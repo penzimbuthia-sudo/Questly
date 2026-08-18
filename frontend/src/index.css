@@ -19,7 +19,18 @@
   --color-card: #FFFFFF;      
   --color-surface-alt: #FAF7F0; 
   --color-fg: #17151A;        
-  --color-line: #17151A;      
+  --color-line: #17151A;    
+  --color-tone-success-bg: #E7F6EC;
+  --color-tone-success-fg: #1F7A44;
+
+  --color-tone-danger-bg: #FBEAE5;
+  --color-tone-danger-fg: #B3492B;
+
+  --color-tone-warning-bg: #FFF3D6;
+  --color-tone-warning-fg: #8A6200;
+
+  --color-tone-info-bg: rgba(139, 92, 246, 0.12);
+  --color-tone-info-fg: #6D28D9;  
 }
 
 .theme-contributor {
@@ -36,5 +47,15 @@
   --color-surface-alt: #201C26; 
   --color-fg: #FAF7F0;         
   --color-line: #FAF7F0;
-}
+  --color-tone-success-bg: rgba(127, 217, 154, 0.14);
+  --color-tone-success-fg: #7FD99A;
 
+  --color-tone-danger-bg: rgba(232, 138, 125, 0.16);
+  --color-tone-danger-fg: #E88A7D;
+
+  --color-tone-warning-bg: rgba(244, 211, 94, 0.16);
+  --color-tone-warning-fg: #F4D35E;
+
+  --color-tone-info-bg: rgba(139, 92, 246, 0.16);
+  --color-tone-info-fg: #C4B5FD;
+}
