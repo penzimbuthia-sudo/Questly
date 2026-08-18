@@ -3,3 +3,8 @@ export { default as Card } from "./Card";
 export { default as Pill } from "./Pill";
 export { default as ProgressBar } from "./ProgressBar";
 export { default as Avatar } from "./Avatar";
+export { default as SectionHeader } from "./SectionHeader";
+export { default as FormField } from "./FormField";
+export { default as EmptyState } from "./EmptyState";
+export { default as Table } from "./Table";
+export { default as Toolbar } from "./Toolbar";
