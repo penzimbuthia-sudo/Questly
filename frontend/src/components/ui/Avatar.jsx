@@ -1,6 +1,6 @@
 const TONE = {
-  royal: "bg-royal/20 text-royal",
-  butter: "bg-butter/20 text-butter-dark",
+  royal: "bg-tone-info-bg text-tone-info-fg",
+  butter: "bg-tone-warning-bg text-tone-warning-fg",
   neutral: "bg-fg/10 text-fg/70",
 };
 
