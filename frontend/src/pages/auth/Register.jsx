@@ -105,6 +105,11 @@ export default function Register() {
               ))}
             </div>
           </div>
+
+          <button type="submit" disabled={submitting}
+            className="w-full rounded-sm bg-[#2A9D8F] py-2 text-sm font-semibold text-[#08201C] disabled:opacity-60">
+            {submitting ? 'Creating account…' : 'Create account'}
+          </button>
         </form>
       </div>
     </div>
