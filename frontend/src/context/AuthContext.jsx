@@ -44,4 +44,17 @@ export function AuthProvider({ children }) {
     setToken(null);
     setUser(null);
   }, []);
+
+  const value = {
+    token,
+    user,
+    role: user?.role ?? null,
+    isAuthenticated: Boolean(token && user),
+    loading,
+    login,
+    register,
+    logout,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
