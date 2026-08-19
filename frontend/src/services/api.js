@@ -47,3 +47,11 @@ async function request(path, { method = 'GET', body, headers = {}, auth = true }
 
   return data;
 }
+
+export const api = {
+  get: (path, opts) => request(path, { ...opts, method: 'GET' }),
+  post: (path, body, opts) => request(path, { ...opts, method: 'POST', body }),
+  put: (path, body, opts) => request(path, { ...opts, method: 'PUT', body }),
+  patch: (path, body, opts) => request(path, { ...opts, method: 'PATCH', body }),
+  delete: (path, opts) => request(path, { ...opts, method: 'DELETE' }),
+};
