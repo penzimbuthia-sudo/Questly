@@ -18,8 +18,18 @@ export function Login() {
       setError('Enter your email and password.');
       return;
     }
-    
+
     setError('');
     setSubmitting(true);
-  }
+
+    try {
+      const user = await login(form.email, form.password);
+      const from = location.state?.from?.pathname;
+      navigate(from || `/${user?.role ?? 'learner'}`, { replace: true });
+    } catch (err) {
+      setError(err.message || 'Could not log in. Check your details and try again.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
 }
