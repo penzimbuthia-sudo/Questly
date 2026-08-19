@@ -85,6 +85,26 @@ export default function Register() {
             <input id="confirmPassword" name="confirmPassword" type="password" value={form.confirmPassword} onChange={handleChange}
               className="w-full rounded-sm border border-[#28313F] bg-[#10151C] px-3 py-2 text-sm text-[#E9EBEF] outline-none focus:border-[#2A9D8F]" />
           </div>
+
+          <div>
+            <span className="mb-1 block text-xs text-[#8B93A7]">I'm joining as</span>
+            <div className="flex gap-2">
+                {ROLES.map((r) => (
+                <button
+                  key={r.value}
+                  type="button"
+                  onClick={() => setForm((f) => ({ ...f, role: r.value }))}
+                  className={`flex-1 rounded-sm border px-3 py-2 text-xs ${
+                    form.role === r.value
+                      ? 'border-[#2A9D8F] bg-[#2A9D8F]/10 text-[#6EE7DD]'
+                      : 'border-[#28313F] text-[#8B93A7]'
+                  }`}
+                >
+                  {r.label}
+                </button>
+              ))}
+            </div>
+          </div>
         </form>
       </div>
     </div>
