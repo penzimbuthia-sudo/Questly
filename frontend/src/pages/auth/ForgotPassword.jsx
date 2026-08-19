@@ -41,6 +41,20 @@ export default function ForgotPassword() {
                 {error}
               </div>
             )}
+            
+            <div>
+              <label className="mb-1 block text-xs text-[#8B93A7]" htmlFor="email">Email</label>
+              <input
+                id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)}
+                className="w-full rounded-sm border border-[#28313F] bg-[#10151C] px-3 py-2 text-sm text-[#E9EBEF] outline-none focus:border-[#2A9D8F]"
+              />
+            </div>
+            <button
+              type="submit" disabled={status === 'sending'}
+              className="w-full rounded-sm bg-[#2A9D8F] py-2 text-sm font-semibold text-[#08201C] disabled:opacity-60"
+            >
+              {status === 'sending' ? 'Sending…' : 'Send reset link'}
+            </button>
           </form>
         )}
 
