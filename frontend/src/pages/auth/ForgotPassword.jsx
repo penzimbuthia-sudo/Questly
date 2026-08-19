@@ -13,5 +13,16 @@ export default function ForgotPassword() {
       setError('Enter your email.');
       return;
     }
+
+    setError('');
+    setStatus('sending');
+    
+    try {
+      await authService.forgotPassword(email);
+      setStatus('sent');
+    } catch (err) {
+      setStatus('error');
+      setError(err.message || 'Something went wrong. Try again.');
+    }
   }
 }
