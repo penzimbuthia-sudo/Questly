@@ -74,6 +74,10 @@ export function Login() {
             {submitting ? 'Logging in…' : 'Log in'}
           </button>
         </form>
+
+        <p className="mt-6 text-center text-xs text-[#8B93A7]">
+          Don't have an account? <Link to="/register" className="text-[#6EE7DD] hover:underline">Sign up</Link>
+        </p>
       </div>
     </div>
   )
