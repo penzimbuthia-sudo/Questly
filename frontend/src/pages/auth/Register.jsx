@@ -17,4 +17,12 @@ export default function Register() {
   const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e) => setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
+
+  const validate = () => {
+    if (!form.name.trim()) return 'Enter your name.';
+    if (!EMAIL_RE.test(form.email)) return 'Enter a valid email address.';
+    if (form.password.length < 8) return 'Password must be at least 8 characters.';
+    if (form.password !== form.confirmPassword) return 'Passwords do not match.';
+    return '';
+  };
 }
