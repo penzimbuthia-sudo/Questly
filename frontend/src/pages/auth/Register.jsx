@@ -25,4 +25,16 @@ export default function Register() {
     if (form.password !== form.confirmPassword) return 'Passwords do not match.';
     return '';
   };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const validationError = validate();
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+    
+    setError('');
+    setSubmitting(true);
+  }
 }
