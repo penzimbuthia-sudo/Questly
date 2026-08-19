@@ -46,6 +46,10 @@ export default function ResetPassword() {
     <div className="flex min-h-screen items-center justify-center bg-[#10151C] px-4">
       <div className="w-full max-w-sm rounded-md border border-[#28313F] bg-[#161D28] p-8">
         <h1 className="mb-1 text-xl font-medium text-[#E9EBEF]">Set a new password</h1>
+
+        <p className="mt-6 text-center text-xs text-[#8B93A7]">
+          <Link to="/login" className="text-[#6EE7DD] hover:underline">Back to login</Link>
+        </p>
       </div>
     </div>
   )
