@@ -27,5 +27,18 @@ export default function ResetPassword() {
       setError('Passwords do not match.');
       return;
     }
+
+    setError('');
+    setSubmitting(true);
+    
+    try {
+      await authService.resetPassword(token, form.password);
+      setDone(true);
+      setTimeout(() => navigate('/login', { replace: true }), 1500);
+    } catch (err) {
+      setError(err.message || 'Could not reset your password. Request a new link.');
+    } finally {
+      setSubmitting(false);
+    }
   }
 }
