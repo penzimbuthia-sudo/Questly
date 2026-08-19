@@ -8,3 +8,11 @@ function AdminPlaceholder() {
     </div>
   );
 }
+
+export default function AdminRoutes() {
+  return (
+    <Routes>
+      <Route index element={<AdminPlaceholder />} />
+    </Routes>
+  );
+}
