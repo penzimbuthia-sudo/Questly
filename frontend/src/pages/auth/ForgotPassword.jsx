@@ -16,7 +16,7 @@ export default function ForgotPassword() {
 
     setError('');
     setStatus('sending');
-    
+
     try {
       await authService.forgotPassword(email);
       setStatus('sent');
@@ -24,5 +24,14 @@ export default function ForgotPassword() {
       setStatus('error');
       setError(err.message || 'Something went wrong. Try again.');
     }
-  }
+  };
+
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-[#10151C] px-4">
+      <div className="w-full max-w-sm rounded-md border border-[#28313F] bg-[#161D28] p-8">
+        <h1 className="mb-1 text-xl font-medium text-[#E9EBEF]">Reset your password</h1>
+        <p className="mb-6 text-sm text-[#8B93A7]">We'll email you a reset link.</p>
+      </div>
+    </div>
+  )
 }
