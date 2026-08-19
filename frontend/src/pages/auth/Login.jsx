@@ -38,6 +38,23 @@ export function Login() {
       <div className="w-full max-w-sm rounded-md border border-[#28313F] bg-[#161D28] p-8">
         <h1 className="mb-1 text-xl font-medium text-[#E9EBEF]">Welcome back</h1>
         <p className="mb-6 text-sm text-[#8B93A7]">Log in to continue your path.</p>
+
+        {error && (
+          <div className="mb-4 rounded-sm border border-red-900/50 bg-red-950/40 px-3 py-2 text-xs text-red-300">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="mb-1 block text-xs text-[#8B93A7]" htmlFor="email">Email</label>
+            <input
+              id="email" name="email" type="email" value={form.email} onChange={handleChange}
+              className="w-full rounded-sm border border-[#28313F] bg-[#10151C] px-3 py-2 text-sm text-[#E9EBEF] outline-none focus:border-[#2A9D8F]"
+              placeholder="you@example.com"
+            />
+          </div>
+        </form>
       </div>
     </div>
   )
