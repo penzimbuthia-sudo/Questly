@@ -27,4 +27,16 @@ async function request(path, { method = 'GET', body, headers = {}, auth = true }
   const token = localStorage.getItem('token');
   const finalHeaders = { 'Content-Type': 'application/json', ...headers };
   if (auth && token) finalHeaders.Authorization = `Bearer ${token}`;
+
+  const res = await fetch(`${BASE_URL}${path}`, {
+    method,
+    headers: finalHeaders,
+    body: body !== undefined ? JSON.stringify(body) : undefined,
+  });
+
+  let data = null;
+  const contentType = res.headers.get('content-type');
+  if (contentType && contentType.includes('application/json')) {
+    data = await res.json().catch(() => null);
+  }
 }
