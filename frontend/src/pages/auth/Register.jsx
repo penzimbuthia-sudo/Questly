@@ -50,5 +50,20 @@ export default function Register() {
     } finally {
       setSubmitting(false);
     }
-  }
+  };
+
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-[#10151C] px-4 py-10">
+      <div className="w-full max-w-sm rounded-md border border-[#28313F] bg-[#161D28] p-8">
+        <h1 className="mb-1 text-xl font-medium text-[#E9EBEF]">Create your account</h1>
+        <p className="mb-6 text-sm text-[#8B93A7]">Join as a learner or a contributor.</p>
+
+        {error && (
+          <div className="mb-4 rounded-sm border border-red-900/50 bg-red-950/40 px-3 py-2 text-xs text-red-300">
+            {error}
+          </div>
+        )}
+      </div>
+    </div>
+  )
 }
