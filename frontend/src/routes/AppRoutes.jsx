@@ -1,7 +1,7 @@
 import RoleRoute from './RoleRoute';
-import LearnerRoutes from './learnerRoutes';
-import ContributorRoutes from './contributorRoutes';
-import AdminRoutes from './adminRoutes';
+import LearnerRoutes from './LearnerRoutes';
+import ContributorRoutes from './ContributorRoutes';
+import AdminRoutes from './AdminRoutes';
 
 const ROLE_HOME = {
   learner: '/learner',
