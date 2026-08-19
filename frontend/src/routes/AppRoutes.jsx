@@ -15,3 +15,16 @@ function RootRedirect() {
   if (isAuthenticated) return <Navigate to={ROLE_HOME[role] ?? '/login'} replace />;
   return <Landing />;
 }
+
+export default function AppRoutes() {
+  return (
+    <Routes>
+      <Route path="/" element={<RootRedirect />} />
+
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
+    </Routes>
+  )
+}
