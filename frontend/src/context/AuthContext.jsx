@@ -1,2 +1,23 @@
 import { createContext, useState, useEffect, useCallback } from 'react';
 import { authService, decodeToken } from '../services/authService';
+
+export function AuthProvider({ children }) {
+  const [token, setToken] = useState(null);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const stored = localStorage.getItem('token');
+    if (stored) {
+      const decoded = decodeToken(stored);
+      const expired = decoded?.exp && decoded.exp * 1000 < Date.now();
+      if (decoded && !expired) {
+        setToken(stored);
+        setUser(decoded);
+      } else {
+        localStorage.removeItem('token');
+      }
+    }
+    setLoading(false);
+  }, []);
+}
