@@ -64,7 +64,18 @@ export default function Register() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4"></form>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="mb-1 block text-xs text-[#8B93A7]" htmlFor="name">Name</label>
+            <input id="name" name="name" value={form.name} onChange={handleChange}
+              className="w-full rounded-sm border border-[#28313F] bg-[#10151C] px-3 py-2 text-sm text-[#E9EBEF] outline-none focus:border-[#2A9D8F]" />
+          </div>
+          <div>
+            <label className="mb-1 block text-xs text-[#8B93A7]" htmlFor="email">Email</label>
+            <input id="email" name="email" type="email" value={form.email} onChange={handleChange}
+              className="w-full rounded-sm border border-[#28313F] bg-[#10151C] px-3 py-2 text-sm text-[#E9EBEF] outline-none focus:border-[#2A9D8F]" />
+          </div>
+        </form>
       </div>
     </div>
   )
