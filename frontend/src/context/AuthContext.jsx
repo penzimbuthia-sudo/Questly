@@ -38,4 +38,10 @@ export function AuthProvider({ children }) {
     setUser(decoded);
     return decoded;
   }, []);
+
+  const logout = useCallback(() => {
+    localStorage.removeItem('token');
+    setToken(null);
+    setUser(null);
+  }, []);
 }
