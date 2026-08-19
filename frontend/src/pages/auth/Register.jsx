@@ -33,8 +33,22 @@ export default function Register() {
       setError(validationError);
       return;
     }
-    
+
     setError('');
     setSubmitting(true);
+
+    try {
+      const user = await register({
+        name: form.name,
+        email: form.email,
+        password: form.password,
+        role: form.role,
+      });
+      navigate(`/${user?.role ?? 'learner'}`, { replace: true });
+    } catch (err) {
+      setError(err.message || 'Could not create your account. Try again.');
+    } finally {
+      setSubmitting(false);
+    }
   }
 }
