@@ -50,7 +50,13 @@ export default function ResetPassword() {
         {done ? (
           <p className="text-sm text-[#6EE7DD]">Password updated. Redirecting to login…</p>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-4"></form>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {error && (
+              <div className="rounded-sm border border-red-900/50 bg-red-950/40 px-3 py-2 text-xs text-red-300">
+                {error}
+              </div>
+            )}
+          </form>
         )}
 
         <p className="mt-6 text-center text-xs text-[#8B93A7]">
