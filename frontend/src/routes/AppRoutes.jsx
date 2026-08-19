@@ -42,6 +42,16 @@ export default function AppRoutes() {
           </RoleRoute>
         }
       />
+      <Route
+        path="/admin/*"
+        element={
+          <RoleRoute allowedRoles={['admin']}>
+            <AdminRoutes />
+          </RoleRoute>
+        }
+      />
+
+      <Route path="*" element={<NotFound />} />
     </Routes>
   )
 }
