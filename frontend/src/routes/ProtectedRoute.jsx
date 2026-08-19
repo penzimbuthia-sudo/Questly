@@ -12,4 +12,10 @@ export default function ProtectedRoute({ children, allowedRoles }) {
       </div>
     );
   }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace state={{ from: location }} />;
+  }
+
+  return children;
 }
