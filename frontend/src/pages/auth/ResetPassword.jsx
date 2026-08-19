@@ -56,6 +56,13 @@ export default function ResetPassword() {
                 {error}
               </div>
             )}
+            <div>
+              <label className="mb-1 block text-xs text-[#8B93A7]" htmlFor="password">New password</label>
+              <input
+                id="password" name="password" type="password" value={form.password} onChange={handleChange}
+                className="w-full rounded-sm border border-[#28313F] bg-[#10151C] px-3 py-2 text-sm text-[#E9EBEF] outline-none focus:border-[#2A9D8F]"
+              />
+            </div>
           </form>
         )}
 
