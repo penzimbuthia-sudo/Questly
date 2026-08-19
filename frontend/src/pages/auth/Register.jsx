@@ -63,6 +63,8 @@ export default function Register() {
             {error}
           </div>
         )}
+
+        <form onSubmit={handleSubmit} className="space-y-4"></form>
       </div>
     </div>
   )
