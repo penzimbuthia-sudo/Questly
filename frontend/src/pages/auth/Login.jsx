@@ -62,6 +62,17 @@ export function Login() {
               placeholder="••••••••"
             />
           </div>
+
+          <div className="flex justify-end">
+            <Link to="/forgot-password" className="text-xs text-[#6EE7DD] hover:underline">Forgot password?</Link>
+          </div>
+
+          <button
+            type="submit" disabled={submitting}
+            className="w-full rounded-sm bg-[#2A9D8F] py-2 text-sm font-semibold text-[#08201C] disabled:opacity-60"
+          >
+            {submitting ? 'Logging in…' : 'Log in'}
+          </button>
         </form>
       </div>
     </div>
