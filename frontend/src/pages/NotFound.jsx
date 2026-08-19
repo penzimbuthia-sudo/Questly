@@ -8,6 +8,10 @@ export default function NotFound() {
           <p className="mb-6 text-sm text-[#8B93A7]">
             The page you're looking for doesn't exist or has moved.
           </p>
+
+          <Link to="/" className="rounded-sm bg-[#2A9D8F] px-4 py-2 text-sm font-semibold text-[#08201C]">
+            Back home
+          </Link>
         </div>
     )
 }
