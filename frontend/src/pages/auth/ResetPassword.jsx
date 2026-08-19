@@ -70,6 +70,12 @@ export default function ResetPassword() {
                 className="w-full rounded-sm border border-[#28313F] bg-[#10151C] px-3 py-2 text-sm text-[#E9EBEF] outline-none focus:border-[#2A9D8F]"
               />
             </div>
+            <button
+              type="submit" disabled={submitting}
+              className="w-full rounded-sm bg-[#2A9D8F] py-2 text-sm font-semibold text-[#08201C] disabled:opacity-60"
+            >
+              {submitting ? 'Updating…' : 'Update password'}
+            </button>
           </form>
         )}
 
