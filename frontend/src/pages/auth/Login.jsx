@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 
-export function Login() {
+export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
