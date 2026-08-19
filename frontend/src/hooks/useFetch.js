@@ -19,4 +19,10 @@ export function useFetch(path, { skip = false } = {}) {
       setLoading(false);
     }
   }, [path, skip]);
+
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
+
+  return { data, error, loading, refetch };
 }
