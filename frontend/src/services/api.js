@@ -39,4 +39,11 @@ async function request(path, { method = 'GET', body, headers = {}, auth = true }
   if (contentType && contentType.includes('application/json')) {
     data = await res.json().catch(() => null);
   }
+
+  if (!res.ok) {
+    const message = data?.message || data?.error || `Request failed (${res.status})`;
+    throw new ApiError(message, res.status, data);
+  }
+
+  return data;
 }
