@@ -12,4 +12,12 @@ export default function ResetPassword() {
   const [done, setDone] = useState(false);
 
   const handleChange = (e) => setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!token) {
+      setError('This reset link is invalid or expired.');
+      return;
+    }
+  }
 }
