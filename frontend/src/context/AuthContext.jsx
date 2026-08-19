@@ -6,3 +6,10 @@ import Register from '../pages/auth/Register';
 import ForgotPassword from '../pages/auth/ForgotPassword';
 import ResetPassword from '../pages/auth/ResetPassword';
 import NotFound from '../pages/NotFound';
+
+import Landing from '../pages/Landing';
+
+import RoleRoute from './RoleRoute';
+import LearnerRoutes from './learnerRoutes';
+import ContributorRoutes from './contributorRoutes';
+import AdminRoutes from './adminRoutes';
