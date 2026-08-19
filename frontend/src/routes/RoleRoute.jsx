@@ -8,4 +8,16 @@ const ROLE_HOME = {
   admin: '/admin',
 };
 
-export default function RoleRoute({ children }) {}
+export default function RoleRoute({ children }) {
+  const { user } = useAuth();
+
+  return (
+    <ProtectedRoute>
+      {user && !allowedRoles.includes(user.role) ? (
+        <Navigate to={ROLE_HOME[user.role] ?? '/login'} replace />
+      ) : (
+        children
+      )}
+    </ProtectedRoute>
+  );
+}
