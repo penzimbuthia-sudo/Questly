@@ -34,6 +34,14 @@ export default function AppRoutes() {
           </RoleRoute>
         }
       />
+      <Route
+        path="/contributor/*"
+        element={
+          <RoleRoute allowedRoles={['contributor']}>
+            <ContributorRoutes />
+          </RoleRoute>
+        }
+      />
     </Routes>
   )
 }
