@@ -8,3 +8,10 @@ const ROLE_HOME = {
   contributor: '/contributor',
   admin: '/admin',
 };
+
+function RootRedirect() {
+  const { isAuthenticated, role, loading } = useAuth();
+  if (loading) return null;
+  if (isAuthenticated) return <Navigate to={ROLE_HOME[role] ?? '/login'} replace />;
+  return <Landing />;
+}
