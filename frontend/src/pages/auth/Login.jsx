@@ -32,4 +32,13 @@ export function Login() {
       setSubmitting(false);
     }
   };
+
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-[#10151C] px-4">
+      <div className="w-full max-w-sm rounded-md border border-[#28313F] bg-[#161D28] p-8">
+        <h1 className="mb-1 text-xl font-medium text-[#E9EBEF]">Welcome back</h1>
+        <p className="mb-6 text-sm text-[#8B93A7]">Log in to continue your path.</p>
+      </div>
+    </div>
+  )
 }
