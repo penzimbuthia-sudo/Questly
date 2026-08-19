@@ -20,4 +20,13 @@ export function AuthProvider({ children }) {
     }
     setLoading(false);
   }, []);
+
+  const register = useCallback(async (payload) => {
+    const data = await authService.register(payload);
+    localStorage.setItem('token', data.token);
+    const decoded = decodeToken(data.token);
+    setToken(data.token);
+    setUser(decoded);
+    return decoded;
+  }, []);
 }
