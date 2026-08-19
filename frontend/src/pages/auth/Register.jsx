@@ -111,6 +111,10 @@ export default function Register() {
             {submitting ? 'Creating account…' : 'Create account'}
           </button>
         </form>
+
+        <p className="mt-6 text-center text-xs text-[#8B93A7]">
+          Already have an account? <Link to="/login" className="text-[#6EE7DD] hover:underline">Log in</Link>
+        </p>
       </div>
     </div>
   )
