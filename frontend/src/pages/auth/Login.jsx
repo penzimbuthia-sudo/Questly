@@ -12,5 +12,14 @@ export function Login() {
 
   const handleChange = (e) => setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
 
-  
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!form.email || !form.password) {
+      setError('Enter your email and password.');
+      return;
+    }
+    
+    setError('');
+    setSubmitting(true);
+  }
 }
