@@ -19,5 +19,13 @@ export default function ResetPassword() {
       setError('This reset link is invalid or expired.');
       return;
     }
+    if (form.password.length < 8) {
+      setError('Password must be at least 8 characters.');
+      return;
+    }
+    if (form.password !== form.confirmPassword) {
+      setError('Passwords do not match.');
+      return;
+    }
   }
 }
