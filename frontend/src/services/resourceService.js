@@ -1,65 +1,81 @@
-import api from './api'
+// src/services/resourceService.js
+import { v4 as uuid } from 'uuid'
+import { awardXP } from './gamificationService'
 
-// Owned by Person D. AddResourceModal submits the shape createResource()
-// sends here: { title, type, url, description }. Admin's review queue
-// (Person E) reads status via getResourceById / listResources.
+let resources = []
 
-export async function listResources({ type, status, authorId, search, page = 1, perPage = 20 } = {}) {
-  const { data } = await api.get('/resources', {
-    params: { type, status, authorId, search, page, perPage },
-  })
-  return data
+const shapeResource = (data) => ({
+  id: uuid(),
+  title: data.title,
+  url: data.url || null,
+  type: data.type, // video | article | doc | path
+  modules: data.modules || null,
+  status: 'pending',
+  views: 0,
+  upvotes: 0,
+  updated: 'Just now',
+  submittedAt: new Date().toISOString()
+})
+
+export const addResource = (data) => {
+  const resource = shapeResource(data)
+  resources.unshift(resource)
+  awardXP(50, `Added resource: ${resource.title}`)
+  return resource
 }
 
-export async function getResourceById(resourceId) {
-  const { data } = await api.get(`/resources/${resourceId}`)
-  return data
+export const addPath = (data) => {
+  const path = shapeResource({ ...data, type: 'path' })
+  resources.unshift(path)
+  awardXP(120, `Created learning path: ${path.title}`)
+  return path
 }
 
-export async function createResource({ title, type, url, description }) {
-  // Lands in Admin's review queue with status: 'pending'.
-  const { data } = await api.post('/resources', { title, type, url, description })
-  return data
+export const getResources = () => resources
+
+export const getResource = (id) => resources.find((r) => r.id === id) || null
+
+export const updateResource = (id, updates) => {
+  const index = resources.findIndex((r) => r.id === id)
+  if (index === -1) return null
+
+  resources[index] = {
+    ...resources[index],
+    ...updates,
+    updated: 'Just now'
+  }
+
+  return resources[index]
 }
 
-export async function updateResource(resourceId, updates) {
-  const { data } = await api.patch(`/resources/${resourceId}`, updates)
-  return data
+export const deleteResource = (id) => {
+  resources = resources.filter((r) => r.id !== id)
 }
 
-export async function deleteResource(resourceId) {
-  await api.delete(`/resources/${resourceId}`)
+export const setReviewStatus = (id, status) => {
+  const item = getResource(id)
+  if (!item) return null
+
+  item.status = status
+  item.updated = 'Just now'
+
+  if (status === 'published') {
+    awardXP(80, `Resource published: ${item.title}`)
+  }
+
+  return item
 }
 
-export async function upvoteResource(resourceId) {
-  const { data } = await api.post(`/resources/${resourceId}/upvote`)
-  return data
+export const addView = (id) => {
+  const item = getResource(id)
+  if (!item) return null
+  item.views += 1
+  return item.views
 }
 
-export async function removeUpvote(resourceId) {
-  const { data } = await api.delete(`/resources/${resourceId}/upvote`)
-  return data
-}
-
-export async function getMyResources({ status, page = 1, perPage = 20 } = {}) {
-  const { data } = await api.get('/resources/mine', { params: { status, page, perPage } })
-  return data
-}
-
-export async function getMyResourceStats() {
-  // Powers the StatCard row on the Contributor Dashboard.
-  const { data } = await api.get('/resources/mine/stats')
-  return data
-}
-
-export default {
-  listResources,
-  getResourceById,
-  createResource,
-  updateResource,
-  deleteResource,
-  upvoteResource,
-  removeUpvote,
-  getMyResources,
-  getMyResourceStats,
+export const addUpvote = (id) => {
+  const item = getResource(id)
+  if (!item) return null
+  item.upvotes += 1
+  return item.upvotes
 }
