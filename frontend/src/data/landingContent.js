@@ -40,3 +40,30 @@ export const features = [
       "Track views, upvotes, engagement, and performance of your published resources.",
   },
 ];
+
+export const howItWorks = [
+  {
+    step: 1,
+    title: "Create or Learn",
+    description:
+      "Start by exploring curated learning paths or contribute your own resources to help others grow.",
+  },
+  {
+    step: 2,
+    title: "Review & Publish",
+    description:
+      "Submitted content goes through a review process to ensure quality, accuracy, and value.",
+  },
+  {
+    step: 3,
+    title: "Earn XP & Rewards",
+    description:
+      "Every action — learning, contributing, engaging — earns XP and unlocks badges and achievements.",
+  },
+  {
+    step: 4,
+    title: "Grow Your Profile",
+    description:
+      "Build a contributor profile showcasing your published work, achievements, and community impact.",
+  },
+];
