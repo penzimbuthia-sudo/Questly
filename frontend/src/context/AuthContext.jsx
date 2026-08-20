@@ -1,6 +1,8 @@
 import { createContext, useState, useEffect, useCallback } from 'react';
 import { authService, decodeToken } from '../services/authService';
 
+export const AuthContext = createContext(null);
+
 export function AuthProvider({ children }) {
   const [token, setToken] = useState(null);
   const [user, setUser] = useState(null);
