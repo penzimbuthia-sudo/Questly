@@ -1,11 +1,11 @@
 // feature/your-name/landing-page/Landing.jsx
-import Navbar from './Navbar'
-import Hero from './Hero'
-import FeatureGrid from './FeatureGrid'
-import HowItWorks from './HowItWorks'
-import RolesShowcase from './RolesShowcase'
-import CTASection from './CTASection'
-import Footer from './Footer'
+import Navbar from '../components/Landing/Navbar'
+import Hero from '../components/Landing/Hero'
+import FeatureGrid from '../components/Landing/FeatureGrid'
+import HowItWorks from '../components/Landing/HowItWorks'
+import RolesShowcase from '../components/Landing/RolesShowcase'
+import CTASection from '../components/Landing/CTASection'
+import Footer from '../components/Landing/Footer'
 
 export default function Landing() {
   return (
