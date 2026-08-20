@@ -67,3 +67,32 @@ export const howItWorks = [
       "Build a contributor profile showcasing your published work, achievements, and community impact.",
   },
 ];
+
+export const roles = [
+  {
+    id: "learner",
+    title: "Learners",
+    description:
+      "Discover structured learning paths, track your progress, and grow your skills with community‑powered content.",
+  },
+  {
+    id: "creator",
+    title: "Creators",
+    description:
+      "Publish high‑quality resources, build learning paths, and earn XP as your content helps others.",
+  },
+  {
+    id: "reviewer",
+    title: "Reviewers",
+    description:
+      "Ensure content quality by reviewing submissions and helping maintain a high standard across the platform.",
+  },
+];
+
+export const cta = {
+  title: "Ready to Start Your Quest?",
+  subtitle:
+    "Join thousands of learners and creators building the future of community‑driven education.",
+  buttonLabel: "Get Started",
+  buttonLink: "/signup",
+};
