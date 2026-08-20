@@ -8,3 +8,4 @@ export { default as FormField } from "./FormField";
 export { default as EmptyState } from "./EmptyState";
 export { default as Table } from "./Table";
 export { default as Toolbar } from "./Toolbar";
+export { default as Toggle } from "./Toggle";
