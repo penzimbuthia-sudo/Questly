@@ -7,7 +7,7 @@ import ForgotPassword from '../pages/auth/ForgotPassword';
 import ResetPassword from '../pages/auth/ResetPassword';
 import NotFound from '../pages/NotFound';
 
-import Landing from '../pages/Landing';
+import Landing from '../components/Landing/Landing';
 
 import RoleRoute from './RoleRoute';
 import LearnerRoutes from './LearnerRoutes';
