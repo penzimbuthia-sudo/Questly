@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
 @theme {
   --color-ink: #17151A;
   --color-dark-purple: #332D3A;
@@ -13,11 +15,12 @@
 
   --font-sans: 'Inter', sans-serif;
 
-  --color-page: #FAF7F0;      
-  --color-card: #FFFFFF;      
-  --color-surface-alt: #FAF7F0; 
-  --color-fg: #17151A;        
-  --color-line: #17151A;    
+  --color-page: #FAF7F0;
+  --color-card: #FFFFFF;
+  --color-surface-alt: #FAF7F0;
+  --color-fg: #17151A;
+  --color-line: #17151A;
+
   --color-tone-success-bg: #E7F6EC;
   --color-tone-success-fg: #1F7A44;
 
@@ -28,23 +31,27 @@
   --color-tone-warning-fg: #8A6200;
 
   --color-tone-info-bg: rgba(139, 92, 246, 0.12);
-  --color-tone-info-fg: #6D28D9;  
+  --color-tone-info-fg: #6D28D9;
 }
 
 .theme-contributor {
-  --color-page: #17151A;       
-  --color-card: #211D28;       
-  --color-surface-alt: #2A2431; 
-  --color-fg: #FAF7F0;         
+  --color-page: #17151A;
+  --color-card: #211D28;
+  --color-surface-alt: #2A2431;
+  --color-fg: #FAF7F0;
   --color-line: #FAF7F0;
 }
 
 .theme-admin {
-  --color-page: #332D3A;       
-  --color-card: #17151A;       
-  --color-surface-alt: #201C26; 
-  --color-fg: #FAF7F0;         
+  --color-page: #332D3A;
+  --color-card: #17151A;
+  --color-surface-alt: #201C26;
+  --color-fg: #FAF7F0;
   --color-line: #FAF7F0;
+}
+
+.theme-contributor,
+.theme-admin {
   --color-tone-success-bg: rgba(127, 217, 154, 0.14);
   --color-tone-success-fg: #7FD99A;
 
@@ -56,4 +63,10 @@
 
   --color-tone-info-bg: rgba(139, 92, 246, 0.16);
   --color-tone-info-fg: #C4B5FD;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-page);
+  color: var(--color-fg);
 }

@@ -1,80 +1,81 @@
-// feature/your-name/landing-page/Navbar.jsx
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { Menu, X, ArrowRight } from "lucide-react";
+import Button from "../ui/Button";
+import Logo from "../ui/Logo";
+import { NAV_LINKS } from "../../data/landingContent";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="fixed top-0 left-0 w-full bg-slate-950/70 backdrop-blur-xl border-b border-slate-800 z-50">
-      <nav className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-
-        {/* Logo */}
-        <Link to="/" className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-violet-600 flex items-center justify-center">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
-              <path d="M12 2l2 7h7l-5.5 4.5L17 21l-5-4-5 4 1.5-7.5L3 9h7z" />
-            </svg>
-          </div>
-          <span className="text-xl font-bold tracking-tight text-white">
-            Questly
-          </span>
+    <header className="theme-contributor sticky top-0 z-50 bg-ink">
+      <div className="w-full max-w-6xl mx-auto px-5 sm:px-6 lg:px-8 flex items-center justify-between py-3.5">
+        <Link to="/">
+          <Logo />
         </Link>
 
-        {/* Desktop Menu */}
-        <ul className="hidden md:flex items-center gap-10 text-slate-300 font-medium">
-          <li><Link to="/features" className="hover:text-white transition">Features</Link></li>
-          <li><Link to="/how-it-works" className="hover:text-white transition">How it works</Link></li>
-          <li><Link to="/community" className="hover:text-white transition">Community</Link></li>
-        </ul>
+        <nav className="hidden md:flex items-center gap-6 lg:gap-8">
+          {NAV_LINKS.map((link) => (
+            <a
+              key={link.label}
+              href={`#${link.id}`}
+              className="text-sm text-ivory/70 font-medium"
+            >
+              {link.label}
+            </a>
+          ))}
+        </nav>
 
-        {/* Right Side */}
-        <div className="hidden md:flex items-center gap-6">
-          <Link
-            to="/login"
-            className="text-slate-300 hover:text-white transition font-medium"
-          >
-            Log in
+        <div className="hidden md:flex items-center gap-2 lg:gap-3">
+          <Link to="/login">
+            <Button variant="ghost" size="sm">
+              Log in
+            </Button>
           </Link>
-
-          <Link
-            to="/signup"
-            className="px-5 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-lg font-semibold transition"
-          >
-            Sign up free
+          <Link to="/register">
+            <Button variant="primary" size="sm">
+              Sign up free
+            </Button>
           </Link>
         </div>
 
-        {/* Mobile Menu Button */}
         <button
-          className="md:hidden text-slate-300 hover:text-white transition"
-          onClick={() => setOpen(!open)}
+          className="md:hidden w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-dark-purple"
+          onClick={() => setOpen((o) => !o)}
+          aria-label="Toggle menu"
+          aria-expanded={open}
         >
-          {open ? (
-            <span className="text-2xl">&times;</span>
-          ) : (
-            <span className="text-2xl">&#9776;</span>
-          )}
+          {open ? <X size={18} className="text-ivory" /> : <Menu size={18} className="text-ivory" />}
         </button>
-      </nav>
+      </div>
 
-      {/* Mobile Menu */}
       {open && (
-        <div className="md:hidden bg-slate-900 border-t border-slate-800 px-6 py-4">
-          <ul className="flex flex-col gap-4 text-slate-300 font-medium">
-            <li><Link to="/features" className="hover:text-white transition">Features</Link></li>
-            <li><Link to="/how-it-works" className="hover:text-white transition">How it works</Link></li>
-            <li><Link to="/community" className="hover:text-white transition">Community</Link></li>
-            <li><Link to="/login" className="hover:text-white transition">Log in</Link></li>
-            <li>
-              <Link
-                to="/signup"
-                className="px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-lg font-semibold transition inline-block"
+        <div className="md:hidden border-t border-ivory/8 bg-ink">
+          <div className="w-full max-w-6xl mx-auto px-5 sm:px-6 lg:px-8 py-4 flex flex-col gap-1">
+            {NAV_LINKS.map((link) => (
+              <a
+                key={link.label}
+                href={`#${link.id}`}
+                className="text-sm py-2.5 text-ivory/75 font-medium"
+                onClick={() => setOpen(false)}
               >
-                Sign up free
+                {link.label}
+              </a>
+            ))}
+            <div className="flex flex-col gap-2 mt-3 pt-3 border-t border-ivory/8">
+              <Link to="/login" className="w-full" onClick={() => setOpen(false)}>
+                <Button variant="outline" className="w-full">
+                  Log in
+                </Button>
               </Link>
-            </li>
-          </ul>
+              <Link to="/register" className="w-full" onClick={() => setOpen(false)}>
+                <Button variant="primary" className="w-full">
+                  Sign up free <ArrowRight size={15} />
+                </Button>
+              </Link>
+            </div>
+          </div>
         </div>
       )}
     </header>

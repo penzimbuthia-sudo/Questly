@@ -1,121 +1,86 @@
+import {
+  Route,
+  Zap,
+  Award,
+  Trophy,
+  MessageCircle,
+  Swords,
+  BookOpen,
+  Share2,
+  BarChart3,
+} from "lucide-react";
 
-export const hero = {
-  title: "Learn. Build. Grow.",
-  subtitle:
-    "Questly empowers creators, learners, and contributors with a modern platform designed for growth, collaboration, and real impact.",
-  buttonPrimary: {
-    label: "Get Started",
-    link: "/signup",
-  },
-  buttonSecondary: {
-    label: "Explore Features",
-    link: "/features",
-  },
-};
-
+export const NAV_LINKS = [
+  { label: "Features", id: "features-how" },
+  { label: "How it works", id: "features-how" },
+  { label: "Community", id: "community" },
+];
 
 export const FEATURES = [
   {
-    id: 1,
-    title: "Curated Learning Paths",
-    description:
-      "Follow structured, high‑quality learning paths built by contributors and experts across multiple domains.",
+    icon: Route,
+    title: "Structured learning paths",
+    desc: "Modules, resources, and end-of-module quizzes, curated by the community.",
   },
   {
-    id: 2,
-    title: "Gamified Progress",
-    description:
-      "Earn XP, badges, and rewards as you learn, contribute, and engage with the community.",
+    icon: Zap,
+    title: "Points & XP",
+    desc: "Earn XP for completing modules, sharing resources, and passing quizzes.",
   },
   {
-    id: 3,
-    title: "Community‑Driven Content",
-    description:
-      "Discover resources created by real contributors, reviewed and published through a transparent workflow.",
+    icon: Award,
+    title: "Achievements & badges",
+    desc: "Unlock badges for streaks, quiz mastery, and contributions.",
   },
   {
-    id: 4,
-    title: "Creator Analytics",
-    description:
-      "Track views, upvotes, engagement, and performance of your published resources.",
+    icon: Trophy,
+    title: "Leaderboards",
+    desc: "See where you rank — weekly, monthly, or all-time.",
+  },
+  {
+    icon: MessageCircle,
+    title: "Rate, comment, discuss",
+    desc: "Every resource is rated and discussed, so the best rises to the top.",
+  },
+  {
+    icon: Swords,
+    title: "Challenges & seasonal events",
+    desc: "Weekly quests and limited-time events for bonus XP and badges.",
   },
 ];
 
-export const howItWorks = [
-  {
-    step: 1,
-    title: "Create or Learn",
-    description:
-      "Start by exploring curated learning paths or contribute your own resources to help others grow.",
-  },
-  {
-    step: 2,
-    title: "Review & Publish",
-    description:
-      "Submitted content goes through a review process to ensure quality, accuracy, and value.",
-  },
-  {
-    step: 3,
-    title: "Earn XP & Rewards",
-    description:
-      "Every action — learning, contributing, engaging — earns XP and unlocks badges and achievements.",
-  },
-  {
-    step: 4,
-    title: "Grow Your Profile",
-    description:
-      "Build a contributor profile showcasing your published work, achievements, and community impact.",
-  },
+export const LEARNER_STEPS = [
+  { icon: BookOpen, title: "Follow a path", desc: "Pick a path made of modules, resources, and quizzes." },
+  { icon: Zap, title: "Learn & earn XP", desc: "Complete modules and quizzes to earn XP and badges." },
+  { icon: Trophy, title: "Climb the leaderboard", desc: "Keep your streak alive and track your rank." },
 ];
-
-export const roles = [
-  {
-    id: "learner",
-    title: "Learners",
-    description:
-      "Discover structured learning paths, track your progress, and grow your skills with community‑powered content.",
-  },
-  {
-    id: "creator",
-    title: "Creators",
-    description:
-      "Publish high‑quality resources, build learning paths, and earn XP as your content helps others.",
-  },
-  {
-    id: "reviewer",
-    title: "Reviewers",
-    description:
-      "Ensure content quality by reviewing submissions and helping maintain a high standard across the platform.",
-  },
-];
-
-export const cta = {
-  title: "Ready to Start Your Quest?",
-  subtitle:
-    "Join thousands of learners and creators building the future of community‑driven education.",
-  buttonLabel: "Get Started",
-  buttonLink: "/signup",
-};
 
 export const CONTRIBUTOR_STEPS = [
+  { icon: Share2, title: "Share resources & paths", desc: "Publish videos, articles, and grouped learning paths." },
+  { icon: MessageCircle, title: "Engage with learners", desc: "Rate, comment, and join discussions on your work." },
+  { icon: BarChart3, title: "Grow your reputation", desc: "Earn XP and badges for every contribution." },
+];
+
+export const HERO_STATS = [
+  { value: "50k+", label: "Active learners" },
+  { value: "12k+", label: "Shared resources" },
+  { value: "1,200+", label: "Learning paths" },
+];
+
+export const TESTIMONIALS = [
   {
-    step: 1,
-    title: "Create or Learn",
-    desc: "Start by exploring curated learning paths or contribute your own resources to help others grow.",
+    name: "Aisha K.",
+    role: "Frontend contributor",
+    quote: "The badges and streaks genuinely got me to finish paths I'd normally abandon halfway through.",
   },
   {
-    step: 2,
-    title: "Review & Publish",
-    desc: "Submitted content goes through a review process to ensure quality, accuracy, and value.",
+    name: "Brian O.",
+    role: "Backend learner",
+    quote: "Ratings and comments on every resource meant I stopped wasting time on outdated tutorials.",
   },
   {
-    step: 3,
-    title: "Earn XP & Rewards",
-    desc: "Every action — learning, contributing, engaging — earns XP and unlocks badges and achievements.",
-  },
-  {
-    step: 4,
-    title: "Grow Your Profile",
-    desc: "Build a contributor profile showcasing your published work, achievements, and community impact.",
+    name: "Chinedu M.",
+    role: "Data science learner",
+    quote: "Weekly challenges turned solo studying into something that actually feels social.",
   },
 ];
