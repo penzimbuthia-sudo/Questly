@@ -72,14 +72,22 @@ async function mockResetPassword() {
 
 export const authService = {
   login: (email, password) =>
-    api.post('/auth/login', { email, password }, { auth: false }),
+    USE_MOCK
+      ? mockLogin(email, password)
+      : api.post('/auth/login', { email, password }, { auth: false }),
 
   register: (payload) =>
-    api.post('/auth/register', payload, { auth: false }),
+    USE_MOCK
+      ? mockRegister(payload)
+      : api.post('/auth/register', payload, { auth: false }),
 
   forgotPassword: (email) =>
-    api.post('/auth/forgot-password', { email }, { auth: false }),
+    USE_MOCK
+      ? mockForgotPassword(email)
+      : api.post('/auth/forgot-password', { email }, { auth: false }),
 
   resetPassword: (token, password) =>
-    api.post('/auth/reset-password', { token, password }, { auth: false }),
+    USE_MOCK
+      ? mockResetPassword(token, password)
+      : api.post('/auth/reset-password', { token, password }, { auth: false }),
 };
