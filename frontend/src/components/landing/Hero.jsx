@@ -1,56 +1,53 @@
 // feature/your-name/landing-page/Hero.jsx
+import { Link } from "react-router-dom";
+
 export default function Hero() {
   return (
-    <section className="px-6 md:px-12 lg:px-20 py-28">
-      <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-20 items-center">
+    <section className="bg-slate-950 pt-32 pb-20 px-6 md:px-12 lg:px-20">
+      <div className="max-w-4xl mx-auto text-center">
 
-        {/* LEFT */}
-        <div className="flex flex-col gap-6">
-          <h1 className="text-4xl md:text-5xl font-bold leading-tight">
-            Crowdsourced Learning Powered by{' '}
-            <span className="text-violet-600">Contributors</span>
-          </h1>
-
-          <p className="text-lg text-gray-600 max-w-md">
-            Share knowledge, earn rewards, complete challenges, and help build the world’s most
-            community‑driven learning platform.
-          </p>
-
-          <div className="flex gap-4 mt-4">
-            <button className="px-6 py-3 bg-violet-600 text-white rounded-lg font-medium hover:bg-violet-700">
-              Get Started
-            </button>
-            <button className="px-6 py-3 border border-gray-300 rounded-lg font-medium hover:bg-gray-100">
-              Explore Community
-            </button>
-          </div>
-
-          {/* HERO STATS */}
-          <div className="flex gap-12 mt-10">
-            <div>
-              <p className="text-3xl font-bold">12k+</p>
-              <p className="text-gray-500 text-sm">Contributors</p>
-            </div>
-            <div>
-              <p className="text-3xl font-bold">48k+</p>
-              <p className="text-gray-500 text-sm">Resources Created</p>
-            </div>
-            <div>
-              <p className="text-3xl font-bold">320+</p>
-              <p className="text-gray-500 text-sm">Active Challenges</p>
-            </div>
-          </div>
+        {/* Badge */}
+        <div className="inline-flex items-center gap-2 bg-amber-900/30 text-amber-400 text-sm font-medium px-4 py-1.5 rounded-full mb-6">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2l2 7h7l-5.5 4.5L17 21l-5-4-5 4 1.5-7.5L3 9h7z" />
+          </svg>
+          Learning, gamified
         </div>
 
-        {/* RIGHT — dashboard preview */}
-        <div className="rounded-xl shadow-xl bg-white p-4 border border-gray-100">
-          <img
-            src="/preview-dashboard.png"
-            alt="Dashboard Preview"
-            className="rounded-lg"
-          />
+        <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight mb-6">
+          Turn learning into a game you actually want to play
+        </h1>
+
+        <p className="text-lg text-slate-400 max-w-2xl mx-auto mb-10">
+          Questly brings scattered tutorials, videos, and courses into one
+          community-curated platform — with points, badges, and leaderboards
+          that keep you coming back.
+        </p>
+
+        <Link
+          to="/signup"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-amber-400 hover:bg-amber-500 text-slate-900 rounded-lg font-semibold transition-colors"
+        >
+          Get started free
+          <span>&rarr;</span>
+        </Link>
+
+        {/* Stats */}
+        <div className="flex items-center justify-center gap-12 mt-16">
+          <div>
+            <p className="text-2xl font-bold text-white">50k+</p>
+            <p className="text-slate-500 text-sm">Active learners</p>
+          </div>
+          <div>
+            <p className="text-2xl font-bold text-white">12k+</p>
+            <p className="text-slate-500 text-sm">Shared resources</p>
+          </div>
+          <div>
+            <p className="text-2xl font-bold text-white">1,200+</p>
+            <p className="text-slate-500 text-sm">Learning paths</p>
+          </div>
         </div>
       </div>
     </section>
-  )
+  );
 }
