@@ -1,7 +1,7 @@
 // feature/your-name/landing-page/Landing.jsx
 import Navbar from '../components/Landing/Navbar'
 import Hero from '../components/Landing/Hero'
-import FeatureGrid from '../components/Landing/FeatureGrid'
+import FeatureGrid from '../components/Landing/FeaturedGrid'
 import HowItWorks from '../components/Landing/HowItWorks'
 import RolesShowcase from '../components/Landing/RolesShowcase'
 import CTASection from '../components/Landing/CTASection'
