@@ -32,7 +32,7 @@ export default function ResetPassword() {
     setSubmitting(true);
 
     try {
-      await authService.resetPassword(token, form.password);
+      await authService.resetPassword({ token, password: form.password });
       setDone(true);
       setTimeout(() => navigate('/login', { replace: true }), 1500);
     } catch (err) {

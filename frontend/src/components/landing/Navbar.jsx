@@ -1,77 +1,81 @@
-// feature/your-name/landing-page/Navbar.jsx
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { Menu, X, ArrowRight } from "lucide-react";
+import Button from "../ui/Button";
+import Logo from "../ui/Logo";
+import { NAV_LINKS } from "../../data/landingContent";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="fixed top-0 left-0 w-full bg-slate-950/70 backdrop-blur-xl border-b border-slate-800 z-50">
-      <nav className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        
-        {/* Logo */}
-        <Link to="/" className="flex items-center gap-3">
-          <span className="text-xl font-bold tracking-tight text-white">
-            Questly
-          </span>
+    <header className="theme-contributor sticky top-0 z-50 bg-ink">
+      <div className="w-full max-w-6xl mx-auto px-5 sm:px-6 lg:px-8 flex items-center justify-between py-3.5">
+        <Link to="/">
+          <Logo />
         </Link>
 
-        {/* Desktop Menu */}
-        <ul className="hidden md:flex items-center gap-10 text-slate-300 font-medium">
-          <li><Link to="/" className="hover:text-white transition">Home</Link></li>
-          <li><Link to="/features" className="hover:text-white transition">Features</Link></li>
-          <li><Link to="/how-it-works" className="hover:text-white transition">How It Works</Link></li>
-          <li><Link to="/roles" className="hover:text-white transition">Roles</Link></li>
-        </ul>
+        <nav className="hidden md:flex items-center gap-6 lg:gap-8">
+          {NAV_LINKS.map((link) => (
+            <a
+              key={link.label}
+              href={`#${link.id}`}
+              className="text-sm text-ivory/70 font-medium"
+            >
+              {link.label}
+            </a>
+          ))}
+        </nav>
 
-        {/* Right Side */}
-        <div className="hidden md:flex items-center gap-6">
-          <Link
-            to="/login"
-            className="text-slate-300 hover:text-white transition font-medium"
-          >
-            Login
+        <div className="hidden md:flex items-center gap-2 lg:gap-3">
+          <Link to="/login">
+            <Button variant="ghost" size="sm">
+              Log in
+            </Button>
           </Link>
-
-          <Link
-            to="/register"
-            className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold transition"
-          >
-            Get Started
+          <Link to="/register">
+            <Button variant="primary" size="sm">
+              Sign up free
+            </Button>
           </Link>
         </div>
 
-        {/* Mobile Menu Button */}
         <button
-          className="md:hidden text-slate-300 hover:text-white transition"
-          onClick={() => setOpen(!open)}
+          className="md:hidden w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-dark-purple"
+          onClick={() => setOpen((o) => !o)}
+          aria-label="Toggle menu"
+          aria-expanded={open}
         >
-          {open ? (
-            <span className="text-2xl">&times;</span>
-          ) : (
-            <span className="text-2xl">&#9776;</span>
-          )}
+          {open ? <X size={18} className="text-ivory" /> : <Menu size={18} className="text-ivory" />}
         </button>
-      </nav>
+      </div>
 
-      {/* Mobile Menu */}
       {open && (
-        <div className="md:hidden bg-slate-900 border-t border-slate-800 px-6 py-4">
-          <ul className="flex flex-col gap-4 text-slate-300 font-medium">
-            <li><Link to="/" className="hover:text-white transition">Home</Link></li>
-            <li><Link to="/features" className="hover:text-white transition">Features</Link></li>
-            <li><Link to="/how-it-works" className="hover:text-white transition">How It Works</Link></li>
-            <li><Link to="/roles" className="hover:text-white transition">Roles</Link></li>
-            <li><Link to="/login" className="hover:text-white transition">Login</Link></li>
-            <li>
-              <Link
-                to="/signup"
-                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold transition inline-block"
+        <div className="md:hidden border-t border-ivory/8 bg-ink">
+          <div className="w-full max-w-6xl mx-auto px-5 sm:px-6 lg:px-8 py-4 flex flex-col gap-1">
+            {NAV_LINKS.map((link) => (
+              <a
+                key={link.label}
+                href={`#${link.id}`}
+                className="text-sm py-2.5 text-ivory/75 font-medium"
+                onClick={() => setOpen(false)}
               >
-                Get Started
+                {link.label}
+              </a>
+            ))}
+            <div className="flex flex-col gap-2 mt-3 pt-3 border-t border-ivory/8">
+              <Link to="/login" className="w-full" onClick={() => setOpen(false)}>
+                <Button variant="outline" className="w-full">
+                  Log in
+                </Button>
               </Link>
-            </li>
-          </ul>
+              <Link to="/register" className="w-full" onClick={() => setOpen(false)}>
+                <Button variant="primary" className="w-full">
+                  Sign up free <ArrowRight size={15} />
+                </Button>
+              </Link>
+            </div>
+          </div>
         </div>
       )}
     </header>
