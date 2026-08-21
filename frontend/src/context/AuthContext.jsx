@@ -42,7 +42,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   const logout = useCallback(() => {
-    localStorage.removeItem('token');
+    authService.logout();
     setToken(null);
     setUser(null);
   }, []);

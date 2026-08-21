@@ -90,4 +90,8 @@ export const authService = {
     USE_MOCK
       ? mockResetPassword(token, password)
       : api.post('/auth/reset-password', { token, password }, { auth: false }),
+
+  logout: () => {
+    localStorage.removeItem('token');
+  },
 };
