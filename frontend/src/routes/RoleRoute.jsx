@@ -8,7 +8,7 @@ const ROLE_HOME = {
   admin: '/admin',
 };
 
-export default function RoleRoute({ children }) {
+export default function RoleRoute({ allowedRoles, children }) {
   const { user } = useAuth();
 
   return (
