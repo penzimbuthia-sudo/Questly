@@ -18,6 +18,11 @@ function readStoredSession() {
   return { token: null, user: null };
 }
 
+import { createContext, useState, useEffect, useCallback } from 'react';
+import authService, { decodeToken } from '../services/authService';
+
+export const AuthContext = createContext(null);
+
 export function AuthProvider({ children }) {
   const [session, setSession] = useState(readStoredSession);
 
@@ -44,6 +49,35 @@ export function AuthProvider({ children }) {
     authService.logout().catch(() => {});
     tokenStore.clear();
     setSession({ token: null, user: null });
+    const userData = await authService.login({ email, password });
+    // If your authService returns the token in the response
+    // You might need to adjust this based on your actual API response
+    const token = localStorage.getItem('token');
+    if (token) {
+      const decoded = decodeToken(token);
+      setToken(token);
+      setUser(decoded);
+      return decoded;
+    }
+    return userData;
+  }, []);
+
+  const register = useCallback(async (payload) => {
+    const userData = await authService.register(payload);
+    const token = localStorage.getItem('token');
+    if (token) {
+      const decoded = decodeToken(token);
+      setToken(token);
+      setUser(decoded);
+      return decoded;
+    }
+    return userData;
+  }, []);
+
+  const logout = useCallback(() => {
+    authService.logout();
+    setToken(null);
+    setUser(null);
   }, []);
 
   const value = {

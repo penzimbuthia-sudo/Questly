@@ -1,8 +1,6 @@
 // feature/your-name/landing-page/Navbar.jsx
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import logo from "./assets/logo.png";
-import avatar from "./assets/avatar.png";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -13,11 +11,7 @@ export default function Navbar() {
         
         {/* Logo */}
         <Link to="/" className="flex items-center gap-3">
-          <img 
-            src={logo} 
-            alt="Questly Logo" 
-            className="h-10 w-auto object-contain"
-          />
+         
           <span className="text-xl font-bold tracking-tight text-white">
             Questly
           </span>
@@ -46,12 +40,6 @@ export default function Navbar() {
           >
             Get Started
           </Link>
-
-          <img 
-            src={avatar} 
-            alt="Contributor Avatar" 
-            className="h-10 w-10 rounded-full border border-slate-700"
-          />
         </div>
 
         {/* Mobile Menu Button */}
