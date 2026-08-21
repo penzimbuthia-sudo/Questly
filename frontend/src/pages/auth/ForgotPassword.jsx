@@ -18,7 +18,7 @@ export default function ForgotPassword() {
     setStatus('sending');
 
     try {
-      await authService.forgotPassword(email);
+      await authService.requestPasswordReset(email);
       setStatus('sent');
     } catch (err) {
       setStatus('error');
