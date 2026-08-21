@@ -11,19 +11,23 @@ import Achievements from '../pages/learner/Achievements';
 import Profile from '../pages/learner/Profile';
 import Settings from '../pages/learner/Settings';
 
-function LearnerPlaceholder() {
-  return (
-    <div className="p-8 text-sm text-[#8B93A7]">
-      Learner routes go here — Home, Explore, Paths, PathDetail, Challenges,
-      Community, Leaderboard, Achievements, Profile, Settings.
-    </div>
-  );
-}
+
 
 export default function LearnerRoutes() {
   return (
     <Routes>
-      <Route index element={<LearnerPlaceholder />} />
+      <Route element={<DashboardLayout />}>
+        <Route index element={<Home />} />
+        <Route path="explore" element={<Explore />} />
+        <Route path="paths" element={<Paths />} />
+        <Route path="paths/:pathId" element={<PathDetail />} />
+        <Route path="challenges" element={<Challenges />} />
+        <Route path="community" element={<Community />} />
+        <Route path="leaderboard" element={<Leaderboard />} />
+        <Route path="achievements" element={<Achievements />} />
+        <Route path="profile" element={<Profile />} />
+        <Route path="settings" element={<Settings />} />
+      </Route>
     </Routes>
   );
 }
