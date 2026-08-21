@@ -43,6 +43,33 @@ function mockDelay(ms = 350) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+async function mockLogin(email, password) {
+  await mockDelay();
+  const match = MOCK_USERS.find((u) => u.email === email);
+  if (match && match.password !== password) {
+    throw new Error('Incorrect password for this mock account.');
+  }
+  const name = match?.name ?? email.split('@')[0];
+  const role = match?.role ?? 'learner';
+  return { token: buildMockToken({ email, name, role }) };
+}
+
+async function mockRegister(payload) {
+  await mockDelay();
+  const { email, name, role = 'learner' } = payload;
+  return { token: buildMockToken({ email, name, role }) };
+}
+
+async function mockForgotPassword() {
+  await mockDelay();
+  return { message: 'Mock mode: pretend a reset email was sent.' };
+}
+
+async function mockResetPassword() {
+  await mockDelay();
+  return { message: 'Mock mode: pretend the password was reset.' };
+}
+
 export const authService = {
   login: (email, password) =>
     api.post('/auth/login', { email, password }, { auth: false }),
