@@ -34,7 +34,7 @@ export default function Navbar() {
           </Link>
 
           <Link
-            to="/signup"
+            to="/register"
             className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold transition"
           >
             Get Started
