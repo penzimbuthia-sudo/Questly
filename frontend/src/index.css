@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
 @theme {
   --color-ink: #17151A;
   --color-dark-purple: #332D3A;
@@ -61,4 +63,10 @@
 
   --color-tone-info-bg: rgba(139, 92, 246, 0.16);
   --color-tone-info-fg: #C4B5FD;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-page);
+  color: var(--color-fg);
 }
