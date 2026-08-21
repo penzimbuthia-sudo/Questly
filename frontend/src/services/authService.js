@@ -10,6 +10,16 @@ export function decodeToken(token) {
   }
 }
 
+const USE_MOCK = import.meta.env.VITE_USE_MOCK_AUTH === 'true';
+
+// Seeded accounts so you can test each role's dashboard directly.
+// Any other email/password combo on login falls back to role "learner".
+const MOCK_USERS = [
+  { email: 'learner@test.com', password: 'password', name: 'Test Learner', role: 'learner' },
+  { email: 'contributor@test.com', password: 'password', name: 'Test Contributor', role: 'contributor' },
+  { email: 'admin@test.com', password: 'password', name: 'Test Admin', role: 'admin' },
+];
+
 export const authService = {
   login: (email, password) =>
     api.post('/auth/login', { email, password }, { auth: false }),
