@@ -6,7 +6,7 @@ export default function DashboardLayout({
   theme,
   sidebarProps = {},
   topBarProps = {},
-  children,
+  //children,
 }) {
   const themeClass = theme ? `theme-${theme}` : "";
 

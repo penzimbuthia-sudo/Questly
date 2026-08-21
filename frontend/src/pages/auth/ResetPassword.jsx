@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
-import { authService } from '../../services/authService';
+import authService from '../../services/authService';
 
 export default function ResetPassword() {
   const [searchParams] = useSearchParams();
@@ -32,7 +32,7 @@ export default function ResetPassword() {
     setSubmitting(true);
 
     try {
-      await authService.resetPassword(token, form.password);
+      await authService.resetPassword({ token, password: form.password });
       setDone(true);
       setTimeout(() => navigate('/login', { replace: true }), 1500);
     } catch (err) {
