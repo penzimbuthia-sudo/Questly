@@ -1,5 +1,6 @@
+
 import { createContext, useState, useEffect, useCallback } from 'react';
-import { authService, decodeToken } from '../services/authService';
+import authService, { decodeToken } from '../services/authService';
 
 export const AuthContext = createContext(null);
 
@@ -24,25 +25,33 @@ export function AuthProvider({ children }) {
   }, []);
 
   const login = useCallback(async (email, password) => {
-    const data = await authService.login(email, password);
-    localStorage.setItem('token', data.token);
-    const decoded = decodeToken(data.token);
-    setToken(data.token);
-    setUser(decoded);
-    return decoded;
+    const userData = await authService.login({ email, password });
+    // If your authService returns the token in the response
+    // You might need to adjust this based on your actual API response
+    const token = localStorage.getItem('token');
+    if (token) {
+      const decoded = decodeToken(token);
+      setToken(token);
+      setUser(decoded);
+      return decoded;
+    }
+    return userData;
   }, []);
 
   const register = useCallback(async (payload) => {
-    const data = await authService.register(payload);
-    localStorage.setItem('token', data.token);
-    const decoded = decodeToken(data.token);
-    setToken(data.token);
-    setUser(decoded);
-    return decoded;
+    const userData = await authService.register(payload);
+    const token = localStorage.getItem('token');
+    if (token) {
+      const decoded = decodeToken(token);
+      setToken(token);
+      setUser(decoded);
+      return decoded;
+    }
+    return userData;
   }, []);
 
   const logout = useCallback(() => {
-    localStorage.removeItem('token');
+    authService.logout();
     setToken(null);
     setUser(null);
   }, []);
