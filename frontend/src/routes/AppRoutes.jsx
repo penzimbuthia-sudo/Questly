@@ -1,3 +1,4 @@
+import { Suspense, lazy } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
@@ -7,12 +8,16 @@ import ForgotPassword from '../pages/auth/ForgotPassword';
 import ResetPassword from '../pages/auth/ResetPassword';
 import NotFound from '../pages/NotFound';
 
-import Landing from '../pages/Landing';
-
 import RoleRoute from './RoleRoute';
-import LearnerRoutes from './LearnerRoutes';
-import ContributorRoutes from './ContributorRoutes';
-import AdminRoutes from './AdminRoutes';
+
+// Lazy-loaded so a broken import inside any one section (Landing,
+// Contributor, Admin) only breaks that section's route when it's
+// actually visited, instead of crashing the whole app on load — each
+// area is still being built out in parallel by different people.
+const Landing = lazy(() => import('../pages/Landing'));
+const LearnerRoutes = lazy(() => import('./LearnerRoutes'));
+const ContributorRoutes = lazy(() => import('./ContributorRoutes'));
+const AdminRoutes = lazy(() => import('./AdminRoutes'));
 
 const ROLE_HOME = {
   learner: '/learner',
@@ -27,42 +32,48 @@ function RootRedirect() {
   return <Landing />;
 }
 
+function RouteFallback() {
+  return <div className="p-8 text-sm text-[#8B93A7]">Loading…</div>;
+}
+
 export default function AppRoutes() {
   return (
-    <Routes>
-      <Route path="/" element={<RootRedirect />} />
+    <Suspense fallback={<RouteFallback />}>
+      <Routes>
+        <Route path="/" element={<RootRedirect />} />
 
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
 
-      <Route
-        path="/learner/*"
-        element={
-          <RoleRoute allowedRoles={['learner']}>
-            <LearnerRoutes />
-          </RoleRoute>
-        }
-      />
-      <Route
-        path="/contributor/*"
-        element={
-          <RoleRoute allowedRoles={['contributor']}>
-            <ContributorRoutes />
-          </RoleRoute>
-        }
-      />
-      <Route
-        path="/admin/*"
-        element={
-          <RoleRoute allowedRoles={['admin']}>
-            <AdminRoutes />
-          </RoleRoute>
-        }
-      />
+        <Route
+          path="/learner/*"
+          element={
+            <RoleRoute allowedRoles={['learner']}>
+              <LearnerRoutes />
+            </RoleRoute>
+          }
+        />
+        <Route
+          path="/contributor/*"
+          element={
+            <RoleRoute allowedRoles={['contributor']}>
+              <ContributorRoutes />
+            </RoleRoute>
+          }
+        />
+        <Route
+          path="/admin/*"
+          element={
+            <RoleRoute allowedRoles={['admin']}>
+              <AdminRoutes />
+            </RoleRoute>
+          }
+        />
 
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Suspense>
   )
 }
