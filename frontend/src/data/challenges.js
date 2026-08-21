@@ -1,6 +1,6 @@
 // src/data/challenges.js
 
-export const challengeCategories = [
+export const CHALLENGECATEGORIES = [
   {
     id: "weekly",
     label: "Weekly Challenges",
@@ -18,7 +18,7 @@ export const challengeCategories = [
   }
 ]
 
-export const challenges = [
+export const CHALLENGES = [
   {
     id: "c1",
     title: "Share 3 new resources",

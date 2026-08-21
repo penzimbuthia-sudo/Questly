@@ -1,7 +1,4 @@
-import api, { tokenStore } from './api';
-
-// Person A owns route guards / auth context; this file only wraps the
-// auth endpoints so any page or context can call a plain async function.
+import { api } from './api';
 
 export function decodeToken(token) {
   try {
@@ -13,52 +10,88 @@ export function decodeToken(token) {
   }
 }
 
-export async function login({ email, password }) {
-  const { data } = await api.post('/auth/login', { email, password });
-  if (data.token) tokenStore.set(data.token);
-  return data.user;
+const USE_MOCK = import.meta.env.VITE_USE_MOCK_AUTH === 'true';
+
+// Seeded accounts so you can test each role's dashboard directly.
+// Any other email/password combo on login falls back to role "learner".
+const MOCK_USERS = [
+  { email: 'learner@test.com', password: 'password', name: 'Test Learner', role: 'learner' },
+  { email: 'contributor@test.com', password: 'password', name: 'Test Contributor', role: 'contributor' },
+  { email: 'admin@test.com', password: 'password', name: 'Test Admin', role: 'admin' },
+];
+
+function base64url(obj) {
+  const json = JSON.stringify(obj);
+  return btoa(json).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
-export async function register({ name, email, password, role = 'learner' }) {
-  const { data } = await api.post('/auth/register', { name, email, password, role });
-  if (data.token) tokenStore.set(data.token);
-  return data.user;
+// Builds a real-shaped (but unsigned) JWT so decodeToken() and RoleRoute
+// work exactly as they would against the real backend.
+function buildMockToken({ email, name, role }) {
+  const header = { alg: 'none', typ: 'JWT' };
+  const payload = {
+    sub: email,
+    email,
+    name,
+    role,
+    exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24, // 24h
+  };
+  return `${base64url(header)}.${base64url(payload)}.mock-signature`;
 }
 
-export async function logout() {
-  try {
-    await api.post('/auth/logout');
-  } finally {
-    tokenStore.clear();
+function mockDelay(ms = 350) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function mockLogin(email, password) {
+  await mockDelay();
+  const match = MOCK_USERS.find((u) => u.email === email);
+  if (match && match.password !== password) {
+    throw new Error('Incorrect password for this mock account.');
   }
+  const name = match?.name ?? email.split('@')[0];
+  const role = match?.role ?? 'learner';
+  return { token: buildMockToken({ email, name, role }) };
 }
 
-export async function getCurrentUser() {
-  const { data } = await api.get('/auth/me');
-  return data;
+async function mockRegister(payload) {
+  await mockDelay();
+  const { email, name, role = 'learner' } = payload;
+  return { token: buildMockToken({ email, name, role }) };
 }
 
-export async function requestPasswordReset(email) {
-  const { data } = await api.post('/auth/forgot-password', { email });
-  return data;
+async function mockForgotPassword() {
+  await mockDelay();
+  return { message: 'Mock mode: pretend a reset email was sent.' };
 }
 
-export async function resetPassword({ token, password }) {
-  const { data } = await api.post('/auth/reset-password', { token, password });
-  return data;
+async function mockResetPassword() {
+  await mockDelay();
+  return { message: 'Mock mode: pretend the password was reset.' };
 }
 
-export function isAuthenticated() {
-  return Boolean(tokenStore.get());
-}
+export const authService = {
+  login: (email, password) =>
+    USE_MOCK
+      ? mockLogin(email, password)
+      : api.post('/auth/login', { email, password }, { auth: false }),
 
-export default {
-  login,
-  register,
-  logout,
-  getCurrentUser,
-  requestPasswordReset,
-  resetPassword,
-  isAuthenticated,
-  decodeToken,
+  register: (payload) =>
+    USE_MOCK
+      ? mockRegister(payload)
+      : api.post('/auth/register', payload, { auth: false }),
+
+  forgotPassword: (email) =>
+    USE_MOCK
+      ? mockForgotPassword(email)
+      : api.post('/auth/forgot-password', { email }, { auth: false }),
+
+  resetPassword: (token, password) =>
+    USE_MOCK
+      ? mockResetPassword(token, password)
+      : api.post('/auth/reset-password', { token, password }, { auth: false }),
+
+  logout: () => {
+    localStorage.removeItem('token');
+  },
 };
