@@ -96,3 +96,26 @@ export const CTA = {
   buttonLabel: "Get Started",
   buttonLink: "/signup",
 };
+
+export const CONTRIBUTOR_STEPS = [
+  {
+    step: 1,
+    title: "Create or Learn",
+    desc: "Start by exploring curated learning paths or contribute your own resources to help others grow.",
+  },
+  {
+    step: 2,
+    title: "Review & Publish",
+    desc: "Submitted content goes through a review process to ensure quality, accuracy, and value.",
+  },
+  {
+    step: 3,
+    title: "Earn XP & Rewards",
+    desc: "Every action — learning, contributing, engaging — earns XP and unlocks badges and achievements.",
+  },
+  {
+    step: 4,
+    title: "Grow Your Profile",
+    desc: "Build a contributor profile showcasing your published work, achievements, and community impact.",
+  },
+];
