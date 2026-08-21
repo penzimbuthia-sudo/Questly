@@ -1,5 +1,5 @@
 
-export const hero = {
+export const HERO = {
   title: "Learn. Build. Grow.",
   subtitle:
     "Questly empowers creators, learners, and contributors with a modern platform designed for growth, collaboration, and real impact.",
@@ -14,7 +14,7 @@ export const hero = {
 };
 
 
-export const features = [
+export const FEATURES = [
   {
     id: 1,
     title: "Curated Learning Paths",
@@ -41,7 +41,7 @@ export const features = [
   },
 ];
 
-export const howItWorks = [
+export const HOWITWORKS = [
   {
     step: 1,
     title: "Create or Learn",
@@ -68,7 +68,7 @@ export const howItWorks = [
   },
 ];
 
-export const roles = [
+export const ROLES = [
   {
     id: "learner",
     title: "Learners",
@@ -89,7 +89,7 @@ export const roles = [
   },
 ];
 
-export const cta = {
+export const CTA = {
   title: "Ready to Start Your Quest?",
   subtitle:
     "Join thousands of learners and creators building the future of community‑driven education.",

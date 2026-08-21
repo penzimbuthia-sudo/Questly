@@ -6,7 +6,7 @@ export default function CTASection() {
 
       {/* Decorative glow */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-violet-400 opacity-20 blur-3xl rounded-full"></div>
+        <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-125 h-125 bg-violet-400 opacity-20 blur-3xl rounded-full"></div>
       </div>
 
       <div className="relative max-w-5xl mx-auto text-center">
