@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="100" cy="100" r="90" fill="url(#logoGrad)" opacity="0.1"/>
+  
+  <!-- Shield/Quest icon -->
+  <path d="M100 20 L160 50 L160 110 C160 150 130 175 100 190 C70 175 40 150 40 110 L40 50 L100 20 Z" 
+        fill="none" stroke="url(#logoGrad)" stroke-width="8" stroke-linejoin="round"/>
+  
+  <!-- Checkmark -->
+  <path d="M75 100 L92 117 L125 80" 
+        fill="none" stroke="url(#logoGrad)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Star dots -->
+  <circle cx="70" cy="55" r="4" fill="#6366f1"/>
+  <circle cx="130" cy="55" r="4" fill="#8b5cf6"/>
+  <circle cx="100" cy="45" r="3" fill="#a78bfa"/>
+  
+  <!-- Text "Q" -->
+  <text x="100" y="190" text-anchor="middle" font-family="Arial, sans-serif" 
+        font-weight="bold" font-size="60" fill="#6366f1" opacity="0.3">Q</text>
+</svg>

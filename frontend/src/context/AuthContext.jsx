@@ -4,14 +4,12 @@ import { tokenStore } from '../services/api';
 import { AuthContext } from './auth-context';
 
 function readStoredSession() {
-  // Synchronous by nature (localStorage read + JWT decode), so it can run
-  // directly inside useState's lazy initializer below instead of an
-  // effect — no mount-time setState cascade, no loading flicker.
   const stored = tokenStore.get();
   if (!stored) return { token: null, user: null };
 
   const decoded = decodeToken(stored);
   const expired = decoded?.exp && decoded.exp * 1000 < Date.now();
+
   if (decoded && !expired) return { token: stored, user: decoded };
 
   tokenStore.clear();
@@ -22,12 +20,15 @@ export function AuthProvider({ children }) {
   const [session, setSession] = useState(readStoredSession);
 
   const login = useCallback(async (email, password) => {
-    // authService.login expects a single { email, password } object and
-    // already persists the token via tokenStore internally — it returns
-    // the user profile, not the token, so we read the token back out.
     await authService.login({ email, password });
     const stored = tokenStore.get();
     const decoded = decodeToken(stored);
+
+    if (!stored || !decoded) {
+      setSession({ token: null, user: null });
+      return null;
+    }
+
     setSession({ token: stored, user: decoded });
     return decoded;
   }, []);
@@ -36,12 +37,23 @@ export function AuthProvider({ children }) {
     await authService.register(payload);
     const stored = tokenStore.get();
     const decoded = decodeToken(stored);
+
+    if (!stored || !decoded) {
+      setSession({ token: null, user: null });
+      return null;
+    }
+
     setSession({ token: stored, user: decoded });
     return decoded;
   }, []);
 
-  const logout = useCallback(() => {
-    authService.logout().catch(() => {});
+  const logout = useCallback(async () => {
+    try {
+      await authService.logout();
+    } catch (error) {
+      // Ignore backend logout errors; still clear client session.
+    }
+
     tokenStore.clear();
     setSession({ token: null, user: null });
   }, []);
