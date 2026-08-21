@@ -20,6 +20,29 @@ const MOCK_USERS = [
   { email: 'admin@test.com', password: 'password', name: 'Test Admin', role: 'admin' },
 ];
 
+function base64url(obj) {
+  const json = JSON.stringify(obj);
+  return btoa(json).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+// Builds a real-shaped (but unsigned) JWT so decodeToken() and RoleRoute
+// work exactly as they would against the real backend.
+function buildMockToken({ email, name, role }) {
+  const header = { alg: 'none', typ: 'JWT' };
+  const payload = {
+    sub: email,
+    email,
+    name,
+    role,
+    exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24, // 24h
+  };
+  return `${base64url(header)}.${base64url(payload)}.mock-signature`;
+}
+
+function mockDelay(ms = 350) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 export const authService = {
   login: (email, password) =>
     api.post('/auth/login', { email, password }, { auth: false }),
