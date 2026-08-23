@@ -1,4 +1,4 @@
-import { Search, Filter, Plus, Edit, Trash2, Eye, Video, FileText, BookOpen, Users, Eye as ViewIcon, Clock } from 'lucide-react';
+import { Search, Filter, Plus, Edit, Trash2, Eye, Video, FileText, BookOpen, Eye as ViewIcon } from 'lucide-react';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 
@@ -32,7 +32,7 @@ const resources = [
   },
   { 
     id: 4, 
-    title: 'Advanced Typescript Concepts', 
+    title: 'Advanced TypeScript Concepts', 
     type: 'Article', 
     contributor: 'Brian O.', 
     views: '—', 
@@ -178,9 +178,6 @@ export default function Resources() {
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-2">
-                      <button className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors text-slate-400 hover:text-slate-600">
-                        <Eye size={16} />
-                      </button>
                       <button className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors text-slate-400 hover:text-slate-600">
                         <Edit size={16} />
                       </button>
