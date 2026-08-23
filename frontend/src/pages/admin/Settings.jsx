@@ -1,8 +1,9 @@
-import { Shield, Flag, RotateCw, Award, Power, Save, Edit, Eye, Clock, Users, FileText, MessageSquare, MapPin, Trophy, Settings as SettingsIcon } from 'lucide-react';
+import { useState } from 'react';
+import { Shield, Flag, RotateCw, Award, Power, Save, Edit, Eye, Clock, Users, FileText, MessageSquare, MapPin, Trophy, Settings as SettingsIcon, X } from 'lucide-react';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 
-const settings = [
+const initialSettings = [
   { 
     id: 1, 
     title: 'Require review before publishing', 
@@ -75,6 +76,40 @@ const getColorClass = (color) => {
 };
 
 export default function Settings() {
+  const [settings, setSettings] = useState(initialSettings);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingSetting, setEditingSetting] = useState(null);
+
+  const handleToggle = (id) => {
+    setSettings(prev => 
+      prev.map(setting => 
+        setting.id === id 
+          ? { ...setting, status: setting.status === 'Active' ? 'Inactive' : 'Active' }
+          : setting
+      )
+    );
+  };
+
+  const handleSave = () => {
+    alert('Settings saved successfully!');
+  };
+
+  const handleEdit = (id) => {
+    const setting = settings.find(s => s.id === id);
+    setEditingSetting(setting);
+    setShowEditModal(true);
+  };
+
+  const handleEditSave = () => {
+    setSettings(prev => 
+      prev.map(setting => 
+        setting.id === editingSetting.id ? editingSetting : setting
+      )
+    );
+    setShowEditModal(false);
+    alert('Setting updated successfully!');
+  };
+
   return (
     <div className="space-y-6">
       {/* Page Header */}
@@ -111,14 +146,20 @@ export default function Settings() {
                   <div className="flex items-center gap-2 ml-4">
                     <div className="flex items-center gap-2">
                       {/* Toggle Switch */}
-                      <div className={`relative inline-flex items-center h-6 rounded-full w-11 transition-colors duration-200 cursor-pointer ${setting.status === 'Active' ? 'bg-green-600' : 'bg-slate-300'}`}>
+                      <div 
+                        className={`relative inline-flex items-center h-6 rounded-full w-11 transition-colors duration-200 cursor-pointer ${setting.status === 'Active' ? 'bg-green-600' : 'bg-slate-300'}`}
+                        onClick={() => handleToggle(setting.id)}
+                      >
                         <span className={`inline-block w-4 h-4 transform bg-white rounded-full transition-transform duration-200 ${setting.status === 'Active' ? 'translate-x-6' : 'translate-x-1'}`} />
                       </div>
                       <span className="text-sm font-medium text-slate-600">
                         {setting.status === 'Active' ? 'On' : 'Off'}
                       </span>
                     </div>
-                    <button className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors text-slate-400 hover:text-slate-600">
+                    <button 
+                      className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors text-slate-400 hover:text-slate-600"
+                      onClick={() => handleEdit(setting.id)}
+                    >
                       <Edit size={16} />
                     </button>
                   </div>
@@ -131,7 +172,7 @@ export default function Settings() {
 
       {/* Save Button */}
       <div className="flex justify-end">
-        <Button className="flex items-center gap-2">
+        <Button className="flex items-center gap-2" onClick={handleSave}>
           <Save size={18} />
           Save Changes
         </Button>
@@ -141,21 +182,83 @@ export default function Settings() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
           <p className="text-sm text-slate-500">Total Settings</p>
-          <p className="text-2xl font-bold text-slate-800">12</p>
+          <p className="text-2xl font-bold text-slate-800">{settings.length}</p>
         </div>
         <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
           <p className="text-sm text-slate-500">Active</p>
-          <p className="text-2xl font-bold text-green-600">8</p>
+          <p className="text-2xl font-bold text-green-600">
+            {settings.filter(s => s.status === 'Active').length}
+          </p>
         </div>
         <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
           <p className="text-sm text-slate-500">Inactive</p>
-          <p className="text-2xl font-bold text-red-600">4</p>
+          <p className="text-2xl font-bold text-red-600">
+            {settings.filter(s => s.status === 'Inactive').length}
+          </p>
         </div>
         <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
           <p className="text-sm text-slate-500">Last Updated</p>
           <p className="text-lg font-bold text-blue-600">Today, 10:30 AM</p>
         </div>
       </div>
+
+      {/* Edit Modal */}
+      {showEditModal && editingSetting && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/50" onClick={() => setShowEditModal(false)} />
+          <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-md p-6 mx-4">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-semibold text-slate-800">Edit Setting</h3>
+              <button 
+                onClick={() => setShowEditModal(false)}
+                className="p-1 hover:bg-slate-100 rounded-lg transition-colors"
+              >
+                <X size={20} className="text-slate-500" />
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">Title</label>
+                <input
+                  type="text"
+                  value={editingSetting.title}
+                  onChange={(e) => setEditingSetting({ ...editingSetting, title: e.target.value })}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">Description</label>
+                <textarea
+                  value={editingSetting.description}
+                  onChange={(e) => setEditingSetting({ ...editingSetting, description: e.target.value })}
+                  rows="3"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">Status</label>
+                <select
+                  value={editingSetting.status}
+                  onChange={(e) => setEditingSetting({ ...editingSetting, status: e.target.value })}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="Active">Active</option>
+                  <option value="Inactive">Inactive</option>
+                </select>
+              </div>
+              <div className="flex gap-3 pt-2">
+                <Button variant="secondary" className="flex-1" onClick={() => setShowEditModal(false)}>
+                  Cancel
+                </Button>
+                <Button variant="primary" className="flex-1" onClick={handleEditSave}>
+                  Save Changes
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
