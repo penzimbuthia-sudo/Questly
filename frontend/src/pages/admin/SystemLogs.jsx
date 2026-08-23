@@ -1,8 +1,9 @@
+import { useState } from 'react';
 import { Search, Filter, Clock, AlertCircle, CheckCircle, XCircle, Info, Activity, Database, Server, RefreshCw } from 'lucide-react';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 
-const logs = [
+const initialLogs = [
   { 
     id: 1, 
     time: '12:41:03', 
@@ -87,6 +88,34 @@ const getColorClass = (color) => {
 };
 
 export default function SystemLogs() {
+  const [logs, setLogs] = useState(initialLogs);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterLevel, setFilterLevel] = useState('All');
+
+  const filteredLogs = logs.filter(log => {
+    const matchesSearch = log.message.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                         log.source.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesLevel = filterLevel === 'All' || log.level === filterLevel;
+    return matchesSearch && matchesLevel;
+  });
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+  };
+
+  const handleFilter = () => {
+    alert('Filter options would open here');
+  };
+
+  const handleRefresh = () => {
+    alert('Logs refreshed successfully!');
+  };
+
+  const handleViewLog = (id) => {
+    const log = logs.find(l => l.id === id);
+    alert(`Log Details:\nTime: ${log.time}\nLevel: ${log.level}\nMessage: ${log.message}\nSource: ${log.source}`);
+  };
+
   return (
     <div className="space-y-6">
       {/* Page Header */}
@@ -97,20 +126,36 @@ export default function SystemLogs() {
 
       {/* Search and Filter Bar */}
       <div className="flex flex-col sm:flex-row gap-4">
-        <div className="flex-1 relative">
+        <form onSubmit={handleSearch} className="flex-1 relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
           <input
             type="text"
             placeholder="Search logs..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
-        </div>
+        </form>
         <div className="flex gap-2">
-          <button className="px-4 py-2.5 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors flex items-center gap-2 text-sm font-medium text-slate-700">
+          <select
+            value={filterLevel}
+            onChange={(e) => setFilterLevel(e.target.value)}
+            className="px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+          >
+            <option value="All">All Levels</option>
+            <option value="INFO">INFO</option>
+            <option value="WARN">WARN</option>
+            <option value="ERROR">ERROR</option>
+            <option value="DEBUG">DEBUG</option>
+          </select>
+          <button 
+            onClick={handleFilter}
+            className="px-4 py-2.5 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors flex items-center gap-2 text-sm font-medium text-slate-700"
+          >
             <Filter size={18} />
             Filter
           </button>
-          <Button className="flex items-center gap-2" variant="secondary">
+          <Button className="flex items-center gap-2" variant="secondary" onClick={handleRefresh}>
             <RefreshCw size={18} />
             Refresh
           </Button>
@@ -130,38 +175,46 @@ export default function SystemLogs() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">
-              {logs.map((log) => (
-                <tr key={log.id} className="hover:bg-slate-50 transition-colors">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
-                      <Clock size={14} className="text-slate-400" />
-                      <span className="text-sm font-mono text-slate-700">{log.time}</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
-                      <span className={`w-2 h-2 rounded-full ${getLevelDot(log.level)}`}></span>
-                      <div className="flex items-center gap-1">
-                        {getLevelIcon(log.level)}
-                        <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${getLevelColor(log.level)}`}>
-                          {log.level}
-                        </span>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm text-slate-800">{log.message}</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${getColorClass(log.color)}`}>
-                      <Server size={12} />
-                      {log.source}
-                    </div>
+              {filteredLogs.length === 0 ? (
+                <tr>
+                  <td colSpan="4" className="px-6 py-8 text-center text-slate-500">
+                    No logs found matching your criteria
                   </td>
                 </tr>
-              ))}
+              ) : (
+                filteredLogs.map((log) => (
+                  <tr key={log.id} className="hover:bg-slate-50 transition-colors cursor-pointer" onClick={() => handleViewLog(log.id)}>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        <Clock size={14} className="text-slate-400" />
+                        <span className="text-sm font-mono text-slate-700">{log.time}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        <span className={`w-2 h-2 rounded-full ${getLevelDot(log.level)}`}></span>
+                        <div className="flex items-center gap-1">
+                          {getLevelIcon(log.level)}
+                          <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${getLevelColor(log.level)}`}>
+                            {log.level}
+                          </span>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-slate-800">{log.message}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${getColorClass(log.color)}`}>
+                        <Server size={12} />
+                        {log.source}
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
@@ -171,19 +224,25 @@ export default function SystemLogs() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
           <p className="text-sm text-slate-500">Total Logs</p>
-          <p className="text-2xl font-bold text-slate-800">1,247</p>
+          <p className="text-2xl font-bold text-slate-800">{logs.length}</p>
         </div>
         <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
           <p className="text-sm text-slate-500">INFO</p>
-          <p className="text-2xl font-bold text-blue-600">892</p>
+          <p className="text-2xl font-bold text-blue-600">
+            {logs.filter(l => l.level === 'INFO').length}
+          </p>
         </div>
         <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
           <p className="text-sm text-slate-500">WARN</p>
-          <p className="text-2xl font-bold text-yellow-600">234</p>
+          <p className="text-2xl font-bold text-yellow-600">
+            {logs.filter(l => l.level === 'WARN').length}
+          </p>
         </div>
         <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
           <p className="text-sm text-slate-500">ERROR</p>
-          <p className="text-2xl font-bold text-red-600">121</p>
+          <p className="text-2xl font-bold text-red-600">
+            {logs.filter(l => l.level === 'ERROR').length}
+          </p>
         </div>
       </div>
     </div>
