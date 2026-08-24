@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import PasswordInput from '../../components/auth/PasswordInput';
+import BackToHome from '../../components/auth/BackToHome';
 
 export default function Login() {
   const { login } = useAuth();
@@ -36,6 +38,8 @@ export default function Login() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-page px-4">
       <div className="w-full max-w-sm rounded-md border border-line/10 bg-card p-8 shadow-sm">
+        <BackToHome />
+        
         <h1 className="mb-1 text-xl font-medium text-fg">Welcome back</h1>
         <p className="mb-6 text-sm text-fg/60">Log in to continue your path.</p>
 
@@ -56,11 +60,9 @@ export default function Login() {
           </div>
           <div>
             <label className="mb-1 block text-xs text-fg/60" htmlFor="password">Password</label>
-            <input
-              id="password" name="password" type="password" value={form.password} onChange={handleChange}
-              className="w-full rounded-sm border border-line/15 bg-page px-3 py-2 text-sm text-fg outline-none focus:border-royal"
-              placeholder="••••••••"
-            />
+            <div>
+              <PasswordInput id="password" name="password" value={form.password} onChange={handleChange} placeholder="••••••••" />
+            </div>
           </div>
 
           <div className="flex justify-end">

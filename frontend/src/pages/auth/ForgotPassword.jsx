@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { authService } from '../../services/authService';
+import BackToHome from '../../components/auth/BackToHome';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
@@ -29,6 +30,8 @@ export default function ForgotPassword() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-page px-4">
       <div className="w-full max-w-sm rounded-md border border-line/10 bg-card p-8 shadow-sm">
+        <BackToHome />
+        
         <h1 className="mb-1 text-xl font-medium text-fg">Reset your password</h1>
         <p className="mb-6 text-sm text-fg/60">We'll email you a reset link.</p>
 
