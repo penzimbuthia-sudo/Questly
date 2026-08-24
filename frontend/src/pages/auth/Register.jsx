@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import PasswordInput from '../../components/auth/PasswordInput';
+import BackToHome from '../../components/auth/BackToHome';
 
 const ROLES = [
   { value: 'learner', label: 'Learner' },
@@ -56,6 +57,8 @@ export default function Register() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-page px-4 py-10">
       <div className="w-full max-w-sm rounded-md border border-line/10 bg-card p-8 shadow-sm">
+        <BackToHome />
+        
         <h1 className="mb-1 text-xl font-medium text-fg">Create your account</h1>
         <p className="mb-6 text-sm text-fg/60">Join as a learner or a contributor.</p>
 
