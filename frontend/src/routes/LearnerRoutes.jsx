@@ -1,5 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
-import DashboardLayout from '../components/layout/DashboardLayout';
+import LearnerLayout from '../components/layout/LearnerLayout';
 import Home from '../pages/learner/Home';
 import Explore from '../pages/learner/Explore';
 import Paths from '../pages/learner/Paths';
@@ -16,7 +16,7 @@ import Settings from '../pages/learner/Settings';
 export default function LearnerRoutes() {
   return (
     <Routes>
-      <Route element={<DashboardLayout />}>
+      <Route element={<LearnerLayout />}>
         <Route index element={<Home />} />
         <Route path="explore" element={<Explore />} />
         <Route path="paths" element={<Paths />} />
