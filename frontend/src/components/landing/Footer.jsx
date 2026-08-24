@@ -1,4 +1,4 @@
-import { Twitter, Github, Linkedin, Instagram } from "lucide-react";
+import { FaGithub, FaLinkedin, FaInstagram, FaXTwitter } from "react-icons/fa6";
 import Logo from "../ui/Logo";
 
 const COLUMNS = [
@@ -6,7 +6,12 @@ const COLUMNS = [
   { title: "Community", links: ["Discussions", "Leaderboard"] },
 ];
 
-const SOCIALS = [Twitter, Github, Linkedin, Instagram];
+const SOCIALS = [
+  { icon: FaXTwitter, label: "X" },
+  { icon: FaGithub, label: "GitHub" },
+  { icon: FaLinkedin, label: "LinkedIn" },
+  { icon: FaInstagram, label: "Instagram" },
+];
 
 export default function Footer() {
   return (
@@ -17,40 +22,39 @@ export default function Footer() {
             <div className="mb-3">
               <Logo size="sm" />
             </div>
+
             <p className="text-xs leading-relaxed mb-4 max-w-xs text-ivory/50">
-              A crowdsourced learning platform with gamification, built for tech professionals
-              who want to keep leveling up.
+              A crowdsourced learning platform with gamification, built for
+              tech professionals who want to keep leveling up.
             </p>
+
             <div className="flex items-center gap-2.5">
-              {SOCIALS.map((Icon, i) => (
+              {SOCIALS.map(({ icon: Icon, label }) => (
                 <a
-                  key={i}
+                  key={label}
                   href="#"
+                  aria-label={label}
                   className="w-7 h-7 rounded-lg flex items-center justify-center bg-dark-purple"
                 >
                   <Icon size={13} className="text-ivory/70" />
                 </a>
               ))}
             </div>
-            <span className="text-white font-semibold">Questly</span>
-          </div>
-          <p className="text-sm text-gray-400 mb-5 max-w-xs">
-            A crowdsourced learning platform with gamification, built for tech professionals who want to keep leveling up.
-          </p>
-          <div className="flex gap-3">
-            {["twitter", "github", "linkedin", "instagram"].map((s) => (
-              <div key={s} className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-xs">
-                {s[0].toUpperCase()}
-              </div>
-            ))}
           </div>
 
           {COLUMNS.map((c) => (
             <div key={c.title}>
-              <p className="text-xs mb-3 text-ivory font-bold">{c.title}</p>
+              <p className="text-xs mb-3 text-ivory font-bold">
+                {c.title}
+              </p>
+
               <div className="space-y-2">
                 {c.links.map((l) => (
-                  <a key={l} href="#" className="block text-xs text-ivory/50">
+                  <a
+                    key={l}
+                    href="#"
+                    className="block text-xs text-ivory/50"
+                  >
                     {l}
                   </a>
                 ))}
@@ -60,10 +64,17 @@ export default function Footer() {
         </div>
 
         <div className="pt-5 border-t border-ivory/8 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-xs text-ivory/40">&copy; 2026 Questly. All rights reserved.</p>
+          <p className="text-xs text-ivory/40">
+            &copy; 2026 Questly. All rights reserved.
+          </p>
+
           <div className="flex items-center gap-5">
-            <a href="#" className="text-xs text-ivory/40">Privacy</a>
-            <a href="#" className="text-xs text-ivory/40">Terms</a>
+            <a href="#" className="text-xs text-ivory/40">
+              Privacy
+            </a>
+            <a href="#" className="text-xs text-ivory/40">
+              Terms
+            </a>
           </div>
         </div>
       </div>
