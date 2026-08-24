@@ -32,6 +32,17 @@ export default function Footer() {
                 </a>
               ))}
             </div>
+            <span className="text-white font-semibold">Questly</span>
+          </div>
+          <p className="text-sm text-gray-400 mb-5 max-w-xs">
+            A crowdsourced learning platform with gamification, built for tech professionals who want to keep leveling up.
+          </p>
+          <div className="flex gap-3">
+            {["twitter", "github", "linkedin", "instagram"].map((s) => (
+              <div key={s} className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-xs">
+                {s[0].toUpperCase()}
+              </div>
+            ))}
           </div>
 
           {COLUMNS.map((c) => (
