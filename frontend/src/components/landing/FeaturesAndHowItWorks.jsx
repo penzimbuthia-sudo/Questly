@@ -21,7 +21,7 @@ function MiniCard({ icon: Icon, title, desc, tone = "info" }) {
 // Features Section with light background
 function FeaturesSection() {
   return (
-    <section id="features" className="py-14 sm:py-20">
+    <section id="features" className="py-14 sm:py-15">
       <div className="w-full max-w-6xl mx-auto px-5 sm:px-6 lg:px-8">
         <div className="mb-12">
           <span className="text-xs px-3 py-1.5 rounded-full inline-block mb-4 bg-tone-info-bg text-tone-info-fg font-bold">
@@ -47,7 +47,7 @@ function FeaturesSection() {
 // How It Works Section with subtle background - CENTERED
 function HowItWorksSection() {
   return (
-    <section id="how-it-works" className="bg-page/50 py-14 sm:py-20 border-t border-line/10">
+    <section id="how-it-works" className="bg-page/50 py-14 sm:py-15 border-t border-line/10">
       <div className="w-full max-w-6xl mx-auto px-5 sm:px-6 lg:px-8">
         <div className="mb-12">
           <span className="text-xs px-3 py-1.5 rounded-full inline-block mb-4 bg-tone-warning-bg text-tone-warning-fg font-bold">
