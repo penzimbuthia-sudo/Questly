@@ -27,39 +27,40 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#10151C] px-4">
-      <div className="w-full max-w-sm rounded-md border border-[#28313F] bg-[#161D28] p-8">
-        <h1 className="mb-1 text-xl font-medium text-[#E9EBEF]">Reset your password</h1>
-        <p className="mb-6 text-sm text-[#8B93A7]">We'll email you a reset link.</p>
+    <div className="flex min-h-screen items-center justify-center bg-page px-4">
+      <div className="w-full max-w-sm rounded-md border border-line/10 bg-card p-8 shadow-sm">
+        <h1 className="mb-1 text-xl font-medium text-fg">Reset your password</h1>
+        <p className="mb-6 text-sm text-fg/60">We'll email you a reset link.</p>
 
         {status === 'sent' ? (
-          <p className="text-sm text-[#6EE7DD]">Check your inbox for a reset link.</p>
+          <p className="rounded-sm border border-tone-success-fg/20 bg-tone-success-bg px-3 py-2 text-sm text-tone-success-fg">
+            Check your inbox for a reset link.
+          </p>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
-              <div className="rounded-sm border border-red-900/50 bg-red-950/40 px-3 py-2 text-xs text-red-300">
+              <div className="rounded-sm border border-tone-danger-fg/20 bg-tone-danger-bg px-3 py-2 text-xs text-tone-danger-fg">
                 {error}
               </div>
             )}
-            
             <div>
-              <label className="mb-1 block text-xs text-[#8B93A7]" htmlFor="email">Email</label>
+              <label className="mb-1 block text-xs text-fg/60" htmlFor="email">Email</label>
               <input
                 id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-sm border border-[#28313F] bg-[#10151C] px-3 py-2 text-sm text-[#E9EBEF] outline-none focus:border-[#2A9D8F]"
+                className="w-full rounded-sm border border-line/15 bg-page px-3 py-2 text-sm text-fg outline-none focus:border-royal"
               />
             </div>
             <button
               type="submit" disabled={status === 'sending'}
-              className="w-full rounded-sm bg-[#2A9D8F] py-2 text-sm font-semibold text-[#08201C] disabled:opacity-60"
+              className="w-full rounded-sm bg-royal py-2 text-sm font-semibold text-ivory disabled:opacity-60"
             >
               {status === 'sending' ? 'Sending…' : 'Send reset link'}
             </button>
           </form>
         )}
 
-        <p className="mt-6 text-center text-xs text-[#8B93A7]">
-          <Link to="/login" className="text-[#6EE7DD] hover:underline">Back to login</Link>
+        <p className="mt-6 text-center text-xs text-fg/60">
+          <Link to="/login" className="text-royal hover:underline">Back to login</Link>
         </p>
       </div>
     </div>

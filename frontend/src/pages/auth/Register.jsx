@@ -53,51 +53,51 @@ export default function Register() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#10151C] px-4 py-10">
-      <div className="w-full max-w-sm rounded-md border border-[#28313F] bg-[#161D28] p-8">
-        <h1 className="mb-1 text-xl font-medium text-[#E9EBEF]">Create your account</h1>
-        <p className="mb-6 text-sm text-[#8B93A7]">Join as a learner or a contributor.</p>
+    <div className="flex min-h-screen items-center justify-center bg-page px-4 py-10">
+      <div className="w-full max-w-sm rounded-md border border-line/10 bg-card p-8 shadow-sm">
+        <h1 className="mb-1 text-xl font-medium text-fg">Create your account</h1>
+        <p className="mb-6 text-sm text-fg/60">Join as a learner or a contributor.</p>
 
         {error && (
-          <div className="mb-4 rounded-sm border border-red-900/50 bg-red-950/40 px-3 py-2 text-xs text-red-300">
+          <div className="mb-4 rounded-sm border border-tone-danger-fg/20 bg-tone-danger-bg px-3 py-2 text-xs text-tone-danger-fg">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="mb-1 block text-xs text-[#8B93A7]" htmlFor="name">Name</label>
+            <label className="mb-1 block text-xs text-fg/60" htmlFor="name">Name</label>
             <input id="name" name="name" value={form.name} onChange={handleChange}
-              className="w-full rounded-sm border border-[#28313F] bg-[#10151C] px-3 py-2 text-sm text-[#E9EBEF] outline-none focus:border-[#2A9D8F]" />
+              className="w-full rounded-sm border border-line/15 bg-page px-3 py-2 text-sm text-fg outline-none focus:border-royal" />
           </div>
           <div>
-            <label className="mb-1 block text-xs text-[#8B93A7]" htmlFor="email">Email</label>
+            <label className="mb-1 block text-xs text-fg/60" htmlFor="email">Email</label>
             <input id="email" name="email" type="email" value={form.email} onChange={handleChange}
-              className="w-full rounded-sm border border-[#28313F] bg-[#10151C] px-3 py-2 text-sm text-[#E9EBEF] outline-none focus:border-[#2A9D8F]" />
+              className="w-full rounded-sm border border-line/15 bg-page px-3 py-2 text-sm text-fg outline-none focus:border-royal" />
           </div>
           <div>
-            <label className="mb-1 block text-xs text-[#8B93A7]" htmlFor="password">Password</label>
+            <label className="mb-1 block text-xs text-fg/60" htmlFor="password">Password</label>
             <input id="password" name="password" type="password" value={form.password} onChange={handleChange}
-              className="w-full rounded-sm border border-[#28313F] bg-[#10151C] px-3 py-2 text-sm text-[#E9EBEF] outline-none focus:border-[#2A9D8F]" />
+              className="w-full rounded-sm border border-line/15 bg-page px-3 py-2 text-sm text-fg outline-none focus:border-royal" />
           </div>
           <div>
-            <label className="mb-1 block text-xs text-[#8B93A7]" htmlFor="confirmPassword">Confirm password</label>
+            <label className="mb-1 block text-xs text-fg/60" htmlFor="confirmPassword">Confirm password</label>
             <input id="confirmPassword" name="confirmPassword" type="password" value={form.confirmPassword} onChange={handleChange}
-              className="w-full rounded-sm border border-[#28313F] bg-[#10151C] px-3 py-2 text-sm text-[#E9EBEF] outline-none focus:border-[#2A9D8F]" />
+              className="w-full rounded-sm border border-line/15 bg-page px-3 py-2 text-sm text-fg outline-none focus:border-royal" />
           </div>
 
           <div>
-            <span className="mb-1 block text-xs text-[#8B93A7]">I'm joining as</span>
+            <span className="mb-1 block text-xs text-fg/60">I'm joining as</span>
             <div className="flex gap-2">
-                {ROLES.map((r) => (
+              {ROLES.map((r) => (
                 <button
                   key={r.value}
                   type="button"
                   onClick={() => setForm((f) => ({ ...f, role: r.value }))}
                   className={`flex-1 rounded-sm border px-3 py-2 text-xs ${
                     form.role === r.value
-                      ? 'border-[#2A9D8F] bg-[#2A9D8F]/10 text-[#6EE7DD]'
-                      : 'border-[#28313F] text-[#8B93A7]'
+                      ? 'border-royal bg-royal/10 text-royal'
+                      : 'border-line/15 text-fg/60'
                   }`}
                 >
                   {r.label}
@@ -107,13 +107,13 @@ export default function Register() {
           </div>
 
           <button type="submit" disabled={submitting}
-            className="w-full rounded-sm bg-[#2A9D8F] py-2 text-sm font-semibold text-[#08201C] disabled:opacity-60">
+            className="w-full rounded-sm bg-royal py-2 text-sm font-semibold text-ivory disabled:opacity-60">
             {submitting ? 'Creating account…' : 'Create account'}
           </button>
         </form>
 
-        <p className="mt-6 text-center text-xs text-[#8B93A7]">
-          Already have an account? <Link to="/login" className="text-[#6EE7DD] hover:underline">Log in</Link>
+        <p className="mt-6 text-center text-xs text-fg/60">
+          Already have an account? <Link to="/login" className="text-royal hover:underline">Log in</Link>
         </p>
       </div>
     </div>
