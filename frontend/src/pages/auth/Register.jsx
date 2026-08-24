@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import PasswordInput from '../auth/PasswordInput';
 
 const ROLES = [
   { value: 'learner', label: 'Learner' },
@@ -77,13 +78,11 @@ export default function Register() {
           </div>
           <div>
             <label className="mb-1 block text-xs text-fg/60" htmlFor="password">Password</label>
-            <input id="password" name="password" type="password" value={form.password} onChange={handleChange}
-              className="w-full rounded-sm border border-line/15 bg-page px-3 py-2 text-sm text-fg outline-none focus:border-royal" />
+            <PasswordInput id="password" name="password" value={form.password} onChange={handleChange} />
           </div>
           <div>
             <label className="mb-1 block text-xs text-fg/60" htmlFor="confirmPassword">Confirm password</label>
-            <input id="confirmPassword" name="confirmPassword" type="password" value={form.confirmPassword} onChange={handleChange}
-              className="w-full rounded-sm border border-line/15 bg-page px-3 py-2 text-sm text-fg outline-none focus:border-royal" />
+            <PasswordInput id="confirmPassword" name="confirmPassword" value={form.confirmPassword} onChange={handleChange} />
           </div>
 
           <div>

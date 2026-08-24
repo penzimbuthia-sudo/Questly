@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import PasswordInput from '../auth/PasswordInput';
 
 export default function Login() {
   const { login } = useAuth();
@@ -56,11 +57,9 @@ export default function Login() {
           </div>
           <div>
             <label className="mb-1 block text-xs text-fg/60" htmlFor="password">Password</label>
-            <input
-              id="password" name="password" type="password" value={form.password} onChange={handleChange}
-              className="w-full rounded-sm border border-line/15 bg-page px-3 py-2 text-sm text-fg outline-none focus:border-royal"
-              placeholder="••••••••"
-            />
+            <div>
+              <PasswordInput id="password" name="password" value={form.password} onChange={handleChange} placeholder="••••••••" />
+            </div>
           </div>
 
           <div className="flex justify-end">
