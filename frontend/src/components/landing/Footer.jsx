@@ -6,7 +6,12 @@ const COLUMNS = [
   { title: "Community", links: ["Discussions", "Leaderboard"] },
 ];
 
-const SOCIALS = [FaXTwitter, FaGithub, FaLinkedin, FaInstagram];
+const SOCIALS = [
+  { icon: FaXTwitter, label: "X" },
+  { icon: FaGithub, label: "GitHub" },
+  { icon: FaLinkedin, label: "LinkedIn" },
+  { icon: FaInstagram, label: "Instagram" },
+];
 
 export default function Footer() {
   return (
@@ -24,10 +29,11 @@ export default function Footer() {
             </p>
 
             <div className="flex items-center gap-2.5">
-              {SOCIALS.map((Icon, i) => (
+              {SOCIALS.map(({ icon: Icon, label }) => (
                 <a
-                  key={i}
+                  key={label}
                   href="#"
+                  aria-label={label}
                   className="w-7 h-7 rounded-lg flex items-center justify-center bg-dark-purple"
                 >
                   <Icon size={13} className="text-ivory/70" />
