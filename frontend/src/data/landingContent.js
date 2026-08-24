@@ -11,8 +11,8 @@ import {
 } from "lucide-react";
 
 export const NAV_LINKS = [
-  { label: "Features", id: "features-how" },
-  { label: "How it works", id: "features-how" },
+  { label: "Features", id: "features" },        // Changed from "features-how"
+  { label: "How it works", id: "how-it-works" }, // Changed from "features-how"
   { label: "Community", id: "community" },
 ];
 
