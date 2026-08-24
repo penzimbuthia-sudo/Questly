@@ -15,8 +15,7 @@ export default function Footer() {
             <span className="text-white font-semibold">Questly</span>
           </div>
           <p className="text-sm text-gray-400 mb-5 max-w-xs">
-            A crowdsourced learning platform with gamification, built for
-            tech professionals who want to keep leveling up.
+            A crowdsourced learning platform with gamification, built for tech professionals who want to keep leveling up.
           </p>
           <div className="flex gap-3">
             {["twitter", "github", "linkedin", "instagram"].map((s) => (
