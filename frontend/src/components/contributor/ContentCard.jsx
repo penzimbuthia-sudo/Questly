@@ -14,7 +14,7 @@ export default function ContentCard({ item }) {
 
   return (
     <div
-      className="group rounded-2xl border p-5 flex flex-col gap-4 transition-colors hover:border-[var(--color-violet-600)]"
+      className="group rounded-2xl border p-5 flex flex-col gap-4 transition-colors hover:border-violet-600"
       style={{ background: 'var(--color-surface)', borderColor: 'var(--color-border)' }}
     >
       <div className="flex items-start justify-between">

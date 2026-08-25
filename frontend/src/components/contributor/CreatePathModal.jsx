@@ -91,7 +91,7 @@ export default function CreatePathModal({ open, onClose, onSubmit }) {
                     type="button"
                     onClick={() => removeModule(mod.id)}
                     aria-label="Remove module"
-                    className="focus-ring grid place-items-center w-8 h-8 shrink-0 rounded-lg text-[var(--color-ink-3)] hover:text-white hover:bg-[var(--color-surface-hover)]"
+                    className="focus-ring grid place-items-center w-8 h-8 shrink-0 rounded-lg text-(--color-ink-3) hover:text-white hover:bg-(--color-surface-hover)"
                   >
                     <XIcon size={14} />
                   </button>
@@ -109,7 +109,7 @@ export default function CreatePathModal({ open, onClose, onSubmit }) {
           <button
             type="button"
             onClick={onClose}
-            className="focus-ring rounded-lg px-4 h-10 text-[13.5px] font-medium text-[var(--color-ink-1)] hover:text-white hover:bg-[var(--color-surface-hover)]"
+            className="focus-ring rounded-lg px-4 h-10 text-[13.5px] font-medium text-(--color-ink-1) hover:text-white hover:bg-(--color-surface-hover)"
           >
             Cancel
           </button>
