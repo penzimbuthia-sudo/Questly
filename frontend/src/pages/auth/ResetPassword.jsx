@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { authService } from '../../services/authService';
+import BackToHome from '../../components/auth/BackToHome';
 
 export default function ResetPassword() {
   const [searchParams] = useSearchParams();
@@ -45,6 +46,8 @@ export default function ResetPassword() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-page px-4">
       <div className="w-full max-w-sm rounded-md border border-line/10 bg-card p-8 shadow-sm">
+        <BackToHome />
+        
         <h1 className="mb-1 text-xl font-medium text-fg">Set a new password</h1>
 
         {done ? (
