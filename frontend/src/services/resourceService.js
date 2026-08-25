@@ -2,7 +2,35 @@
 import { v4 as uuid } from 'uuid'
 import { awardXP } from './gamificationService'
 
-let resources = []
+let resources = [
+  {
+    id: uuid(),
+    title: "React 101",
+    type: "video",
+    status: "published",
+    views: 150,
+    upvotes: 25,
+    updated: "2 hours ago"
+  },
+  {
+    id: uuid(),
+    title: "JavaScript Guide",
+    type: "article",
+    status: "published",
+    views: 89,
+    upvotes: 12,
+    updated: "5 hours ago"
+  },
+  {
+    id: uuid(),
+    title: "Advanced CSS",
+    type: "video",
+    status: "pending",
+    views: 0,
+    upvotes: 0,
+    updated: "Just now"
+  }
+]
 
 const shapeResource = (data) => ({
   id: uuid(),
@@ -16,6 +44,17 @@ const shapeResource = (data) => ({
   updated: 'Just now',
   submittedAt: new Date().toISOString()
 })
+
+// Get all resources (for MyContent)
+export const getMyResources = () => {
+  return Promise.resolve(resources)
+}
+
+// Get all paths (for MyContent)
+export const getMyPaths = () => {
+  const paths = resources.filter(r => r.type === 'path')
+  return Promise.resolve(paths)
+}
 
 export const addResource = (data) => {
   const resource = shapeResource(data)
@@ -80,6 +119,7 @@ export const addUpvote = (id) => {
   return item.upvotes
 }
 
+// API client version (for backend integration)
 import client from '../api/client';
 
 export const resourceService = {

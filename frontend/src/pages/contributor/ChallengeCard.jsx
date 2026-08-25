@@ -1,8 +1,10 @@
 import { Target, CheckCircle2 } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import XPBar from './XPBar'
 
 export default function ChallengeCard({ challenge, compact = false }) {
   const {
+    id,
     title,
     description,
     progress,
@@ -48,9 +50,14 @@ export default function ChallengeCard({ challenge, compact = false }) {
         </div>
 
         <div className="flex-1">
-          <h3 className="font-medium text-[14.5px] leading-tight">
-            {title}
-          </h3>
+          <Link 
+            to={`/challenges/${id}`}
+            className="hover:text-violet-400 transition-colors"
+          >
+            <h3 className="font-medium text-[14.5px] leading-tight">
+              {title}
+            </h3>
+          </Link>
 
           {/* Difficulty + Category */}
           {!compact && (
@@ -125,6 +132,36 @@ export default function ChallengeCard({ challenge, compact = false }) {
           {reward}
         </span>
       </div>
+
+      {/* ACTION BUTTONS */}
+      {!compact && (
+        <div className="flex items-center gap-2 mt-2 pt-2 border-t" style={{ borderColor: 'var(--color-border)' }}>
+          <Link
+            to={`/challenges/${id}/start`}
+            className="flex-1 text-center px-4 py-2 rounded-lg text-sm font-medium text-white transition-colors hover:opacity-90"
+            style={{
+              background: complete 
+                ? 'var(--color-ink-3)' 
+                : 'linear-gradient(155deg, var(--color-violet-500), var(--color-violet-700))'
+            }}
+          >
+            {complete ? 'View Details' : 'Start Challenge'}
+          </Link>
+          
+          {!complete && (
+            <Link
+              to={`/challenges/${id}/progress`}
+              className="px-4 py-2 rounded-lg text-sm font-medium border transition-colors hover:bg-violet-50"
+              style={{ 
+                borderColor: 'var(--color-border)',
+                color: 'var(--color-ink-1)'
+              }}
+            >
+              Track Progress
+            </Link>
+          )}
+        </div>
+      )}
     </div>
   )
 }
