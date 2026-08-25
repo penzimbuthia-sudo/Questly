@@ -98,7 +98,7 @@ export default function AddResourceModal({ open, onClose, onSubmit }) {
           <button
             type="button"
             onClick={onClose}
-            className="focus-ring rounded-lg px-4 h-10 text-[13.5px] font-medium text-[var(--color-ink-1)] hover:text-white hover:bg-[var(--color-surface-hover)]"
+            className="focus-ring rounded-lg px-4 h-10 text-[13.5px] font-medium text-(--color-ink-1) hover:text-white hover:bg-(--color-surface-hover)"
           >
             Cancel
           </button>

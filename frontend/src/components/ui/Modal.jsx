@@ -50,7 +50,7 @@ export default function Modal({ open, isOpen, onClose, title, children }) {
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="focus-ring grid place-items-center w-8 h-8 rounded-lg ml-auto text-[var(--color-ink-3)] hover:text-white hover:bg-[var(--color-surface-hover)]"
+            className="focus-ring grid place-items-center w-8 h-8 rounded-lg ml-auto text-(--color-ink-3) hover:text-white hover:bg-(--color-surface-hover)"
           >
             <X size={16} />
           </button>
