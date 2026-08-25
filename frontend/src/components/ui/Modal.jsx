@@ -1,65 +1,63 @@
-import { useEffect } from 'react';
-import { X } from 'lucide-react';
+import { useEffect } from 'react'
+import { createPortal } from 'react-dom'
+import { X } from 'lucide-react'
 
-/**
- * Modal
- * Generic dialog primitive. Was a 0-byte stub — components/contributor/
- * AddResourceModal.jsx and CreatePathModal.jsx use `open`, while
- * components/admin/EditStatusModal.jsx uses `isOpen`; both are accepted
- * here rather than picking one and having to touch every call site.
- *
- * Closes on Escape and on backdrop click; locks body scroll while open.
- */
+// Accepts both `open` (contributor's Add/CreatePathModal) and `isOpen`
+// (admin's EditStatusModal) so this one component works for both sectors
+// without either side needing to change how they call it.
 export default function Modal({ open, isOpen, onClose, title, children }) {
-  const show = open ?? isOpen ?? false;
+  const visible = open ?? isOpen ?? false
 
   useEffect(() => {
-    if (!show) return;
+    if (!visible) return
 
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape') onClose?.();
-    };
-    document.addEventListener('keydown', handleKeyDown);
+    const handleKey = (e) => {
+      if (e.key === 'Escape') onClose?.()
+    }
 
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
+    document.addEventListener('keydown', handleKey)
+    document.body.style.overflow = 'hidden'
 
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = previousOverflow;
-    };
-  }, [show, onClose]);
+      document.removeEventListener('keydown', handleKey)
+      document.body.style.overflow = ''
+    }
+  }, [visible, onClose])
 
-  if (!show) return null;
+  if (!visible) return null
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div
-        className="absolute inset-0 bg-ink/60"
-        aria-hidden="true"
-        onClick={() => onClose?.()}
-      />
-
+  return createPortal(
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      style={{ background: 'rgba(0,0,0,0.5)' }}
+      onClick={onClose}
+    >
       <div
         role="dialog"
         aria-modal="true"
-        aria-label={title}
-        className="relative w-full max-w-lg max-h-[85vh] overflow-y-auto rounded-2xl bg-card border border-line/10 p-6 shadow-xl"
+        aria-labelledby={title ? 'modal-title' : undefined}
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-md rounded-2xl border p-6 shadow-xl max-h-[90vh] overflow-y-auto"
+        style={{ background: 'var(--color-surface)', borderColor: 'var(--color-border)' }}
       >
-        <div className="flex items-center justify-between mb-4">
-          {title && <h2 className="text-base font-semibold text-fg">{title}</h2>}
+        <div className="flex items-center justify-between mb-5">
+          {title && (
+            <h2 id="modal-title" className="font-display font-semibold text-[16px]">
+              {title}
+            </h2>
+          )}
           <button
             type="button"
-            onClick={() => onClose?.()}
+            onClick={onClose}
             aria-label="Close"
-            className="w-8 h-8 rounded-lg flex items-center justify-center text-fg/40 hover:bg-fg/5 hover:text-fg ml-auto"
+            className="focus-ring grid place-items-center w-8 h-8 rounded-lg ml-auto text-[var(--color-ink-3)] hover:text-white hover:bg-[var(--color-surface-hover)]"
           >
             <X size={16} />
           </button>
         </div>
-
         {children}
       </div>
-    </div>
-  );
+    </div>,
+    document.body
+  )
 }
