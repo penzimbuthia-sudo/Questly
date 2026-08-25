@@ -2,6 +2,8 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell,
 } from 'recharts'
+import { Link } from 'react-router-dom'
+import { ArrowLeft } from 'lucide-react'
 import PageHeader from '../../components/contributor/PageHeader'
 import { contributionAnalytics, contentMix, topPerformingResources } from '../../data/mockData'
 
@@ -22,7 +24,23 @@ export default function Analytics() {
 
   return (
     <div>
-      <PageHeader eyebrow="Contributor workspace" title="Analytics" subtitle="How your content is performing across the platform." />
+      {/* Back button */}
+      <div className="mb-4">
+        <Link 
+          to="/contributor/dashboard" 
+          className="inline-flex items-center gap-2 text-sm hover:text-violet-600 transition-colors"
+          style={{ color: 'var(--color-ink-2)' }}
+        >
+          <ArrowLeft size={16} />
+          Back to Dashboard
+        </Link>
+      </div>
+
+      <PageHeader 
+        eyebrow="Contributor workspace" 
+        title="Analytics" 
+        subtitle="How your content is performing across the platform." 
+      />
 
       <div
         className="rounded-2xl border p-5 mb-4"
@@ -85,10 +103,15 @@ export default function Analytics() {
         >
           <h3 className="font-display font-semibold text-[15px] mb-4">Top performing resources</h3>
           <ul className="flex flex-col gap-4">
-            {topPerformingResources.map((r) => (
+            {topPerformingResources.map((r, index) => (
               <li key={r.title}>
                 <div className="flex items-center justify-between text-[13px] mb-1.5">
-                  <span className="font-medium truncate pr-3">{r.title}</span>
+                  <Link 
+                    to={`/contributor/content/${r.id || index}`}
+                    className="font-medium truncate pr-3 hover:text-violet-600 transition-colors"
+                  >
+                    {r.title}
+                  </Link>
                   <span style={{ color: 'var(--color-ink-2)' }}>{r.views.toLocaleString()}</span>
                 </div>
                 <div className="h-2 rounded-full overflow-hidden" style={{ background: 'var(--color-surface-active)' }}>
