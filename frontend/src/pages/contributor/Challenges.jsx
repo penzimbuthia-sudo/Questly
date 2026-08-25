@@ -1,5 +1,5 @@
 import { Flame } from 'lucide-react'
-import PageHeader from '../../components/contributor/PageHeader'
+import PageHeader from '../../components/layout/PageHeader'
 import ChallengeCard from '../../components/contributor/ChallengeCard'
 import { contributorChallenges, challengeStats } from '../../data/mockData'
 
