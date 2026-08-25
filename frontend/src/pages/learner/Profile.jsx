@@ -27,9 +27,9 @@ export default function Profile() {
   return (
     <div className="flex flex-col gap-6">
       <div className="overflow-hidden rounded-2xl border border-black/5 bg-white">
-        <div className="h-24 bg-gradient-to-r from-neutral-900 to-purple-900" />
+        <div className="h-24 bg-linear-to-r from-neutral-900 to-purple-900" />
         <div className="flex items-start justify-between px-6 pb-6">
-          <div className="-mt-8 flex items-end gap-4">
+          <div className="-mt-3 flex items-end gap-4">
             <div className="flex h-20 w-20 items-center justify-center rounded-full border-4 border-white bg-purple-600 text-2xl font-bold text-white">
               PM
             </div>
@@ -40,7 +40,7 @@ export default function Profile() {
               <p className="text-sm text-neutral-500">Learner · Joined March 2025</p>
             </div>
           </div>
-          <button type="button" className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-neutral-200 px-3.5 py-1.5 text-sm font-medium text-neutral-700">
+          <button type="button" className="mt-4 inline-flex items-center gap-1.5 rounded-lg border border-neutral-200 px-3.5 py-1.5 text-sm font-medium text-neutral-700">
             <Pencil className="h-3.5 w-3.5" /> Edit profile
           </button>
         </div>
@@ -65,7 +65,7 @@ export default function Profile() {
           {myPaths.map(({ path, progress }) => (
             <div key={path.id}>
               <div className="flex items-center justify-between text-sm">
-                <span className="font-medium text-neutral-900">{path.title}</span>
+                <span className="font-medium text-neutral-500">{path.title}</span>
                 <span className="text-neutral-500">{progress.percent}%</span>
               </div>
               <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-neutral-100">
