@@ -4,8 +4,8 @@ import {
   FileText,
   Users,
   Target,
-  BarChart2,
-  Gift,
+  BarChart3,
+  Wallet,
   User,
   Settings,
 } from 'lucide-react';
@@ -15,11 +15,11 @@ import { useAuth } from '../../hooks/useAuth';
 
 const NAV_ITEMS = [
   { key: '/contributor', label: 'Dashboard', icon: LayoutDashboard },
-  { key: '/contributor/content', label: 'My content', icon: FileText },
+  { key: '/contributor/my-content', label: 'My content', icon: FileText },
   { key: '/contributor/community', label: 'Community', icon: Users },
   { key: '/contributor/challenges', label: 'Challenges', icon: Target },
-  { key: '/contributor/analytics', label: 'Analytics', icon: BarChart2 },
-  { key: '/contributor/rewards', label: 'Rewards', icon: Gift },
+  { key: '/contributor/analytics', label: 'Analytics', icon: BarChart3 },
+  { key: '/contributor/rewards', label: 'Rewards', icon: Wallet },
 ];
 
 const ACCOUNT_ITEMS = [
@@ -27,8 +27,8 @@ const ACCOUNT_ITEMS = [
   { key: '/contributor/settings', label: 'Settings', icon: Settings },
 ];
 
-/** Longest matching key wins, so nested routes stay highlighted on their
- *  parent nav item without `/contributor` matching every sub-route. */
+/** Longest matching key wins, so nested contributor routes stay
+ *  correctly highlighted while `/contributor` only matches itself. */
 function computeActiveKey(pathname) {
   const all = [...NAV_ITEMS, ...ACCOUNT_ITEMS].sort((a, b) => b.key.length - a.key.length);
   const match = all.find((item) => pathname === item.key || pathname.startsWith(`${item.key}/`));
@@ -42,10 +42,10 @@ function roleLabel(role) {
 
 /**
  * ContributorLayout
- * Same pattern as LearnerLayout: supplies the generic <Sidebar>/<TopBar>
- * (via <DashboardLayout theme="contributor">) with nav groups, active-route
- * tracking, navigation, the signed-in user, and logout for everything
- * under /contributor.
+ * Mirrors LearnerLayout.jsx exactly: supplies <DashboardLayout>'s generic
+ * <Sidebar>/<TopBar> with contributor-specific nav, active-route
+ * highlighting, navigation, the signed-in user, and logout. Mount this as
+ * the layout route for everything under /contributor.
  */
 export default function ContributorLayout() {
   const navigate = useNavigate();
@@ -66,7 +66,6 @@ export default function ContributorLayout() {
 
   return (
     <DashboardLayout
-      theme="contributor"
       sidebarProps={{
         logo: <Logo size="md" />,
         groups: [{ items: NAV_ITEMS }, { label: 'Account', items: ACCOUNT_ITEMS }],
@@ -76,7 +75,7 @@ export default function ContributorLayout() {
         onLogout: handleLogout,
       }}
       topBarProps={{
-        searchPlaceholder: 'Search your content…',
+        searchPlaceholder: 'Search your content, paths, resources…',
         notificationCount: 0,
         user: sidebarUser,
       }}
