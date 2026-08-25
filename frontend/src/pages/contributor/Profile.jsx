@@ -1,6 +1,6 @@
 import { Rocket, Star, ShieldCheck, TrendingUp, Crown, Flame, Award } from 'lucide-react'
-import PageHeader from '../../components/contributor/PageHeader'
-import Avatar from '../../components/contributor/Avatar'
+import PageHeader from '../../components/layout/PageHeader'
+import Avatar from '../../components/ui/Avatar'
 import { currentUser, badges, contributorStats, nextMilestone } from '../../data/mockData'
 
 const ICONS = { Rocket, Star, ShieldCheck, TrendingUp, Crown, Flame }

@@ -1,5 +1,5 @@
 import { Gem, Rocket, Sparkles, Crown, Wallet } from 'lucide-react'
-import PageHeader from '../../components/contributor/PageHeader'
+import PageHeader from '../../components/layout/PageHeader'
 import XPBar from '../../components/contributor/XPBar'
 import { currentUser, rewards } from '../../data/mockData'
 

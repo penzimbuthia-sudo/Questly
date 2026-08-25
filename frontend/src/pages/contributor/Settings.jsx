@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { User, Lock, Bell, Globe, AlertTriangle } from 'lucide-react'
-import PageHeader from '../../components/contributor/PageHeader'
-import Toggle from '../../components/contributor/Toggle'
+import PageHeader from '../../components/layout/PageHeader'
+import Toggle from '../../components/ui/Toggle'
 import { currentUser } from '../../data/mockData'
 
 const inputClass =
