@@ -1,5 +1,5 @@
 import { Target } from 'lucide-react'
-import XPBar from './XPBar'
+import XPBar from '../../components/contributor/XPBar'
 
 export default function ChallengeCard({ challenge, compact = false }) {
   const { title, description, progress, total, reward } = challenge
