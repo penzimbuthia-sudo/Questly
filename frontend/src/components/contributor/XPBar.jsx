@@ -1,32 +1,21 @@
-const TONES = {
-  gold: 'var(--color-amber-300)',
-  violet: 'var(--color-violet-500)',
-};
+export default function XPBar({ progress, total, tone = 'violet' }) {
+  const pct = total > 0 ? Math.min(100, Math.max(0, (progress / total) * 100)) : 0
 
-/**
- * XPBar
- * Simple progress bar for XP/challenge progress. Was missing entirely —
- * built from its two call sites: components/contributor/ChallengeCard.jsx
- * (`<XPBar progress={n} total={n} tone="violet"|"gold" />`) and
- * pages/contributor/Rewards.jsx (same shape).
- */
-export default function XPBar({ progress = 0, total = 1, tone = 'violet' }) {
-  const percent = total > 0 ? Math.min(100, Math.max(0, (progress / total) * 100)) : 0;
-  const fill = TONES[tone] ?? TONES.violet;
+  const fillStyle =
+    tone === 'gold'
+      ? { background: 'linear-gradient(90deg, var(--color-amber-500), var(--color-amber-300))' }
+      : { background: 'linear-gradient(90deg, var(--color-violet-700), var(--color-violet-400))' }
 
   return (
     <div
       className="h-2 rounded-full overflow-hidden"
-      role="progressbar"
-      aria-valuenow={progress}
-      aria-valuemin={0}
-      aria-valuemax={total}
       style={{ background: 'var(--color-surface-active)' }}
+      role="progressbar"
+      aria-valuenow={Math.round(pct)}
+      aria-valuemin={0}
+      aria-valuemax={100}
     >
-      <div
-        className="h-full rounded-full transition-all"
-        style={{ width: `${percent}%`, background: fill }}
-      />
+      <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, ...fillStyle }} />
     </div>
-  );
+  )
 }
