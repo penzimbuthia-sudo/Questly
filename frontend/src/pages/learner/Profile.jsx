@@ -45,7 +45,7 @@ export default function Profile() {
           </button>
         </div>
 
-        <div className="grid grid-cols-2 gap-6 border-t border-neutral-100 px-6 py-5 sm:grid-cols-5">
+        <div className="grid grid-cols-2 gap-6 border-t border-neutral-100 px-10 py-5 sm:grid-cols-5">
           <Stat label="Total XP" value={stats.totalXP.toLocaleString()} />
           <Stat label="Level" value={stats.level} />
           <Stat label="Badges" value={earnedBadges.length} />
