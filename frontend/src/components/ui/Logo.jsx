@@ -16,7 +16,7 @@ export default function Logo({ size = "md", showWordmark = true, className = "" 
         <Sparkles size={s.icon} className="text-ink" strokeWidth={2.5} />
       </div>
       {showWordmark && (
-        <span className={`${s.text} truncate text-ivory font-extrabold tracking-tight`}>
+        <span className={`${s.text} truncate text-fg font-extrabold tracking-tight`}>
           Questly
         </span>
       )}

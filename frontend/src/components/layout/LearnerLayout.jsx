@@ -11,6 +11,7 @@ import {
   Settings,
 } from 'lucide-react';
 import DashboardLayout from './DashboardLayout';
+import Logo from '../ui/Logo';
 import { useAuth } from '../../hooks/useAuth';
 
 const NAV_ITEMS = [
@@ -70,6 +71,7 @@ export default function LearnerLayout() {
   return (
     <DashboardLayout
       sidebarProps={{
+        logo: <Logo size="md" />,
         groups: [{ items: NAV_ITEMS }, { label: 'Account', items: ACCOUNT_ITEMS }],
         activeKey,
         onNavigate: (key) => navigate(key),
