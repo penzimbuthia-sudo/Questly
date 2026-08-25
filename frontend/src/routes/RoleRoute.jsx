@@ -8,11 +8,11 @@ const ROLE_HOME = {
   admin: '/admin',
 };
 
-export default function RoleRoute({ allowedRoles, children }) {
+export default function RoleRoute({ allowedRoles, redirectTo, children }) {
   const { user } = useAuth();
 
   return (
-    <ProtectedRoute>
+    <ProtectedRoute redirectTo={redirectTo}>
       {user && !allowedRoles.includes(user.role) ? (
         <Navigate to={ROLE_HOME[user.role] ?? '/login'} replace />
       ) : (

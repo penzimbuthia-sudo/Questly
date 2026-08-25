@@ -52,7 +52,7 @@ export default function AppRoutes() {
           <Route
             path="/learner/*"
             element={
-              <RoleRoute allowedRoles={['learner']}>
+              <RoleRoute allowedRoles={['learner']} redirectTo="/">
                 <LearnerRoutes />
               </RoleRoute>
             }

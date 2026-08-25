@@ -2,6 +2,7 @@ import { LogOut } from "lucide-react";
 import Avatar from "../ui/Avatar";
 
 export default function Sidebar({
+  logo,
   logoText = "Questly",
   groups = [],
   activeKey,
@@ -13,10 +14,14 @@ export default function Sidebar({
     <aside className="w-60 shrink-0 h-screen sticky top-0 flex flex-col bg-card border-r border-line/10 py-5 px-3">
       {/* Logo */}
       <div className="flex items-center gap-2 px-2 mb-8">
-        <div className="w-8 h-8 rounded-lg bg-royal flex items-center justify-center">
-          <span className="text-ivory font-bold text-sm">Q</span>
-        </div>
-        <span className="font-bold text-lg text-fg">{logoText}</span>
+        {logo ?? (
+          <>
+            <div className="w-8 h-8 rounded-lg bg-royal flex items-center justify-center">
+              <span className="text-ivory font-bold text-sm">Q</span>
+            </div>
+            <span className="font-bold text-lg text-fg">{logoText}</span>
+          </>
+        )}
       </div>
 
       {/* Nav groups */}
