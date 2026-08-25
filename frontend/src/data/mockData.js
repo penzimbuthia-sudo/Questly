@@ -1,148 +1,124 @@
-// src/data/mockData.js
-//
-// Mock content for the contributor workspace. Every export here was
-// reverse-engineered from how each page actually reads it (field names,
-// types, .map/.find usage) — not guessed independently — so the shapes
-// below are the real contract each page expects. This is placeholder
-// data for a single demo contributor; replace with real API calls once
-// the backend exists.
-
-// --- pages/contributor/Profile.jsx, Settings.jsx, Rewards.jsx --------------
-
 export const currentUser = {
-  initials: 'JM',
-  name: 'Jordan Mwangi',
+  initials: 'IM',
+  name: 'Iann M.',
   role: 'Contributor',
-  level: 8,
-  xp: 3240,
-  rank: 12,
-  bio: 'I write practical frontend tutorials and the occasional React deep-dive.',
-  email: 'jordan.mwangi@example.com',
-  github: 'jordanmwangi',
+  level: 7,
+  xp: 1248,
+  rank: 7,
+  bio: 'Sharing frontend and React resources with the Codalore community.',
+  email: 'iann@example.com',
+  github: 'DalzWrld',
 };
 
-// --- pages/contributor/Profile.jsx ------------------------------------------
-// `icon` must match a key in Profile.jsx's ICONS map: Rocket, Star,
-// ShieldCheck, TrendingUp, Crown, Flame.
-
 export const badges = [
-  { id: 'first-share', icon: 'Rocket', name: 'First share', criteria: 'Published your first resource', earned: true },
-  { id: 'well-reviewed', icon: 'Star', name: 'Well reviewed', criteria: 'Earned 50+ upvotes total', earned: true },
-  { id: 'quality-checked', icon: 'ShieldCheck', name: 'Quality checked', criteria: '5 submissions approved on first review', earned: true },
-  { id: 'on-the-rise', icon: 'TrendingUp', name: 'On the rise', criteria: 'Doubled your views in one month', earned: false },
-  { id: 'top-contributor', icon: 'Crown', name: 'Top contributor', criteria: 'Reach the top 10 on the leaderboard', earned: false },
-  { id: 'streak-keeper', icon: 'Flame', name: 'Streak keeper', criteria: 'Contribute 7 days in a row', earned: true },
+  { id: 1, icon: 'Rocket', name: 'First contribution', criteria: 'Shared your first resource', earned: true },
+  { id: 2, icon: 'Flame', name: '7-day streak', criteria: 'Contributed 7 days in a row', earned: true },
+  { id: 3, icon: 'Star', name: 'Community favorite', criteria: 'Reached 100 upvotes', earned: true },
+  { id: 4, icon: 'ShieldCheck', name: 'Quality reviewer', criteria: 'Approved on first submission 5 times', earned: false },
+  { id: 5, icon: 'TrendingUp', name: 'Rising contributor', criteria: 'Reach 2,000 XP', earned: false },
+  { id: 6, icon: 'Crown', name: 'Top 10', criteria: 'Reach the top 10 on the leaderboard', earned: false },
 ];
 
 export const contributorStats = {
   resourcesShared: 14,
-  learningPaths: 2,
-  totalUpvotes: 386,
-  badgesEarned: badges.filter((b) => b.earned).length,
+  learningPaths: 3,
+  totalUpvotes: 212,
+  badgesEarned: 3,
 };
 
-export const nextMilestone = 'Reach 5,000 XP to unlock the "Mentor" title and a featured spot on the homepage.';
+export const nextMilestone = 'Reach 2,000 XP to unlock the Rising Contributor badge (752 XP to go).';
 
-// --- pages/contributor/Analytics.jsx ----------------------------------------
-
-export const contributionAnalytics = [
-  { week: 'Wk 1', views: 420, upvotes: 38 },
-  { week: 'Wk 2', views: 610, upvotes: 52 },
-  { week: 'Wk 3', views: 540, upvotes: 47 },
-  { week: 'Wk 4', views: 780, upvotes: 69 },
-  { week: 'Wk 5', views: 690, upvotes: 61 },
-  { week: 'Wk 6', views: 910, upvotes: 88 },
+export const rewards = [
+  { id: 1, icon: 'Gem', name: 'Profile badge frame', cost: 500 },
+  { id: 2, icon: 'Rocket', name: 'Early access to new paths', cost: 1000 },
+  { id: 3, icon: 'Sparkles', name: 'Custom profile theme', cost: 1500 },
+  { id: 4, icon: 'Crown', name: 'Featured contributor spotlight', cost: 3000 },
 ];
-
-export const contentMix = [
-  { name: 'Videos', value: 5, color: 'var(--color-violet-500)' },
-  { name: 'Articles', value: 7, color: 'var(--color-amber-300)' },
-  { name: 'Paths', value: 2, color: 'var(--color-ink-3)' },
-];
-
-export const topPerformingResources = [
-  { title: 'CSS Grid in 10 minutes', views: 3120 },
-  { title: 'React Hooks deep dive', views: 2480 },
-  { title: 'Intro to REST APIs', views: 1860 },
-  { title: 'Debugging async/await', views: 1240 },
-];
-
-// --- pages/contributor/Challenges.jsx ---------------------------------------
 
 export const contributorChallenges = [
   {
-    id: 'share-3-resources',
-    title: 'Share 3 new resources',
-    description: 'Publish 3 approved resources this week to earn bonus XP.',
+    id: 1,
+    title: 'Share 3 resources this week',
+    description: 'Publish three approved resources before Sunday to earn bonus XP.',
     progress: 2,
     total: 3,
-    reward: '+300 XP',
+    reward: '+150 XP',
+    difficulty: 'Easy',
+    category: 'Content',
   },
   {
-    id: 'reply-5-threads',
+    id: 2,
+    title: 'Build a complete learning path',
+    description: 'Create a path with at least 4 modules and a quiz on each.',
+    progress: 1,
+    total: 4,
+    reward: '+400 XP',
+    difficulty: 'Hard',
+    category: 'Paths',
+  },
+  {
+    id: 3,
     title: 'Answer 5 community questions',
-    description: 'Help learners by replying to open questions on your content.',
+    description: 'Reply to discussion threads on your published resources.',
     progress: 5,
     total: 5,
-    reward: '+150 XP',
-  },
-  {
-    id: 'publish-a-path',
-    title: 'Publish a learning path',
-    description: 'Structure a full path with at least 5 modules.',
-    progress: 0,
-    total: 1,
-    reward: '+500 XP',
+    reward: '+100 XP',
+    difficulty: 'Easy',
+    category: 'Community',
   },
 ];
 
 export const challengeStats = {
-  active: contributorChallenges.filter((c) => c.progress < c.total).length,
-  xpUpForGrabs: contributorChallenges.reduce((sum, c) => sum + parseInt(c.reward.replace(/\D/g, ''), 10), 0),
-  completedThisMonth: 4,
-  streakNote: "You've completed a challenge 3 weeks running — one more for a bonus badge.",
+  active: 3,
+  xpUpForGrabs: 650,
+  completedThisMonth: 6,
+  streakNote: "You've completed a challenge every week this month — keep it going for a streak bonus.",
 };
 
-// --- pages/contributor/MyContent.jsx ----------------------------------------
-// `type` must be one of 'video' | 'article' | 'path' (matches MyContent.jsx's
-// FILTERS and ContentCard.jsx's ICONS/TINTS maps). `status` must be one of
-// 'pending' | 'approved' | 'rejected' (matches StatusPill.jsx).
-
 export const myContent = [
-  { id: 'c1', title: 'CSS Grid in 10 minutes', type: 'article', status: 'approved', views: 3120, upvotes: 128, updated: '2d ago' },
-  { id: 'c2', title: 'React Hooks deep dive', type: 'video', status: 'approved', views: 2480, upvotes: 94, updated: '4d ago' },
-  { id: 'c3', title: 'Frontend developer path', type: 'path', status: 'approved', views: 1610, upvotes: 71, updated: '1w ago' },
-  { id: 'c4', title: 'Intro to REST APIs', type: 'article', status: 'pending', views: 0, upvotes: 0, updated: 'Just now' },
-  { id: 'c5', title: 'Debugging async/await', type: 'video', status: 'rejected', views: 0, upvotes: 0, updated: '3d ago' },
+  { id: 1, title: 'State Management Patterns in React', type: 'path', status: 'published', views: 1204, upvotes: 88, updated: '2 days ago' },
+  { id: 2, title: 'Intro to Flask APIs', type: 'video', status: 'published', views: 860, upvotes: 61, updated: '5 days ago' },
+  { id: 3, title: 'Debugging Async JavaScript', type: 'article', status: 'pending', views: 0, upvotes: 0, updated: '1 day ago' },
+  { id: 4, title: 'SQL Joins Explained', type: 'video', status: 'published', views: 540, upvotes: 39, updated: '1 week ago' },
 ];
 
-// --- pages/contributor/Community.jsx ----------------------------------------
-
 export const communityActivity = [
-  { id: 'a1', initials: 'AK', name: 'Aisha K.', action: 'upvoted your resource', target: '"CSS Grid in 10 minutes"', time: '2h ago' },
-  { id: 'a2', initials: 'BO', name: 'Brian O.', action: 'commented on', target: '"React Hooks deep dive"', time: '5h ago' },
-  { id: 'a3', initials: 'CM', name: 'Chinedu M.', action: 'asked a question on', target: '"Intro to REST APIs"', time: '1d ago' },
-  { id: 'a4', initials: 'GW', name: 'Grace W.', action: 'completed', target: '"Frontend developer path"', time: '2d ago' },
+  { id: 1, initials: 'AK', name: 'Amina K.', action: 'upvoted', target: 'State Management Patterns in React', time: '2h ago' },
+  { id: 2, initials: 'BO', name: 'Brian O.', action: 'commented on', target: 'Intro to Flask APIs', time: '5h ago' },
+  { id: 3, initials: 'FN', name: 'Faith N.', action: 'completed', target: 'SQL Joins Explained', time: '1d ago' },
+  { id: 4, initials: 'KM', name: 'Kevin M.', action: 'asked a question on', target: 'Debugging Async JavaScript', time: '2d ago' },
 ];
 
 export const engagementSnapshot = {
-  commentsThisWeek: 23,
-  questionsAnswered: 9,
-  avgResponseTime: '4h',
-  mostDiscussed: 'React Hooks deep dive',
+  commentsThisWeek: 18,
+  questionsAnswered: 12,
+  avgResponseTime: '3h',
+  mostDiscussed: 'State Management Patterns in React',
   frequentCommenters: [
-    { name: 'Aisha K.', initials: 'AK' },
+    { name: 'Amina K.', initials: 'AK' },
     { name: 'Brian O.', initials: 'BO' },
-    { name: 'Chinedu M.', initials: 'CM' },
+    { name: 'Faith N.', initials: 'FN' },
   ],
 };
 
-// --- pages/contributor/Rewards.jsx ------------------------------------------
-// `icon` must match a key in Rewards.jsx's ICONS map: Gem, Rocket, Sparkles, Crown.
+export const contributionAnalytics = [
+  { week: 'W1', views: 320, upvotes: 24 },
+  { week: 'W2', views: 410, upvotes: 31 },
+  { week: 'W3', views: 380, upvotes: 28 },
+  { week: 'W4', views: 560, upvotes: 45 },
+  { week: 'W5', views: 610, upvotes: 52 },
+  { week: 'W6', views: 704, upvotes: 61 },
+];
 
-export const rewards = [
-  { id: 'profile-badge', icon: 'Sparkles', name: 'Animated profile badge', cost: 500 },
-  { id: 'early-access', icon: 'Rocket', name: 'Early access to new paths', cost: 1500 },
-  { id: 'featured-slot', icon: 'Crown', name: 'Featured homepage slot (1 week)', cost: 4000 },
-  { id: 'merch-pack', icon: 'Gem', name: 'Questly merch pack', cost: 6000 },
+export const contentMix = [
+  { name: 'Videos', value: 6, color: 'var(--color-violet-500)' },
+  { name: 'Articles', value: 5, color: 'var(--color-amber-400)' },
+  { name: 'Paths', value: 3, color: 'var(--color-violet-300)' },
+];
+
+export const topPerformingResources = [
+  { title: 'State Management Patterns in React', views: 1204 },
+  { title: 'Intro to Flask APIs', views: 860 },
+  { title: 'SQL Joins Explained', views: 540 },
+  { title: 'Debugging Async JavaScript', views: 210 },
 ];

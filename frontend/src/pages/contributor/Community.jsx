@@ -30,7 +30,7 @@ export default function Community() {
               </div>
               <button
                 aria-label="Reply"
-                className="focus-ring grid place-items-center w-8 h-8 rounded-lg shrink-0 text-[var(--color-ink-2)] hover:text-white hover:bg-[var(--color-surface-hover)]"
+                className="focus-ring grid place-items-center w-8 h-8 rounded-lg shrink-0 text-(--color-ink-2) hover:text-white hover:bg-(--color-surface-hover)"
               >
                 <MessageCircle size={15} />
               </button>
