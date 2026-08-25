@@ -63,7 +63,7 @@ export default function Profile() {
         </div>
         <div className="mt-4 flex flex-col gap-4">
           {myPaths.map(({ path, progress }) => (
-            <div key={path.id}>
+            <div key={path.id} className="flex flex-col gap-1">
               <div className="flex items-center justify-between text-sm">
                 <span className="font-medium text-neutral-500">{path.title}</span>
                 <span className="text-neutral-500">{progress.percent}%</span>
@@ -94,7 +94,7 @@ export default function Profile() {
         <h2 className="text-base font-semibold text-neutral-900">Recent activity</h2>
         <div className="mt-4 flex flex-col gap-4">
           {RECENT_ACTIVITY.map(({ id, icon: Icon, text, time }) => (
-            <div key={id} className="flex items-center gap-3">
+            <div key={id} className="flex items-center gap-3 border-t border-neutral-200 pt-3 first:border-t-0 first:pt-0">
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-purple-50 text-purple-600">
                 <Icon className="h-4 w-4" />
               </div>
