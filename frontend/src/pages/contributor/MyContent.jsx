@@ -1,10 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Plus } from 'lucide-react'
 import PageHeader from '../../components/layout/PageHeader'
 import ContentCard from '../../components/contributor/ContentCard'
 import AddResourceModal from '../../components/contributor/AddResourceModal'
 import CreatePathModal from '../../components/contributor/CreatePathModal'
-import { myContent as initialContent } from '../../data/mockData'
+import { getResources, addResource as saveResource, addPath as savePath } from '../../services/resourceService'
 
 const FILTERS = [
   { key: 'all', label: 'All' },
@@ -14,21 +14,28 @@ const FILTERS = [
 ]
 
 export default function MyContent() {
-  const [content, setContent] = useState(initialContent)
+  const [content, setContent] = useState([])
   const [filter, setFilter] = useState('all')
   const [resourceOpen, setResourceOpen] = useState(false)
   const [pathOpen, setPathOpen] = useState(false)
 
+  // Reads from resourceService's shared store — the same one Dashboard.jsx
+  // reads from — so counts stay consistent across both pages.
+  const load = () => setContent(getResources())
+
+  useEffect(load, [])
+
   const visible = filter === 'all' ? content : content.filter((c) => c.type === filter)
 
-  const addResource = (resource) =>
-    setContent((c) => [{ ...resource, updated: 'Just now', views: 0, upvotes: 0 }, ...c])
+  const handleAddResource = (data) => {
+    saveResource(data)
+    load()
+  }
 
-  const addPath = (path) =>
-    setContent((c) => [
-      { id: path.id, title: path.title, type: 'path', status: 'pending', views: 0, upvotes: 0, updated: 'Just now' },
-      ...c,
-    ])
+  const handleAddPath = (data) => {
+    savePath(data)
+    load()
+  }
 
   return (
     <div>
@@ -87,8 +94,8 @@ export default function MyContent() {
         </div>
       )}
 
-      <AddResourceModal open={resourceOpen} onClose={() => setResourceOpen(false)} onSubmit={addResource} />
-      <CreatePathModal open={pathOpen} onClose={() => setPathOpen(false)} onSubmit={addPath} />
+      <AddResourceModal open={resourceOpen} onClose={() => setResourceOpen(false)} onSubmit={handleAddResource} />
+      <CreatePathModal open={pathOpen} onClose={() => setPathOpen(false)} onSubmit={handleAddPath} />
     </div>
   )
 }
