@@ -13,7 +13,7 @@ export const awardXP = (amount, reason) => {
     id: crypto.randomUUID(),
     amount,
     reason,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   })
 
   return xp
@@ -24,30 +24,43 @@ export const resetXP = () => {
   events = []
 }
 
-// --- Added for Dashboard.jsx, which reads per-user stats/badges ---
-// This service only tracks one in-memory session (no real per-user
-// storage yet), so `userId` is accepted for API-shape compatibility but
-// not used to look anything up. Streak is derived from distinct calendar
-// days seen in `events`; badge thresholds are placeholder milestones
-// pending a real rules engine from whoever owns gamification design.
+// Derives consecutive-day streak from actual awardXP event timestamps —
+// this part is real, not guessed.
+const computeStreak = () => {
+  if (events.length === 0) return 0
 
-const distinctDayCount = () => {
   const days = new Set(events.map((e) => e.timestamp.slice(0, 10)))
-  return days.size
+  let streak = 0
+  const cursor = new Date()
+
+  while (days.has(cursor.toISOString().slice(0, 10))) {
+    streak += 1
+    cursor.setDate(cursor.getDate() - 1)
+  }
+
+  return streak
 }
 
-const BADGE_THRESHOLDS = [
-  { id: 'first-share', name: 'First share', minXp: 1 },
-  { id: 'rising-contributor', name: 'Rising contributor', minXp: 250 },
-  { id: 'community-pillar', name: 'Community pillar', minXp: 1000 },
-]
+// TODO: this is a placeholder heuristic, not a real leaderboard lookup —
+// replace once there's an actual endpoint to rank users against each other.
+const computeRank = (currentXp) => Math.max(1, 20 - Math.floor(currentXp / 100))
 
-export const getUserStats = () =>
+// TODO: userId is currently ignored — state here is global, not per-user,
+// since there's no backend/auth wiring into this service yet.
+export const getUserStats = (userId) =>
   Promise.resolve({
     xp,
-    rank: "—",
-    streak: distinctDayCount(),
-  });
+    rank: computeRank(xp),
+    streak: computeStreak(),
+  })
 
-export const getBadges = () =>
-  Promise.resolve(BADGE_THRESHOLDS.filter((b) => xp >= b.minXp));
+const BADGE_DEFINITIONS = [
+  { id: 'first-contribution', name: 'First contribution', unlocked: () => events.length >= 1 },
+  { id: 'streak-7', name: '7-day streak', unlocked: () => computeStreak() >= 7 },
+  { id: 'xp-500', name: 'Rising contributor', unlocked: () => xp >= 500 },
+]
+
+export const getBadges = (userId) =>
+  Promise.resolve(
+    BADGE_DEFINITIONS.filter((b) => b.unlocked()).map(({ id, name }) => ({ id, name }))
+  )
