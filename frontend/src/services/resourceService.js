@@ -3,8 +3,12 @@ import { awardXP } from './gamificationService'
 
 let resources = []
 
+// Native browser API — no dependency needed (replaces uuid's v4()).
+const generateId = () =>
+  crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2)
+
 const shapeResource = (data) => ({
-  id: crypto.randomUUID(),
+  id: generateId(),
   title: data.title,
   url: data.url || null,
   type: data.type, // video | article | doc | path
@@ -13,7 +17,7 @@ const shapeResource = (data) => ({
   views: 0,
   upvotes: 0,
   updated: 'Just now',
-  submittedAt: new Date().toISOString()
+  submittedAt: new Date().toISOString(),
 })
 
 export const addResource = (data) => {
@@ -34,11 +38,8 @@ export const getResources = () => resources
 
 export const getResource = (id) => resources.find((r) => r.id === id) || null
 
-// --- Added for Dashboard.jsx, which awaits these with .then() ---
-// Single-user mock store, so "my" resources/paths are just everything
-// currently held here, split by type. Wrapped in Promise.resolve to
-// match the async shape Dashboard.jsx expects (and the real API this
-// will eventually call).
+// Dashboard.jsx expects these two specifically, and expects Promises
+// (it calls .then() on the result).
 export const getMyResources = () => Promise.resolve(resources.filter((r) => r.type !== 'path'))
 
 export const getMyPaths = () => Promise.resolve(resources.filter((r) => r.type === 'path'))
@@ -50,7 +51,7 @@ export const updateResource = (id, updates) => {
   resources[index] = {
     ...resources[index],
     ...updates,
-    updated: 'Just now'
+    updated: 'Just now',
   }
 
   return resources[index]
