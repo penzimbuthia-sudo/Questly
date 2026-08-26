@@ -2,7 +2,7 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell,
 } from 'recharts'
-import PageHeader from '../../components/contributor/PageHeader'
+import PageHeader from '../../components/layout/PageHeader'
 import { contributionAnalytics, contentMix, topPerformingResources } from '../../data/mockData'
 
 function ChartTooltip({ active, payload, label }) {

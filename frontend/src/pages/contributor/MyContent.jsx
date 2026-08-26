@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Plus } from 'lucide-react'
-import PageHeader from '../../components/contributor/PageHeader'
+import PageHeader from '../../components/layout/PageHeader'
 import ContentCard from '../../components/contributor/ContentCard'
 import AddResourceModal from '../../components/contributor/AddResourceModal'
 import CreatePathModal from '../../components/contributor/CreatePathModal'

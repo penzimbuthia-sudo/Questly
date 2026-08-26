@@ -1,6 +1,6 @@
 import { MessageCircle } from 'lucide-react'
-import PageHeader from '../../components/contributor/PageHeader'
-import Avatar from '../../components/contributor/Avatar'
+import PageHeader from '../../components/layout/PageHeader'
+import Avatar from '../../components/ui/Avatar'
 import { communityActivity, engagementSnapshot } from '../../data/mockData'
 
 export default function Community() {

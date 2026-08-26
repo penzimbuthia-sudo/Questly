@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { Zap, Flame, FileText, BookOpen, Award } from "lucide-react";
+import PageHeader from "../../components/layout/PageHeader";
 import StatCard from "../../components/contributor/StatCard";
 import { getUserStats, getBadges } from "../../services/gamificationService";
 import { getMyResources, getMyPaths } from "../../services/resourceService";
@@ -18,26 +20,58 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <div className="page contributor-dashboard">
-      <h1>Dashboard</h1>
+    <div>
+      <PageHeader
+        title="Dashboard"
+        subtitle="Your contributor activity at a glance."
+      />
 
-      <div className="stat-row">
-        <StatCard label="Total XP" value={stats?.xp ?? "—"} footnote={stats ? `Rank: ${stats.rank}` : ""} />
-        <StatCard label="Streak" value={stats ? `${stats.streak} days` : "—"} />
-        <StatCard label="Resources shared" value={resourceCount} />
-        <StatCard label="Paths created" value={pathCount} />
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <StatCard
+          icon={Zap}
+          label="Total XP"
+          value={stats?.xp ?? "—"}
+          delta={stats ? `Rank: ${stats.rank}` : ""}
+          tone="gold"
+        />
+        <StatCard
+          icon={Flame}
+          label="Streak"
+          value={stats ? `${stats.streak} days` : "—"}
+        />
+        <StatCard icon={FileText} label="Resources shared" value={resourceCount} />
+        <StatCard icon={BookOpen} label="Paths created" value={pathCount} />
       </div>
 
       <section>
-        <h2>Recent badges</h2>
+        <h2 className="font-display font-semibold text-[15px] mb-3">Recent badges</h2>
         {badges.length === 0 ? (
-          <p>No badges yet — share a resource to get started.</p>
+          <div
+            className="rounded-2xl border border-dashed p-8 text-center"
+            style={{ borderColor: 'var(--color-border)' }}
+          >
+            <p className="text-[13.5px]" style={{ color: 'var(--color-ink-2)' }}>
+              No badges yet — share a resource to get started.
+            </p>
+          </div>
         ) : (
-          <ul className="badge-list">
+          <div className="grid sm:grid-cols-2 gap-4">
             {badges.map((b) => (
-              <li key={b.id}>{b.name}</li>
+              <div
+                key={b.id}
+                className="rounded-2xl border p-4 flex items-center gap-3"
+                style={{ background: 'var(--color-surface)', borderColor: 'var(--color-border)' }}
+              >
+                <div
+                  className="w-9 h-9 shrink-0 grid place-items-center rounded-full"
+                  style={{ background: 'rgba(240,192,75,0.16)', color: 'var(--color-amber-300)' }}
+                >
+                  <Award size={16} />
+                </div>
+                <p className="font-medium text-[14px]">{b.name}</p>
+              </div>
             ))}
-          </ul>
+          </div>
         )}
       </section>
     </div>

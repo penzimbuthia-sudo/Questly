@@ -1,11 +1,10 @@
 // src/services/resourceService.js
-import { v4 as uuid } from 'uuid'
 import { awardXP } from './gamificationService'
 
 let resources = []
 
 const shapeResource = (data) => ({
-  id: uuid(),
+  id: crypto.randomUUID(),
   title: data.title,
   url: data.url || null,
   type: data.type, // video | article | doc | path
@@ -34,6 +33,15 @@ export const addPath = (data) => {
 export const getResources = () => resources
 
 export const getResource = (id) => resources.find((r) => r.id === id) || null
+
+// --- Added for Dashboard.jsx, which awaits these with .then() ---
+// Single-user mock store, so "my" resources/paths are just everything
+// currently held here, split by type. Wrapped in Promise.resolve to
+// match the async shape Dashboard.jsx expects (and the real API this
+// will eventually call).
+export const getMyResources = () => Promise.resolve(resources.filter((r) => r.type !== 'path'))
+
+export const getMyPaths = () => Promise.resolve(resources.filter((r) => r.type === 'path'))
 
 export const updateResource = (id, updates) => {
   const index = resources.findIndex((r) => r.id === id)
@@ -79,44 +87,3 @@ export const addUpvote = (id) => {
   item.upvotes += 1
   return item.upvotes
 }
-
-import client from '../api/client';
-
-export const resourceService = {
-  getResources: async (params = {}) => {
-    const response = await client.get('/admin/resources', { params });
-    return response.data;
-  },
-  getResourceById: async (id) => {
-    const response = await client.get(`/admin/resources/${id}`);
-    return response.data;
-  },
-  createResource: async (data) => {
-    const response = await client.post('/admin/resources', data);
-    return response.data;
-  },
-  updateResource: async (id, data) => {
-    const response = await client.put(`/admin/resources/${id}`, data);
-    return response.data;
-  },
-  deleteResource: async (id) => {
-    const response = await client.delete(`/admin/resources/${id}`);
-    return response.data;
-  },
-  approveResource: async (id) => {
-    const response = await client.put(`/admin/resources/${id}/approve`);
-    return response.data;
-  },
-  rejectResource: async (id, reason) => {
-    const response = await client.put(`/admin/resources/${id}/reject`, { reason });
-    return response.data;
-  },
-  getResourceStats: async () => {
-    const response = await client.get('/admin/resources/stats');
-    return response.data;
-  },
-  getResourceTypes: async () => {
-    const response = await client.get('/admin/resources/types');
-    return response.data;
-  },
-};

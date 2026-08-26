@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Plus, X as XIcon } from 'lucide-react'
-import Modal from './Modal'
+import Modal from '../ui/Modal'
 
 const inputClass =
   'focus-ring w-full rounded-lg px-3.5 h-10 text-[13.5px] border outline-none placeholder:text-[var(--color-ink-3)] transition-colors focus:border-[var(--color-violet-500)]'

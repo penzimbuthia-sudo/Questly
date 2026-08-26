@@ -1,4 +1,4 @@
-import Avatar from './Avatar'
+import Avatar from '../ui/Avatar'
 
 export default function ContributorLeaderboard({ rows, title = 'Top contributors' }) {
   return (
