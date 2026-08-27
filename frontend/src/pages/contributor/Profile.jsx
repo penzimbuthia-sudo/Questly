@@ -1,92 +1,47 @@
-import { Rocket, Star, ShieldCheck, TrendingUp, Crown, Flame, Award } from 'lucide-react'
-import PageHeader from '../../components/contributor/PageHeader'
-import Avatar from '../../components/contributor/Avatar'
-import { currentUser, badges, contributorStats, nextMilestone } from '../../data/mockData'
+import { useState, useEffect } from "react";
+import { Pencil } from "lucide-react";
+import { PageHeader } from "@/components/layout";
+import { Card, Avatar, Button, SectionHeader } from "@/components/ui";
 
-const ICONS = { Rocket, Star, ShieldCheck, TrendingUp, Crown, Flame }
+import { getMyStats, getMyBadges } from "@/services/gamificationService";
 
 export default function Profile() {
+  const [stats, setStats] = useState({ xp: 0, level: 1, resources: 0, paths: 0 });
+  const [badges, setBadges] = useState([]);
+
+  useEffect(() => {
+    getMyStats().then(setStats);
+    getMyBadges().then(setBadges);
+  }, []);
+
   return (
     <div>
-      <PageHeader eyebrow="Contributor workspace" title="Profile" subtitle="Your public presence in the Questly community." />
+      <PageHeader title="Profile" subtitle="How other contributors see you." />
 
-      <div
-        className="rounded-2xl border p-6 flex items-center gap-4 mb-8"
-        style={{ background: 'var(--color-surface)', borderColor: 'var(--color-border)' }}
-      >
-        <Avatar initials={currentUser.initials} size={56} ring />
-        <div className="flex-1 min-w-0">
-          <h2 className="font-display font-bold text-lg">{currentUser.name}</h2>
-          <p className="text-[13.5px]" style={{ color: 'var(--color-ink-2)' }}>{currentUser.role} · Level {currentUser.level}</p>
+      <Card className="p-6 flex items-center gap-5 mb-6">
+        <Avatar name="Penzi M." size={64} />
+        <div className="flex-1">
+          <div className="text-lg font-bold text-fg">Penzi M.</div>
+          <div className="text-sm text-fg/50">Contributor · Level {stats.level}</div>
         </div>
-        <div className="text-right shrink-0">
-          <p className="font-display text-xl font-bold" style={{ color: 'var(--color-amber-300)' }}>{currentUser.xp.toLocaleString()} XP</p>
-          <p className="text-xs" style={{ color: 'var(--color-ink-2)' }}>Rank #{currentUser.rank}</p>
-        </div>
-      </div>
+        <Button variant="outline" size="sm">
+          <Pencil size={12} /> Edit profile
+        </Button>
+      </Card>
 
-      <h3 className="font-display font-semibold text-[15px] mb-3">Badges</h3>
-      <div className="grid sm:grid-cols-2 gap-4 mb-8">
-        {badges.map((b) => {
-          const Icon = ICONS[b.icon] || Award
-          return (
-            <div
-              key={b.id}
-              className="rounded-2xl border p-5 flex items-center gap-4 transition-opacity"
-              style={{
-                background: 'var(--color-surface)',
-                borderColor: 'var(--color-border)',
-                opacity: b.earned ? 1 : 0.45,
-              }}
-            >
-              <div
-                className="w-11 h-11 shrink-0 grid place-items-center rounded-full"
-                style={{
-                  background: b.earned ? 'rgba(240,192,75,0.16)' : 'var(--color-surface-active)',
-                  color: b.earned ? 'var(--color-amber-300)' : 'var(--color-ink-3)',
-                }}
-              >
-                <Icon size={19} />
+      <div>
+        <SectionHeader title="Badges" />
+        <div className="grid grid-cols-4 gap-4">
+          {badges.map((badge) => (
+            <Card key={badge.name} className="p-4 flex flex-col items-center text-center gap-2">
+              <div className="w-11 h-11 rounded-full bg-butter/20 flex items-center justify-center">
+                <span className="text-fg/60 text-xs">🏅</span>
               </div>
-              <div className="min-w-0">
-                <p className="font-medium text-[14px]">{b.name}</p>
-                <p className="text-xs mt-0.5" style={{ color: 'var(--color-ink-3)' }}>{b.criteria}</p>
-              </div>
-            </div>
-          )
-        })}
-      </div>
-
-      <h3 className="font-display font-semibold text-[15px] mb-3">Contributor stats</h3>
-      <div
-        className="rounded-2xl border divide-y mb-4"
-        style={{ background: 'var(--color-surface)', borderColor: 'var(--color-border)' }}
-      >
-        {[
-          ['Resources shared', contributorStats.resourcesShared],
-          ['Learning paths', contributorStats.learningPaths],
-          ['Total upvotes', contributorStats.totalUpvotes],
-          ['Badges earned', contributorStats.badgesEarned],
-        ].map(([label, value]) => (
-          <div key={label} className="flex items-center justify-between px-5 py-3.5" style={{ borderColor: 'var(--color-border-soft)' }}>
-            <span className="text-[13.5px]" style={{ color: 'var(--color-ink-2)' }}>{label}</span>
-            <span className="font-semibold text-[14px]">{value}</span>
-          </div>
-        ))}
-      </div>
-
-      <div
-        className="rounded-2xl border p-5 flex items-start gap-3"
-        style={{ background: 'linear-gradient(135deg, rgba(240,192,75,0.10), rgba(139,92,246,0.06))', borderColor: 'var(--color-border)' }}
-      >
-        <div className="w-9 h-9 shrink-0 grid place-items-center rounded-lg" style={{ background: 'rgba(240,192,75,0.16)', color: 'var(--color-amber-300)' }}>
-          <Crown size={16} />
-        </div>
-        <div>
-          <p className="font-medium text-[14px]">Next milestone</p>
-          <p className="text-[13px] mt-0.5" style={{ color: 'var(--color-ink-2)' }}>{nextMilestone}</p>
+              <span className="text-xs font-medium text-fg">{badge.name}</span>
+            </Card>
+          ))}
         </div>
       </div>
     </div>
-  )
+  );
 }
