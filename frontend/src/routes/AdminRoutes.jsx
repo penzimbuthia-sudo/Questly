@@ -1,9 +1,8 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 
-// From Person A - Auth & Routes (these will be provided later)
-// For now, we'll use placeholders
-// import { ProtectedRoute } from './ProtectedRoute';
-// import { RoleRoute } from './RoleRoute';
+// From Person A - Auth & Routes
+import ProtectedRoute from './ProtectedRoute';
+import RoleRoute from './RoleRoute';
 
 // Admin Pages
 import Dashboard from '../pages/admin/Dashboard';
@@ -23,9 +22,8 @@ import DashboardLayout from '../components/layout/DashboardLayout';
 
 export default function AdminRoutes() {
   return (
-    // When Person A provides these, uncomment:
-    // <ProtectedRoute>
-    //   <RoleRoute role="admin">
+    <ProtectedRoute allowedRoles={['admin']}>
+      <RoleRoute allowedRoles={['admin']}>
         <DashboardLayout>
           <Routes>
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
@@ -42,7 +40,7 @@ export default function AdminRoutes() {
             <Route path="settings" element={<Settings />} />
           </Routes>
         </DashboardLayout>
-    //   </RoleRoute>
-    // </ProtectedRoute>
+      </RoleRoute>
+    </ProtectedRoute>
   );
 }
