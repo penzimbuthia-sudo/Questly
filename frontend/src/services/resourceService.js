@@ -1,4 +1,4 @@
-import api from "@/services/api";
+import { api } from "../services/api";
 
 export async function getMyResources() {
   const response = await api.get("/contributor/resources");

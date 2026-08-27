@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { Modal, FormField, Button } from "@/components/ui";
+import Modal from "../../components/ui/Modal";
+import FormField from "../../components/ui/FormField";
+import Button from "../../components/ui/Button";
 
 export default function CreatePathModal({ onClose, onSubmit }) {
   const [title, setTitle] = useState("");
