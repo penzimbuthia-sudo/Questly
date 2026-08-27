@@ -1,60 +1,69 @@
-import React from 'react';
-import { Award, Edit, Trash2, Eye, Users } from 'lucide-react';
-import Pill from '../ui/Pill';
+import { Users, Edit, Trash2 } from 'lucide-react';
+
+// From Person B - UI Components
+import Card from '../ui/Card';
 import Button from '../ui/Button';
 
-const BadgeAdminCard = ({
-  id,
-  name,
-  description,
-  icon,
-  category,
-  points,
-  earnedCount,
-  onEdit,
+export default function BadgeAdminCard({ 
+  badge, 
+  onEdit, 
   onDelete,
-  onView
-}) => {
-  const categoryColors = {
-    learning: 'primary',
-    contribution: 'green',
-    community: 'purple',
-    special: 'yellow',
+  showActions = true 
+}) {
+  const Icon = badge.icon;
+
+  const getColorClass = (color) => {
+    switch(color) {
+      case 'yellow': return 'bg-yellow-100 text-yellow-600';
+      case 'blue': return 'bg-blue-100 text-blue-600';
+      case 'purple': return 'bg-purple-100 text-purple-600';
+      case 'orange': return 'bg-orange-100 text-orange-600';
+      case 'green': return 'bg-green-100 text-green-600';
+      case 'red': return 'bg-red-100 text-red-600';
+      default: return 'bg-blue-100 text-blue-600';
+    }
+  };
+
+  const getBorderColor = (color) => {
+    switch(color) {
+      case 'yellow': return 'border-yellow-200';
+      case 'blue': return 'border-blue-200';
+      case 'purple': return 'border-purple-200';
+      case 'orange': return 'border-orange-200';
+      case 'green': return 'border-green-200';
+      case 'red': return 'border-red-200';
+      default: return 'border-blue-200';
+    }
   };
 
   return (
-    <div className="bg-dark-800 rounded-xl border border-dark-700 p-4 hover:border-dark-600 transition">
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex items-start gap-3 flex-1 min-w-0">
-          <div className="w-12 h-12 bg-primary-500/10 rounded-xl flex items-center justify-center flex-shrink-0">
-            <Award className="w-6 h-6 text-primary-400" />
+    <Card className={`hover:shadow-md transition-shadow border-l-4 ${getBorderColor(badge.color)}`}>
+      <Card.Body>
+        <div className="flex items-start gap-3">
+          <div className={`w-12 h-12 rounded-xl ${getColorClass(badge.color)} flex items-center justify-center flex-shrink-0`}>
+            <Icon size={24} />
           </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
-              <h4 className="text-white font-medium">{name}</h4>
-              <Pill variant={categoryColors[category]}>{category}</Pill>
-            </div>
-            <p className="text-dark-400 text-sm">{description}</p>
-            <div className="flex items-center gap-4 mt-2 text-sm">
-              <span className="text-dark-400 flex items-center gap-1">
-                <Award className="w-4 h-4 text-yellow-500" />
-                {points} points
-              </span>
-              <span className="text-dark-400 flex items-center gap-1">
-                <Users className="w-4 h-4" />
-                {earnedCount} earned
-              </span>
+          <div className="flex-1">
+            <h3 className="font-semibold text-slate-800">{badge.title}</h3>
+            <p className="text-sm text-slate-500 mt-0.5">{badge.description}</p>
+            <div className="flex items-center gap-2 mt-2">
+              <Users size={14} className="text-slate-400" />
+              <span className="text-sm font-medium text-slate-700">{badge.unlocked} unlocked</span>
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-2 flex-shrink-0">
-          <Button size="sm" variant="ghost" icon={<Eye className="w-4 h-4" />} onClick={() => onView(id)} />
-          <Button size="sm" variant="ghost" icon={<Edit className="w-4 h-4" />} onClick={() => onEdit(id)} />
-          <Button size="sm" variant="ghost" icon={<Trash2 className="w-4 h-4" />} onClick={() => onDelete(id)} />
-        </div>
-      </div>
-    </div>
+      </Card.Body>
+      
+      {showActions && (
+        <Card.Footer className="flex justify-end gap-2">
+          <Button variant="ghost" size="sm" onClick={() => onEdit(badge.id)}>
+            <Edit size={16} />
+          </Button>
+          <Button variant="ghost" size="sm" onClick={() => onDelete(badge.id)}>
+            <Trash2 size={16} />
+          </Button>
+        </Card.Footer>
+      )}
+    </Card>
   );
-};
-
-export default BadgeAdminCard;
+}
