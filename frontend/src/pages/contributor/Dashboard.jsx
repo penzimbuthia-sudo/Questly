@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { FileText, BookOpen, Eye, ThumbsUp } from "lucide-react";
 import { PageHeader } from "@/components/layout";
-import { Card, Button, SectionHeader } from "@/components/ui";
+import { Card, Button, SectionHeader, EmptyState } from "@/components/ui";
 import { AreaChartCard } from "@/components/charts";
 import {
   StatCard, ContentCard, ChallengeCard, ContributorLeaderboard,
@@ -10,6 +10,7 @@ import {
 import { getMyResources, createResource, createLearningPath } from "@/services/resourceService";
 import { getMyStats, getContributorLeaderboard } from "@/services/gamificationService";
 import { sampleChallenges } from "@/data/challenges";
+import { useAuth } from "@/hooks/useAuth";
 
 const chartData = [
   { week: "Wk 1", views: 620 },
@@ -19,14 +20,21 @@ const chartData = [
 ];
 
 export default function Dashboard() {
-  
+  const { user } = useAuth();
+
   const [content, setContent] = useState([]);
-  const [stats, setStats] = useState({ xp: 0, level: 1, resources: 0, upvotes: 0 });
+  const [stats, setStats] = useState({
+    xp: 0,
+    level: 1,
+    resources: 0,
+    upvotes: 0,
+  });
+
   const [leaderboard, setLeaderboard] = useState([]);
 
   const [showResourceModal, setShowResourceModal] = useState(false);
   const [showPathModal, setShowPathModal] = useState(false);
- 
+
   useEffect(() => {
     getMyResources().then(setContent);
     getMyStats().then(setStats);
