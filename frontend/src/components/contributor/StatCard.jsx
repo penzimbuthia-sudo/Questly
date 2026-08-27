@@ -1,28 +1,23 @@
-export default function StatCard({ icon: Icon, label, value, delta, tone = 'violet' }) {
-  const tint =
-    tone === 'gold'
-      ? { color: 'var(--color-amber-300)', bg: 'rgba(240,192,75,0.12)' }
-      : { color: 'var(--color-violet-400)', bg: 'rgba(139,92,246,0.14)' }
+import { ArrowUpRight } from "lucide-react";
+import { Card } from "@/components/ui";
 
+export default function StatCard({ icon: Icon, label, value, trend }) {
   return (
-    <div
-      className="rounded-2xl border p-5 flex flex-col gap-4"
-      style={{ background: 'var(--color-surface)', borderColor: 'var(--color-border)' }}
-    >
+    <Card className="p-5 flex flex-col gap-3">
       <div className="flex items-center justify-between">
-        <div className="w-9 h-9 grid place-items-center rounded-lg" style={{ background: tint.bg, color: tint.color }}>
-          <Icon size={17} strokeWidth={2.25} />
+        <div className="w-10 h-10 rounded-xl bg-royal/15 flex items-center justify-center">
+          <Icon size={18} className="text-royal" />
         </div>
-        {delta && (
-          <span className="text-xs font-medium" style={{ color: 'var(--color-amber-300)' }}>
-            {delta}
+        {trend && (
+          <span className="text-xs font-medium text-butter flex items-center gap-1">
+            <ArrowUpRight size={12} /> {trend}
           </span>
         )}
       </div>
       <div>
-        <p className="font-display text-[28px] font-bold leading-none tracking-tight">{value}</p>
-        <p className="text-[13px] mt-1.5" style={{ color: 'var(--color-ink-2)' }}>{label}</p>
+        <div className="text-2xl font-bold text-fg">{value}</div>
+        <div className="text-xs text-fg/50 mt-0.5">{label}</div>
       </div>
-    </div>
-  )
+    </Card>
+  );
 }
