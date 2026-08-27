@@ -89,11 +89,6 @@ export default function Hero() {
                 ))}
               </div>
             </div>
-
-            <div className="absolute -bottom-4 -left-6 rounded-2xl px-3.5 py-2.5 flex items-center gap-2 shadow-xl bg-butter">
-              <Crown size={15} className="text-ink" />
-              <span className="text-xs text-ink font-extrabold">Badge unlocked!</span>
-            </div>
           </div>
         </div>
       </div>

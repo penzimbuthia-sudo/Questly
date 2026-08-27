@@ -1,6 +1,7 @@
 import { Suspense, lazy } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import RouteErrorBoundary from '../components/system/RouteErrorBoundary';
 
 import Login from '../pages/auth/Login';
 import Register from '../pages/auth/Register';
@@ -38,42 +39,44 @@ function RouteFallback() {
 
 export default function AppRoutes() {
   return (
-    <Suspense fallback={<RouteFallback />}>
-      <Routes>
-        <Route path="/" element={<RootRedirect />} />
+    <RouteErrorBoundary>
+      <Suspense fallback={<RouteFallback />}>
+        <Routes>
+          <Route path="/" element={<RootRedirect />} />
 
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
 
-        <Route
-          path="/learner/*"
-          element={
-            <RoleRoute allowedRoles={['learner']}>
-              <LearnerRoutes />
-            </RoleRoute>
-          }
-        />
-        <Route
-          path="/contributor/*"
-          element={
-            <RoleRoute allowedRoles={['contributor']}>
-              <ContributorRoutes />
-            </RoleRoute>
-          }
-        />
-        <Route
-          path="/admin/*"
-          element={
-            <RoleRoute allowedRoles={['admin']}>
-              <AdminRoutes />
-            </RoleRoute>
-          }
-        />
+          <Route
+            path="/learner/*"
+            element={
+              <RoleRoute allowedRoles={['learner']} redirectTo="/">
+                <LearnerRoutes />
+              </RoleRoute>
+            }
+          />
+          <Route
+            path="/contributor/*"
+            element={
+              <RoleRoute allowedRoles={['contributor']}>
+                <ContributorRoutes />
+              </RoleRoute>
+            }
+          />
+          <Route
+            path="/admin/*"
+            element={
+              <RoleRoute allowedRoles={['admin']}>
+                <AdminRoutes />
+              </RoleRoute>
+            }
+          />
 
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </Suspense>
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Suspense>
+    </RouteErrorBoundary>
   )
 }

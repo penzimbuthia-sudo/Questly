@@ -8,6 +8,16 @@ import { NAV_LINKS } from "../../data/landingContent";
 export default function Navbar() {
   const [open, setOpen] = useState(false);
 
+  // Function to handle smooth scroll to section
+  const handleScrollToSection = (e, sectionId) => {
+    e.preventDefault();
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+      setOpen(false);
+    }
+  };
+
   return (
     <header className="theme-contributor sticky top-0 z-50 bg-ink">
       <div className="w-full max-w-6xl mx-auto px-5 sm:px-6 lg:px-8 flex items-center justify-between py-3.5">
@@ -20,7 +30,8 @@ export default function Navbar() {
             <a
               key={link.label}
               href={`#${link.id}`}
-              className="text-sm text-ivory/70 font-medium"
+              onClick={(e) => handleScrollToSection(e, link.id)}
+              className="text-sm text-ivory/70 font-medium hover:text-ivory transition-colors"
             >
               {link.label}
             </a>
@@ -57,8 +68,8 @@ export default function Navbar() {
               <a
                 key={link.label}
                 href={`#${link.id}`}
-                className="text-sm py-2.5 text-ivory/75 font-medium"
-                onClick={() => setOpen(false)}
+                className="text-sm py-2.5 text-ivory/75 font-medium hover:text-ivory transition-colors"
+                onClick={(e) => handleScrollToSection(e, link.id)}
               >
                 {link.label}
               </a>

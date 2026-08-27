@@ -27,9 +27,9 @@ export default function Profile() {
   return (
     <div className="flex flex-col gap-6">
       <div className="overflow-hidden rounded-2xl border border-black/5 bg-white">
-        <div className="h-24 bg-gradient-to-r from-neutral-900 to-purple-900" />
+        <div className="h-24 bg-linear-to-r from-neutral-900 to-purple-900" />
         <div className="flex items-start justify-between px-6 pb-6">
-          <div className="-mt-8 flex items-end gap-4">
+          <div className="-mt-3 flex items-end gap-4">
             <div className="flex h-20 w-20 items-center justify-center rounded-full border-4 border-white bg-purple-600 text-2xl font-bold text-white">
               PM
             </div>
@@ -40,12 +40,12 @@ export default function Profile() {
               <p className="text-sm text-neutral-500">Learner · Joined March 2025</p>
             </div>
           </div>
-          <button type="button" className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-neutral-200 px-3.5 py-1.5 text-sm font-medium text-neutral-700">
+          <button type="button" className="mt-4 inline-flex items-center gap-1.5 rounded-lg border border-neutral-200 px-3.5 py-1.5 text-sm font-medium text-neutral-700">
             <Pencil className="h-3.5 w-3.5" /> Edit profile
           </button>
         </div>
 
-        <div className="grid grid-cols-2 gap-6 border-t border-neutral-100 px-6 py-5 sm:grid-cols-5">
+        <div className="grid grid-cols-2 gap-6 border-t border-neutral-100 px-10 py-5 sm:grid-cols-5">
           <Stat label="Total XP" value={stats.totalXP.toLocaleString()} />
           <Stat label="Level" value={stats.level} />
           <Stat label="Badges" value={earnedBadges.length} />
@@ -63,9 +63,9 @@ export default function Profile() {
         </div>
         <div className="mt-4 flex flex-col gap-4">
           {myPaths.map(({ path, progress }) => (
-            <div key={path.id}>
+            <div key={path.id} className="flex flex-col gap-1">
               <div className="flex items-center justify-between text-sm">
-                <span className="font-medium text-neutral-900">{path.title}</span>
+                <span className="font-medium text-neutral-500">{path.title}</span>
                 <span className="text-neutral-500">{progress.percent}%</span>
               </div>
               <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-neutral-100">
@@ -94,7 +94,7 @@ export default function Profile() {
         <h2 className="text-base font-semibold text-neutral-900">Recent activity</h2>
         <div className="mt-4 flex flex-col gap-4">
           {RECENT_ACTIVITY.map(({ id, icon: Icon, text, time }) => (
-            <div key={id} className="flex items-center gap-3">
+            <div key={id} className="flex items-center gap-3 border-t border-neutral-200 pt-3 first:border-t-0 first:pt-0">
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-purple-50 text-purple-600">
                 <Icon className="h-4 w-4" />
               </div>

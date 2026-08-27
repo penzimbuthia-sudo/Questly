@@ -18,6 +18,7 @@ const MOCK_USERS = [
   { email: 'learner@test.com', password: 'password', name: 'Test Learner', role: 'learner' },
   { email: 'contributor@test.com', password: 'password', name: 'Test Contributor', role: 'contributor' },
   { email: 'admin@test.com', password: 'password', name: 'Test Admin', role: 'admin' },
+  { email: 'chome@test.com', password: 'password', name: 'Test Admin', role: 'admin' },
 ];
 
 function base64url(obj) {
