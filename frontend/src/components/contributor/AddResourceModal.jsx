@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { Modal, FormField, Button } from "@/components/ui";
+import Modal from "../../components/ui/Modal";
+import FormField from "../../components/ui/FormField";
+import Button from "../../components/ui/Button";
 
 export default function AddResourceModal({ onClose, onSubmit }) {
   const [title, setTitle] = useState("");
@@ -14,7 +16,7 @@ export default function AddResourceModal({ onClose, onSubmit }) {
   }
 
   return (
-    <Modal title="Share a new resource" onClose={onClose}>
+    <Modal open={true} title="Share a new resource" onClose={onClose}>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <FormField
           label="Title"

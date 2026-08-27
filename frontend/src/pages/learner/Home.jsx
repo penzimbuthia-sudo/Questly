@@ -8,6 +8,7 @@ import WeeklyChallengeCard from "../../components/learner/WeeklyChallengeCard";
 import BadgeCard from "../../components/learner/BadgeCard";
 import { getAllPaths, getMyPaths, getUserStats, subscribe } from "../../services/learningPathService";
 import { ACHIEVEMENTS } from "../../data/achievements";
+import { useAuth } from "../../hooks/useAuth";
 
 const WEEKLY_CHALLENGE = {
   title: "The 5-day builder",
@@ -27,6 +28,7 @@ const TOP_LEARNERS = [
 
 export default function Home() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [stats, setStats] = useState(getUserStats());
   const [primaryPath, setPrimaryPath] = useState(null);
   const [recommended, setRecommended] = useState([]);
@@ -45,7 +47,7 @@ export default function Home() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-bold text-neutral-900">Welcome back, Penzi</h1>
+        <h1 className="text-2xl font-bold text-neutral-900">Welcome back, {user?.name || "Learner"}</h1>
         <p className="mt-1 text-sm text-neutral-500">
           Keep going, you&apos;re doing amazing. 🔥 {stats.streakDays}-day streak
         </p>
@@ -62,7 +64,7 @@ export default function Home() {
             <h2 className="text-base font-semibold text-neutral-900">Continue learning</h2>
             <button
               type="button"
-              onClick={() => navigate("/paths")}
+              onClick={() => navigate("/learner/paths")}
               className="text-sm font-medium text-purple-600 hover:underline"
             >
               View all
@@ -89,7 +91,7 @@ export default function Home() {
             </div>
             <button
               type="button"
-              onClick={() => navigate(`/paths/${primaryPath.path.id}`)}
+              onClick={() => navigate(`/learner/paths/${primaryPath.path.id}`)}
               className="inline-flex items-center gap-1.5 rounded-lg bg-purple-600 px-4 py-2 text-sm font-semibold text-white"
             >
               <PlayCircle className="h-4 w-4" /> Continue
@@ -101,13 +103,13 @@ export default function Home() {
       <section>
         <div className="flex items-center justify-between">
           <h2 className="text-base font-semibold text-neutral-900">Recommended for you</h2>
-          <button type="button" onClick={() => navigate("/explore")} className="text-sm font-medium text-purple-600 hover:underline">
+          <button type="button" onClick={() => navigate("/learner/explore")} className="text-sm font-medium text-purple-600 hover:underline">
             View all
           </button>
         </div>
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
           {recommended.map((path) => (
-            <LearningPathCard key={path.id} path={path} onOpen={() => navigate(`/paths/${path.id}`)} onStart={() => navigate(`/paths/${path.id}`)} />
+            <LearningPathCard key={path.id} path={path} onOpen={() => navigate(`/learner/paths/${path.id}`)} onStart={() => navigate(`/paths/${path.id}`)} />
           ))}
         </div>
       </section>
@@ -115,7 +117,7 @@ export default function Home() {
       <section className="rounded-2xl border border-black/5 bg-white p-6">
         <div className="flex items-center justify-between">
           <h2 className="text-base font-semibold text-neutral-900">Recent achievements</h2>
-          <button type="button" onClick={() => navigate("/achievements")} className="text-sm font-medium text-purple-600 hover:underline">
+          <button type="button" onClick={() => navigate("/learner/achievements")} className="text-sm font-medium text-purple-600 hover:underline">
             View all
           </button>
         </div>
@@ -126,12 +128,12 @@ export default function Home() {
         </div>
       </section>
 
-      <WeeklyChallengeCard {...WEEKLY_CHALLENGE} onAction={() => navigate("/challenges")} />
+      <WeeklyChallengeCard {...WEEKLY_CHALLENGE} onAction={() => navigate("/learner/challenges")} />
 
       <section className="rounded-2xl border border-black/5 bg-white p-6">
         <div className="flex items-center justify-between">
           <h2 className="text-base font-semibold text-neutral-900">Top learners this week</h2>
-          <button type="button" onClick={() => navigate("/leaderboard")} className="text-sm font-medium text-purple-600 hover:underline">
+          <button type="button" onClick={() => navigate("/learner/leaderboard")} className="text-sm font-medium text-purple-600 hover:underline">
             View all
           </button>
         </div>

@@ -51,6 +51,16 @@ function roleLabel(role) {
  * logout. Mount this as the layout route for everything under /learner
  * instead of <DashboardLayout /> directly.
  */
+function getInitials(name = "") {
+  return name
+    .trim()
+    .split(/\s+/)
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+}
+
 export default function LearnerLayout() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -59,13 +69,14 @@ export default function LearnerLayout() {
   const activeKey = computeActiveKey(location.pathname);
 
   const sidebarUser = {
-    name: user?.name ?? 'Learner',
+    name: user?.name ?? "Learner",
     roleLabel: roleLabel(user?.role),
+    initials: user?.initials || getInitials(user?.name),
   };
 
   const handleLogout = () => {
     logout();
-    navigate('/login', { replace: true });
+    navigate('/', { replace: true });
   };
 
   return (

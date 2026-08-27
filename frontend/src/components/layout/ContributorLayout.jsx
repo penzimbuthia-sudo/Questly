@@ -40,6 +40,16 @@ function roleLabel(role) {
   return role.charAt(0).toUpperCase() + role.slice(1);
 }
 
+function getInitials(name = "") {
+  return name
+    .trim()
+    .split(/\s+/)
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+}
+
 /**
  * ContributorLayout
  * Mirrors LearnerLayout.jsx exactly: supplies <DashboardLayout>'s generic
@@ -55,13 +65,14 @@ export default function ContributorLayout() {
   const activeKey = computeActiveKey(location.pathname);
 
   const sidebarUser = {
-    name: user?.name ?? 'Contributor',
+    name: user?.name ?? "Contributor",
     roleLabel: roleLabel(user?.role),
+    initials: user?.initials || getInitials(user?.name),
   };
 
   const handleLogout = () => {
     logout();
-    navigate('/login', { replace: true });
+    navigate('/', { replace: true });
   };
 
   return (

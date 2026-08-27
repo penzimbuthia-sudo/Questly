@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { FileText, BookOpen, Eye, ThumbsUp } from "lucide-react";
 import { PageHeader } from "@/components/layout";
-import { Card, Button, SectionHeader } from "@/components/ui";
+import { Card, Button, SectionHeader, EmptyState } from "@/components/ui";
 import { AreaChartCard } from "@/components/charts";
 import {
   StatCard, ContentCard, ChallengeCard, ContributorLeaderboard,
@@ -10,6 +10,7 @@ import {
 import { getMyResources, createResource, createLearningPath } from "@/services/resourceService";
 import { getMyStats, getContributorLeaderboard } from "@/services/gamificationService";
 import { sampleChallenges } from "@/data/challenges";
+import { useAuth } from "@/hooks/useAuth";
 
 const chartData = [
   { week: "Wk 1", views: 620 },
@@ -19,16 +20,23 @@ const chartData = [
 ];
 
 export default function Dashboard() {
-  
+  const { user } = useAuth();
+
   const [content, setContent] = useState([]);
-  const [stats, setStats] = useState({ xp: 0, level: 1, resources: 0, upvotes: 0 });
+  const [stats, setStats] = useState({
+    xp: 0,
+    level: 1,
+    resources: 0,
+    upvotes: 0,
+  });
+
   const [leaderboard, setLeaderboard] = useState([]);
 
   const [showResourceModal, setShowResourceModal] = useState(false);
   const [showPathModal, setShowPathModal] = useState(false);
- 
+
   useEffect(() => {
-    getMyResources().then(setContent);
+    getMyResources().then((data) => setContent(data.resources ?? []));
     getMyStats().then(setStats);
     getContributorLeaderboard().then(setLeaderboard);
   }, []);
@@ -48,10 +56,13 @@ export default function Dashboard() {
 
   return (
     <div>
-      <PageHeader title="Welcome back, Penzi" subtitle="Keep sharing. Keep growing." />
+      <PageHeader
+        title={`Welcome back, ${user?.name ?? "Contributor"}`}
+        subtitle="Keep sharing. Keep growing."
+      />
 
       {/* Stat cards */}
-      <div className="grid grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
         <StatCard icon={FileText} label="Resources shared" value={stats.resources} trend="+3 this week" />
         <StatCard icon={BookOpen} label="Learning paths" value={stats.paths || 0} trend="+1 this month" />
         <StatCard icon={Eye} label="Total views" value="1.2k" trend="+18%" />
@@ -93,12 +104,21 @@ export default function Dashboard() {
         {/* Right column: recent content */}
         <div>
           <SectionHeader title="My recent content" />
-          <div className="flex flex-col gap-3">
-            {/* .slice(0, 3) means "only take the first 3 items" */}
-            {content.slice(0, 3).map((item) => (
-              <ContentCard key={item.id} {...item} />
-            ))}
-          </div>
+
+          {content.length > 0 ? (
+            <div className="flex flex-col gap-3">
+              {content.slice(0, 3).map((item) => (
+                <ContentCard key={item.id} {...item} />
+              ))}
+            </div>
+          ) : (
+            <Card className="min-h-55 flex items-center justify-center p-6">
+              <EmptyState
+                title="No content yet"
+                description="Share your first resource or create a learning path to start building your contribution."
+              />
+            </Card>
+          )}
         </div>
       </div>
 

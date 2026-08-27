@@ -2,11 +2,20 @@ import { useState, useEffect } from "react";
 import { Pencil } from "lucide-react";
 import { PageHeader } from "@/components/layout";
 import { Card, Avatar, Button, SectionHeader } from "@/components/ui";
+import { useAuth } from "@/hooks/useAuth";
 
 import { getMyStats, getMyBadges } from "@/services/gamificationService";
 
 export default function Profile() {
-  const [stats, setStats] = useState({ xp: 0, level: 1, resources: 0, paths: 0 });
+  const { user } = useAuth();
+
+  const [stats, setStats] = useState({
+    xp: 0,
+    level: 1,
+    resources: 0,
+    paths: 0,
+  });
+
   const [badges, setBadges] = useState([]);
 
   useEffect(() => {
@@ -19,9 +28,11 @@ export default function Profile() {
       <PageHeader title="Profile" subtitle="How other contributors see you." />
 
       <Card className="p-6 flex items-center gap-5 mb-6">
-        <Avatar name="Penzi M." size={64} />
+        <Avatar name={user?.name ?? "Contributor"} size={64} />
         <div className="flex-1">
-          <div className="text-lg font-bold text-fg">Penzi M.</div>
+          <div className="text-lg font-bold text-fg">
+            {user?.name ?? "Contributor"}
+          </div>
           <div className="text-sm text-fg/50">Contributor · Level {stats.level}</div>
         </div>
         <Button variant="outline" size="sm">

@@ -64,6 +64,7 @@ export default function Sidebar({
             <div className="text-xs text-fg/40 truncate">{user.roleLabel}</div>
           </div>
           <button
+            type="button"
             onClick={onLogout}
             aria-label="Log out"
             className="w-8 h-8 rounded-lg flex items-center justify-center text-fg/40 hover:bg-fg/5 hover:text-fg"
