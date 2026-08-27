@@ -1,25 +1,21 @@
-// src/services/gamificationService.js
-let xp = 0
-let events = []
+import api from "@/services/api";
 
-export const getXP = () => xp
-
-export const getEvents = () => events
-
-export const awardXP = (amount, reason) => {
-  xp += amount
-
-  events.unshift({
-    id: crypto.randomUUID(),
-    amount,
-    reason,
-    timestamp: new Date().toISOString()
-  })
-
-  return xp
+export async function getChallenges() {
+  const response = await api.get("/gamification/challenges");
+  return response.data;
 }
 
-export const resetXP = () => {
-  xp = 0
-  events = []
+export async function getMyBadges() {
+  const response = await api.get("/gamification/badges/me");
+  return response.data;
+}
+
+export async function getContributorLeaderboard() {
+  const response = await api.get("/gamification/leaderboard?role=contributor");
+  return response.data;
+}
+
+export async function getMyStats() {
+  const response = await api.get("/gamification/me/stats");
+  return response.data;
 }
