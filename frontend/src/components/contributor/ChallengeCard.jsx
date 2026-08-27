@@ -1,35 +1,24 @@
-import { Target } from 'lucide-react'
-import XPBar from '../../components/contributor/XPBar'
+import { Target } from "lucide-react";
+import { Card, ProgressBar } from "@/components/ui";
 
-export default function ChallengeCard({ challenge, compact = false }) {
-  const { title, description, progress, total, reward } = challenge
-  const complete = progress >= total
-
+export default function ChallengeCard({ title, description, progress, goal, reward }) {
   return (
-    <div
-      className="rounded-2xl border p-5 flex flex-col gap-3.5"
-      style={{ background: 'var(--color-surface)', borderColor: 'var(--color-border)' }}
-    >
-      <div className="flex items-center gap-2.5">
-        <div
-          className="w-7 h-7 grid place-items-center rounded-full shrink-0"
-          style={{ background: 'rgba(139,92,246,0.16)', color: 'var(--color-violet-400)' }}
-        >
-          <Target size={13.5} strokeWidth={2.5} />
-        </div>
-        <h3 className="font-medium text-[14.5px]">{title}</h3>
+    <Card className="p-5">
+      <div className="flex items-center gap-2 mb-2">
+        <Target size={16} className="text-royal" />
+        <span className="text-sm font-semibold text-fg">{title}</span>
       </div>
 
-      {!compact && (
-        <p className="text-[13px] -mt-1.5" style={{ color: 'var(--color-ink-2)' }}>{description}</p>
-      )}
+      <p className="text-xs text-fg/50 mb-3">{description}</p>
 
-      <XPBar progress={progress} total={total} tone={complete ? 'gold' : 'violet'} />
+      <ProgressBar value={progress} max={goal} color="royal" />
 
-      <div className="flex items-center justify-between text-xs">
-        <span style={{ color: 'var(--color-ink-2)' }}>{progress}/{total} complete</span>
-        <span className="font-semibold" style={{ color: 'var(--color-amber-300)' }}>{reward}</span>
+      <div className="flex items-center justify-between mt-2">
+        <span className="text-[11px] text-fg/40">
+          {progress}/{goal} complete
+        </span>
+        <span className="text-[11px] font-medium text-butter">{reward}</span>
       </div>
-    </div>
-  )
+    </Card>
+  );
 }
