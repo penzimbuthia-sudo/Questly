@@ -1,57 +1,26 @@
-import React from 'react';
-import { Server, Database, HardDrive, Shield, CheckCircle, AlertCircle, XCircle } from 'lucide-react';
-
-const SystemHealthCard = ({ status }) => {
-  const items = [
-    { label: 'Server Status', value: status.server, icon: Server },
-    { label: 'Database', value: status.database, icon: Database },
-    { label: 'Storage', value: status.storage, icon: HardDrive },
-    { label: 'Backup', value: status.backup, icon: Shield },
-  ];
-
-  const getStatusIcon = (value) => {
-    if (value === 'Operational') {
-      return <CheckCircle className="w-4 h-4 text-green-500" />;
-    }
-    if (value.includes('%')) {
-      const num = parseInt(value);
-      if (num > 80) return <AlertCircle className="w-4 h-4 text-yellow-500" />;
-      return <CheckCircle className="w-4 h-4 text-green-500" />;
-    }
-    return <XCircle className="w-4 h-4 text-red-500" />;
+import { CheckCircle, AlertCircle, XCircle } from 'lucide-react';
+export default function SystemHealthCard({ services }) {
+  const getStatusIcon = (status) => {
+    switch(status) { case 'healthy': return <CheckCircle className="text-green-500" size={18} />; case 'warning': return <AlertCircle className="text-yellow-500" size={18} />; case 'down': return <XCircle className="text-red-500" size={18} />; default: return <CheckCircle className="text-green-500" size={18} />; }
   };
-
-  const getStatusColor = (value) => {
-    if (value === 'Operational') return 'text-green-500';
-    if (value.includes('%')) {
-      const num = parseInt(value);
-      if (num > 80) return 'text-yellow-500';
-      return 'text-green-500';
-    }
-    return 'text-red-500';
+  const getStatusColor = (status) => {
+    switch(status) { case 'healthy': return 'bg-green-100 text-green-700'; case 'warning': return 'bg-yellow-100 text-yellow-700'; case 'down': return 'bg-red-100 text-red-700'; default: return 'bg-green-100 text-green-700'; }
   };
-
+  const overallStatus = services.every(s => s.status === 'healthy') ? 'All Systems Operational' : services.some(s => s.status === 'down') ? 'Some Systems Down' : 'Degraded Performance';
+  const overallColor = services.every(s => s.status === 'healthy') ? 'text-green-600' : services.some(s => s.status === 'down') ? 'text-red-600' : 'text-yellow-600';
   return (
-    <div className="space-y-3">
-      {items.map((item, index) => {
-        const Icon = item.icon;
-        return (
-          <div key={index} className="flex items-center justify-between p-3 bg-dark-900 rounded-lg border border-dark-700">
-            <div className="flex items-center gap-3">
-              <Icon className="w-5 h-5 text-dark-400" />
-              <span className="text-dark-300 text-sm">{item.label}</span>
+    <div className="bg-white rounded-xl border border-slate-200 shadow-sm">
+      <div className="px-6 py-4 border-b border-slate-200"><h3 className="text-lg font-semibold text-slate-800">System Health</h3><p className={`text-sm font-medium ${overallColor}`}>{overallStatus}</p></div>
+      <div className="p-6">
+        <div className="space-y-3">
+          {services.map((service, index) => (
+            <div key={index} className="flex items-center justify-between py-2 border-b border-slate-100 last:border-0">
+              <div className="flex items-center gap-3">{getStatusIcon(service.status)}<span className="text-sm font-medium text-slate-700">{service.name}</span></div>
+              <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${getStatusColor(service.status)}`}>{service.status.charAt(0).toUpperCase() + service.status.slice(1)}</span>
             </div>
-            <div className="flex items-center gap-2">
-              {getStatusIcon(item.value)}
-              <span className={`text-sm font-medium ${getStatusColor(item.value)}`}>
-                {item.value}
-              </span>
-            </div>
-          </div>
-        );
-      })}
+          ))}
+        </div>
+      </div>
     </div>
   );
-};
-
-export default SystemHealthCard;
+}
