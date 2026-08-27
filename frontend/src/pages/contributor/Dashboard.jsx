@@ -48,7 +48,7 @@ export default function Dashboard() {
 
   return (
     <div>
-      <PageHeader title="Welcome back, Penzi 👋" subtitle="Keep sharing. Keep growing." />
+      <PageHeader title="Welcome back, Penzi" subtitle="Keep sharing. Keep growing." />
 
       {/* Stat cards */}
       <div className="grid grid-cols-4 gap-4 mb-6">
