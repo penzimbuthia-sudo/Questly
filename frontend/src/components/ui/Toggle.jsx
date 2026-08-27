@@ -17,7 +17,6 @@ export default function Toggle({ on, checked, onChange, disabled = false, label 
         ${isOn ? "bg-royal" : "bg-fg/15"}
         ${disabled ? "opacity-40 cursor-not-allowed" : "cursor-pointer"}`}
     >
-      {/* The little circle that slides left/right */}
       <span
         className="absolute top-0.5 w-5 h-5 rounded-full bg-ivory transition-all"
         style={{ left: isOn ? "18px" : "2px" }}
