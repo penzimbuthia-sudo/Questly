@@ -1,29 +1,25 @@
-// src/routes/contributorRoutes.jsx
-
 import { Route } from "react-router-dom";
+import ContributorLayout from "@/pages/contributor/ContributorLayout";
+import Dashboard from "@/pages/contributor/Dashboard";
+import MyContent from "@/pages/contributor/MyContent";
+import Community from "@/pages/contributor/Community";
+import Challenges from "@/pages/contributor/Challenges";
+import Analytics from "@/pages/contributor/Analytics";
+import Rewards from "@/pages/contributor/Rewards";
+import Profile from "@/pages/contributor/Profile";
+import Settings from "@/pages/contributor/Settings";
 
-// Contributor workspace pages
-import Dashboard from "../../feature/your-name/contributor-workspace/Dashboard";
-import MyContent from "../../feature/your-name/contributor-workspace/MyContent";
-import Community from "../../feature/your-name/contributor-workspace/Community";
-import Challenges from "../../feature/your-name/contributor-workspace/Challenges";
-import Analytics from "../../feature/your-name/contributor-workspace/Analytics";
-import Rewards from "../../feature/your-name/contributor-workspace/Rewards";
-import Profile from "../../feature/your-name/contributor-workspace/Profile";
-import Settings from "../../feature/your-name/contributor-workspace/Settings";
-
-// Optional: If you add contributor layout later
-// import ContributorLayout from "../../feature/your-name/contributor-workspace/ContributorLayout";
-
-export const contributorRoutes = (
-  <>
-    <Route path="/contributor/dashboard" element={<Dashboard />} />
-    <Route path="/contributor/content" element={<MyContent />} />
-    <Route path="/contributor/community" element={<Community />} />
-    <Route path="/contributor/challenges" element={<Challenges />} />
-    <Route path="/contributor/analytics" element={<Analytics />} />
-    <Route path="/contributor/rewards" element={<Rewards />} />
-    <Route path="/contributor/profile" element={<Profile />} />
-    <Route path="/contributor/settings" element={<Settings />} />
-  </>
-);
+export default function ContributorRoutes() {
+  return (
+    <Route path="/contributor" element={<ContributorLayout />}>
+      <Route path="dashboard" element={<Dashboard />} />
+      <Route path="content" element={<MyContent />} />
+      <Route path="community" element={<Community />} />
+      <Route path="challenges" element={<Challenges />} />
+      <Route path="analytics" element={<Analytics />} />
+      <Route path="rewards" element={<Rewards />} />
+      <Route path="profile" element={<Profile />} />
+      <Route path="settings" element={<Settings />} />
+    </Route>
+  );
+}
