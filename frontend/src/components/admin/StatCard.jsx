@@ -1,55 +1,15 @@
-import React from 'react';
-import { clsx } from 'clsx';
-import { TrendingUp, TrendingDown } from 'lucide-react';
-
-const StatCard = ({ 
-  title, 
-  value, 
-  icon: Icon, 
-  change, 
-  changeType = 'up',
-  color = 'primary',
-  subtitle 
-}) => {
-  const colors = {
-    primary: 'bg-primary-500/10 text-primary-500 border-primary-500/20',
-    green: 'bg-green-500/10 text-green-500 border-green-500/20',
-    blue: 'bg-blue-500/10 text-blue-500 border-blue-500/20',
-    purple: 'bg-purple-500/10 text-purple-500 border-purple-500/20',
-    yellow: 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20',
-    red: 'bg-red-500/10 text-red-500 border-red-500/20',
-  };
-
+import { ArrowUp, ArrowDown } from 'lucide-react';
+export default function StatCard({ title, value, icon: Icon, trend, trendValue, color = 'primary' }) {
+  const colors = { primary: 'bg-blue-50 text-blue-600', green: 'bg-green-50 text-green-600', purple: 'bg-purple-50 text-purple-600', orange: 'bg-orange-50 text-orange-600', red: 'bg-red-50 text-red-600', blue: 'bg-blue-50 text-blue-600' };
   return (
-    <div className="bg-dark-800 rounded-xl border border-dark-700 p-6 hover:border-dark-600 transition-all duration-200">
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="text-dark-400 text-sm font-medium">{title}</p>
-          <p className="text-white text-2xl font-bold mt-1">{value}</p>
-          {subtitle && <p className="text-dark-400 text-xs mt-1">{subtitle}</p>}
+    <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className={`w-12 h-12 rounded-xl ${colors[color]} flex items-center justify-center`}><Icon size={24} /></div>
+          <div><p className="text-sm font-medium text-slate-500">{title}</p><p className="text-2xl font-bold text-slate-800">{value}</p></div>
         </div>
-        <div className={clsx('p-3 rounded-xl border', colors[color])}>
-          <Icon className="w-5 h-5" />
-        </div>
+        {trend && <div className={`flex items-center gap-1 text-sm font-medium ${trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>{trend === 'up' ? <ArrowUp size={16} /> : <ArrowDown size={16} />}{trendValue}%</div>}
       </div>
-      {change && (
-        <div className="flex items-center gap-1 mt-4">
-          {changeType === 'up' ? (
-            <TrendingUp className="w-4 h-4 text-green-500" />
-          ) : (
-            <TrendingDown className="w-4 h-4 text-red-500" />
-          )}
-          <span className={clsx(
-            'text-sm font-medium',
-            changeType === 'up' ? 'text-green-500' : 'text-red-500'
-          )}>
-            {change}
-          </span>
-          <span className="text-dark-400 text-sm">vs last month</span>
-        </div>
-      )}
     </div>
   );
-};
-
-export default StatCard;
+}
