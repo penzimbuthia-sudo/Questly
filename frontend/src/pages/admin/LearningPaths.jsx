@@ -1,45 +1,19 @@
+// src/pages/admin/LearningPaths.jsx
 import { useState } from 'react';
-import { Search, Filter, Plus, Edit, Trash2, Eye, Clock, BookOpen, Users, X } from 'lucide-react';
+import { Search, Filter, Plus, Edit, Trash2, BookOpen, Users, X } from 'lucide-react';
+
+// From Person B - UI Components
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 
+// From Person D - Status Enums
+// import { STATUS } from '../../constants/statusEnums';
+
 const initialLearningPaths = [
-  { 
-    id: 1, 
-    title: 'React Developer Path', 
-    modules: 16, 
-    contributor: 'Aisha K.', 
-    enrolled: '2,480', 
-    status: 'Published',
-    color: 'blue'
-  },
-  { 
-    id: 2, 
-    title: 'JavaScript Fundamentals', 
-    modules: 9, 
-    contributor: 'Brian O.', 
-    enrolled: '3,120', 
-    status: 'Published',
-    color: 'green'
-  },
-  { 
-    id: 3, 
-    title: 'Node.js Backend Path', 
-    modules: 18, 
-    contributor: 'Chinedu M.', 
-    enrolled: '1,760', 
-    status: 'Published',
-    color: 'purple'
-  },
-  { 
-    id: 4, 
-    title: 'Full Stack MERN Roadmap', 
-    modules: 24, 
-    contributor: 'Chinedu M.', 
-    enrolled: '—', 
-    status: 'Pending',
-    color: 'yellow'
-  },
+  { id: 1, title: 'React Developer Path', modules: 16, contributor: 'Aisha K.', enrolled: '2,480', status: 'Published', color: 'blue' },
+  { id: 2, title: 'JavaScript Fundamentals', modules: 9, contributor: 'Brian O.', enrolled: '3,120', status: 'Published', color: 'green' },
+  { id: 3, title: 'Node.js Backend Path', modules: 18, contributor: 'Chinedu M.', enrolled: '1,760', status: 'Published', color: 'purple' },
+  { id: 4, title: 'Full Stack MERN Roadmap', modules: 24, contributor: 'Chinedu M.', enrolled: '—', status: 'Pending', color: 'yellow' },
 ];
 
 const getStatusColor = (status) => {
@@ -75,13 +49,7 @@ export default function LearningPaths() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('All');
   const [showAddModal, setShowAddModal] = useState(false);
-  const [newPath, setNewPath] = useState({ 
-    title: '', 
-    modules: '', 
-    contributor: '', 
-    enrolled: '0', 
-    status: 'Pending' 
-  });
+  const [newPath, setNewPath] = useState({ title: '', modules: '', contributor: '', enrolled: '0', status: 'Pending' });
 
   const filteredPaths = learningPaths.filter(path => {
     const matchesSearch = path.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -89,19 +57,6 @@ export default function LearningPaths() {
     const matchesStatus = filterStatus === 'All' || path.status === filterStatus;
     return matchesSearch && matchesStatus;
   });
-
-  const handleSearch = (e) => {
-    e.preventDefault();
-  };
-
-  const handleFilter = () => {
-    alert('Filter options would open here');
-  };
-
-  const handleView = (id) => {
-    const path = learningPaths.find(p => p.id === id);
-    alert(`Viewing: ${path.title}\nModules: ${path.modules}\nContributor: ${path.contributor}\nEnrolled: ${path.enrolled}\nStatus: ${path.status}`);
-  };
 
   const handleEdit = (id) => {
     const path = learningPaths.find(p => p.id === id);
@@ -121,14 +76,12 @@ export default function LearningPaths() {
       alert('Please fill in all required fields');
       return;
     }
-    
     const path = {
       id: learningPaths.length + 1,
       ...newPath,
       enrolled: newPath.enrolled || '0',
       color: newPath.status === 'Published' ? 'blue' : 'yellow'
     };
-    
     setLearningPaths([...learningPaths, path]);
     setShowAddModal(false);
     setNewPath({ title: '', modules: '', contributor: '', enrolled: '0', status: 'Pending' });
@@ -137,15 +90,13 @@ export default function LearningPaths() {
 
   return (
     <div className="space-y-6">
-      {/* Page Header */}
       <div>
         <h1 className="text-2xl font-bold text-slate-800">Learning paths</h1>
         <p className="text-slate-500 mt-1">Structured module sequences built from shared resources.</p>
       </div>
 
-      {/* Search and Filter Bar */}
       <div className="flex flex-col sm:flex-row gap-4">
-        <form onSubmit={handleSearch} className="flex-1 relative">
+        <div className="flex-1 relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
           <input
             type="text"
@@ -154,7 +105,7 @@ export default function LearningPaths() {
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
-        </form>
+        </div>
         <div className="flex gap-2">
           <select
             value={filterStatus}
@@ -166,21 +117,11 @@ export default function LearningPaths() {
             <option value="Pending">Pending</option>
             <option value="Draft">Draft</option>
           </select>
-          <button 
-            onClick={handleFilter}
-            className="px-4 py-2.5 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors flex items-center gap-2 text-sm font-medium text-slate-700"
-          >
-            <Filter size={18} />
-            Filter
-          </button>
-          <Button onClick={() => setShowAddModal(true)} className="flex items-center gap-2">
-            <Plus size={18} />
-            New Path
-          </Button>
+          <Button variant="outline"><Filter size={18} /> Filter</Button>
+          <Button onClick={() => setShowAddModal(true)}><Plus size={18} /> New Path</Button>
         </div>
       </div>
 
-      {/* Table */}
       <Card>
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -196,11 +137,7 @@ export default function LearningPaths() {
             </thead>
             <tbody className="divide-y divide-slate-200">
               {filteredPaths.length === 0 ? (
-                <tr>
-                  <td colSpan="6" className="px-6 py-8 text-center text-slate-500">
-                    No learning paths found matching your criteria
-                  </td>
-                </tr>
+                <tr><td colSpan="6" className="px-6 py-8 text-center text-slate-500">No learning paths found</td></tr>
               ) : (
                 filteredPaths.map((path) => (
                   <tr key={path.id} className="hover:bg-slate-50 transition-colors">
@@ -230,31 +167,13 @@ export default function LearningPaths() {
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <span className={`w-2 h-2 rounded-full ${getStatusDot(path.status)}`}></span>
-                        <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${getStatusColor(path.status)}`}>
-                          {path.status}
-                        </span>
+                        <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${getStatusColor(path.status)}`}>{path.status}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <button 
-                          onClick={() => handleView(path.id)}
-                          className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors text-slate-400 hover:text-slate-600"
-                        >
-                          <Eye size={16} />
-                        </button>
-                        <button 
-                          onClick={() => handleEdit(path.id)}
-                          className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors text-slate-400 hover:text-slate-600"
-                        >
-                          <Edit size={16} />
-                        </button>
-                        <button 
-                          onClick={() => handleDelete(path.id)}
-                          className="p-1.5 hover:bg-red-50 rounded-lg transition-colors text-slate-400 hover:text-red-600"
-                        >
-                          <Trash2 size={16} />
-                        </button>
+                        <Button variant="ghost" size="sm" onClick={() => handleEdit(path.id)}><Edit size={16} /></Button>
+                        <Button variant="ghost" size="sm" onClick={() => handleDelete(path.id)}><Trash2 size={16} /></Button>
                       </div>
                     </td>
                   </tr>
@@ -265,50 +184,16 @@ export default function LearningPaths() {
         </div>
       </Card>
 
-      {/* Stats Footer */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
-          <p className="text-sm text-slate-500">Total Paths</p>
-          <p className="text-2xl font-bold text-slate-800">{learningPaths.length}</p>
-        </div>
-        <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
-          <p className="text-sm text-slate-500">Published</p>
-          <p className="text-2xl font-bold text-green-600">
-            {learningPaths.filter(p => p.status === 'Published').length}
-          </p>
-        </div>
-        <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
-          <p className="text-sm text-slate-500">Pending Review</p>
-          <p className="text-2xl font-bold text-yellow-600">
-            {learningPaths.filter(p => p.status === 'Pending').length}
-          </p>
-        </div>
-        <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
-          <p className="text-sm text-slate-500">Total Enrolled</p>
-          <p className="text-2xl font-bold text-blue-600">
-            {learningPaths.reduce((sum, p) => {
-              const enrolled = p.enrolled === '—' ? 0 : parseInt(p.enrolled.replace(/,/g, ''));
-              return sum + enrolled;
-            }, 0).toLocaleString()}
-          </p>
-        </div>
-      </div>
-
-      {/* Add Learning Path Modal */}
       {showAddModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="absolute inset-0 bg-black/50" onClick={() => setShowAddModal(false)} />
           <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-md p-6 mx-4">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-xl font-semibold text-slate-800">Add New Learning Path</h3>
-              <button 
-                onClick={() => setShowAddModal(false)}
-                className="p-1 hover:bg-slate-100 rounded-lg transition-colors"
-              >
+              <button onClick={() => setShowAddModal(false)} className="p-1 hover:bg-slate-100 rounded-lg transition-colors">
                 <X size={20} className="text-slate-500" />
               </button>
             </div>
-            
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1.5">Title</label>
@@ -353,12 +238,8 @@ export default function LearningPaths() {
                 </select>
               </div>
               <div className="flex gap-3 pt-2">
-                <Button variant="secondary" className="flex-1" onClick={() => setShowAddModal(false)}>
-                  Cancel
-                </Button>
-                <Button variant="primary" className="flex-1" onClick={handleAddPath}>
-                  Add Path
-                </Button>
+                <Button variant="secondary" className="flex-1" onClick={() => setShowAddModal(false)}>Cancel</Button>
+                <Button variant="primary" className="flex-1" onClick={handleAddPath}>Add Path</Button>
               </div>
             </div>
           </div>
