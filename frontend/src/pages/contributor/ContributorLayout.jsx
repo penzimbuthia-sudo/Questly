@@ -30,10 +30,26 @@ export default function ContributorLayout() {
 
   const activeKey = location.pathname.split("/contributor/")[1]?.split("/")[0] || "dashboard";
 
+  const getInitials = (name = "") =>
+  name
+    .trim()
+    .split(/\s+/)
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+
   const currentUser = {
-    name: user?.name || "Penzi M.",
-    roleLabel: "Contributor",
-    initials: user?.initials || "PM",
+    name: user?.name || "Contributor",
+    roleLabel: user?.role
+      ? user.role.charAt(0).toUpperCase() + user.role.slice(1)
+      : "Contributor",
+    initials: user?.initials || getInitials(user?.name),
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate("/", { replace: true });
   };
 
   return (
@@ -44,7 +60,7 @@ export default function ContributorLayout() {
         activeKey: activeKey,
         onNavigate: (key) => navigate(`/contributor/${key}`),
         user: currentUser,
-        onLogout: logout,
+        onLogout: handleLogout,
       }}
       topBarProps={{
         searchPlaceholder: "Search your resources, paths...",
