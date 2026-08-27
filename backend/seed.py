@@ -2,6 +2,7 @@ from app import create_app
 from app.extensions import db
 from app.models.user import User
 
+
 def seed_users():
     """Creates a handful of sample users, one of each role."""
     sample_users = [
