@@ -1,49 +1,19 @@
+// src/pages/admin/Challenges.jsx
 import { useState } from 'react';
-import { Search, Filter, Plus, Edit, Trash2, Eye, Calendar, Users, Trophy, Award, Clock, TrendingUp, X } from 'lucide-react';
+import { Search, Filter, Plus, Edit, Trash2, Users, X } from 'lucide-react';
+
+// From Person B - UI Components
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 
+// From Person D - Gamification Service
+// import { gamificationService } from '../../services/gamificationService';
+
 const initialChallenges = [
-  { 
-    id: 1, 
-    title: 'The 5-day builder', 
-    type: 'Weekly',
-    period: 'This week',
-    participants: '1,840',
-    xp: '500 XP',
-    status: 'Active',
-    color: 'blue'
-  },
-  { 
-    id: 2, 
-    title: 'Data Science Month', 
-    type: 'Monthly',
-    period: 'Aug 1 - Aug 31',
-    participants: '960',
-    xp: '960 XP',
-    status: 'Active',
-    color: 'purple'
-  },
-  { 
-    id: 3, 
-    title: 'Quiz Master Sprint', 
-    type: 'Seasonal',
-    period: 'Sep 1 - Sep 7',
-    participants: '0',
-    xp: '300 XP',
-    status: 'Upcoming',
-    color: 'yellow'
-  },
-  { 
-    id: 4, 
-    title: 'Frontend Frenzy', 
-    type: 'Seasonal',
-    period: 'Jan 2024',
-    participants: '2,210',
-    xp: '450 XP',
-    status: 'Ended',
-    color: 'red'
-  },
+  { id: 1, title: 'The 5-day builder', type: 'Weekly', period: 'This week', participants: '1,840', xp: '500 XP', status: 'Active', color: 'blue' },
+  { id: 2, title: 'Data Science Month', type: 'Monthly', period: 'Aug 1 - Aug 31', participants: '960', xp: '960 XP', status: 'Active', color: 'purple' },
+  { id: 3, title: 'Quiz Master Sprint', type: 'Seasonal', period: 'Sep 1 - Sep 7', participants: '0', xp: '300 XP', status: 'Upcoming', color: 'yellow' },
+  { id: 4, title: 'Frontend Frenzy', type: 'Seasonal', period: 'Jan 2024', participants: '2,210', xp: '450 XP', status: 'Ended', color: 'red' },
 ];
 
 const getStatusColor = (status) => {
@@ -79,7 +49,6 @@ const getColorClass = (color) => {
     case 'purple': return 'bg-purple-100 text-purple-600';
     case 'yellow': return 'bg-yellow-100 text-yellow-600';
     case 'red': return 'bg-red-100 text-red-600';
-    case 'green': return 'bg-green-100 text-green-600';
     default: return 'bg-blue-100 text-blue-600';
   }
 };
@@ -89,33 +58,13 @@ export default function Challenges() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('All');
   const [showAddModal, setShowAddModal] = useState(false);
-  const [newChallenge, setNewChallenge] = useState({ 
-    title: '', 
-    type: 'Weekly', 
-    period: '', 
-    participants: '0', 
-    xp: '0 XP', 
-    status: 'Upcoming' 
-  });
+  const [newChallenge, setNewChallenge] = useState({ title: '', type: 'Weekly', period: '', participants: '0', xp: '0 XP', status: 'Upcoming' });
 
   const filteredChallenges = challenges.filter(challenge => {
     const matchesSearch = challenge.title.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = filterStatus === 'All' || challenge.status === filterStatus;
     return matchesSearch && matchesStatus;
   });
-
-  const handleSearch = (e) => {
-    e.preventDefault();
-  };
-
-  const handleFilter = () => {
-    alert('Filter options would open here');
-  };
-
-  const handleView = (id) => {
-    const challenge = challenges.find(c => c.id === id);
-    alert(`Viewing: ${challenge.title}\nType: ${challenge.type}\nPeriod: ${challenge.period}\nParticipants: ${challenge.participants}\nReward: ${challenge.xp}\nStatus: ${challenge.status}`);
-  };
 
   const handleEdit = (id) => {
     const challenge = challenges.find(c => c.id === id);
@@ -135,13 +84,11 @@ export default function Challenges() {
       alert('Please fill in all required fields');
       return;
     }
-    
     const challenge = {
       id: challenges.length + 1,
       ...newChallenge,
       color: newChallenge.status === 'Active' ? 'blue' : newChallenge.status === 'Upcoming' ? 'yellow' : 'red'
     };
-    
     setChallenges([...challenges, challenge]);
     setShowAddModal(false);
     setNewChallenge({ title: '', type: 'Weekly', period: '', participants: '0', xp: '0 XP', status: 'Upcoming' });
@@ -150,15 +97,13 @@ export default function Challenges() {
 
   return (
     <div className="space-y-6">
-      {/* Page Header */}
       <div>
         <h1 className="text-2xl font-bold text-slate-800">Challenges</h1>
         <p className="text-slate-500 mt-1">Weekly, monthly, and seasonal events that drive engagement.</p>
       </div>
 
-      {/* Search and Filter Bar */}
       <div className="flex flex-col sm:flex-row gap-4">
-        <form onSubmit={handleSearch} className="flex-1 relative">
+        <div className="flex-1 relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
           <input
             type="text"
@@ -167,7 +112,7 @@ export default function Challenges() {
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
-        </form>
+        </div>
         <div className="flex gap-2">
           <select
             value={filterStatus}
@@ -179,21 +124,11 @@ export default function Challenges() {
             <option value="Upcoming">Upcoming</option>
             <option value="Ended">Ended</option>
           </select>
-          <button 
-            onClick={handleFilter}
-            className="px-4 py-2.5 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors flex items-center gap-2 text-sm font-medium text-slate-700"
-          >
-            <Filter size={18} />
-            Filter
-          </button>
-          <Button onClick={() => setShowAddModal(true)} className="flex items-center gap-2">
-            <Plus size={18} />
-            New Challenge
-          </Button>
+          <Button variant="outline"><Filter size={18} /> Filter</Button>
+          <Button onClick={() => setShowAddModal(true)}><Plus size={18} /> New Challenge</Button>
         </div>
       </div>
 
-      {/* Challenge Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {filteredChallenges.length === 0 ? (
           <div className="col-span-2 bg-white rounded-xl border border-slate-200 p-8 text-center">
@@ -225,7 +160,6 @@ export default function Challenges() {
                     </span>
                   </div>
                 </div>
-
                 <div className="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-slate-100">
                   <div className="flex items-center gap-2">
                     <Users size={16} className="text-slate-400" />
@@ -234,81 +168,31 @@ export default function Challenges() {
                       <p className="text-sm font-semibold text-slate-800">{challenge.participants}</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Trophy size={16} className="text-slate-400" />
-                    <div>
-                      <p className="text-xs text-slate-500">Reward</p>
-                      <p className="text-sm font-semibold text-slate-800">{challenge.xp}</p>
-                    </div>
+                  <div>
+                    <p className="text-xs text-slate-500">Reward</p>
+                    <p className="text-sm font-semibold text-slate-800">{challenge.xp}</p>
                   </div>
                 </div>
               </Card.Body>
               <Card.Footer className="flex justify-end gap-2">
-                <button 
-                  onClick={() => handleView(challenge.id)}
-                  className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors text-slate-400 hover:text-slate-600"
-                >
-                  <Eye size={16} />
-                </button>
-                <button 
-                  onClick={() => handleEdit(challenge.id)}
-                  className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors text-slate-400 hover:text-slate-600"
-                >
-                  <Edit size={16} />
-                </button>
-                <button 
-                  onClick={() => handleDelete(challenge.id)}
-                  className="p-1.5 hover:bg-red-50 rounded-lg transition-colors text-slate-400 hover:text-red-600"
-                >
-                  <Trash2 size={16} />
-                </button>
+                <Button variant="ghost" size="sm" onClick={() => handleEdit(challenge.id)}><Edit size={16} /></Button>
+                <Button variant="ghost" size="sm" onClick={() => handleDelete(challenge.id)}><Trash2 size={16} /></Button>
               </Card.Footer>
             </Card>
           ))
         )}
       </div>
 
-      {/* Stats Footer */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
-          <p className="text-sm text-slate-500">Total Challenges</p>
-          <p className="text-2xl font-bold text-slate-800">{challenges.length}</p>
-        </div>
-        <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
-          <p className="text-sm text-slate-500">Active</p>
-          <p className="text-2xl font-bold text-green-600">
-            {challenges.filter(c => c.status === 'Active').length}
-          </p>
-        </div>
-        <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
-          <p className="text-sm text-slate-500">Upcoming</p>
-          <p className="text-2xl font-bold text-yellow-600">
-            {challenges.filter(c => c.status === 'Upcoming').length}
-          </p>
-        </div>
-        <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
-          <p className="text-sm text-slate-500">Total Participants</p>
-          <p className="text-2xl font-bold text-blue-600">
-            {challenges.reduce((sum, c) => sum + parseInt(c.participants.replace(/,/g, '') || 0), 0).toLocaleString()}
-          </p>
-        </div>
-      </div>
-
-      {/* Add Challenge Modal */}
       {showAddModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="absolute inset-0 bg-black/50" onClick={() => setShowAddModal(false)} />
           <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-md p-6 mx-4">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-xl font-semibold text-slate-800">Add New Challenge</h3>
-              <button 
-                onClick={() => setShowAddModal(false)}
-                className="p-1 hover:bg-slate-100 rounded-lg transition-colors"
-              >
+              <button onClick={() => setShowAddModal(false)} className="p-1 hover:bg-slate-100 rounded-lg transition-colors">
                 <X size={20} className="text-slate-500" />
               </button>
             </div>
-            
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1.5">Title</label>
@@ -338,7 +222,7 @@ export default function Challenges() {
                   type="text"
                   value={newChallenge.period}
                   onChange={(e) => setNewChallenge({ ...newChallenge, period: e.target.value })}
-                  placeholder="e.g., This week, Jan 2024, Aug 1 - Aug 31"
+                  placeholder="e.g., This week, Jan 2024"
                   className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -375,12 +259,8 @@ export default function Challenges() {
                 </select>
               </div>
               <div className="flex gap-3 pt-2">
-                <Button variant="secondary" className="flex-1" onClick={() => setShowAddModal(false)}>
-                  Cancel
-                </Button>
-                <Button variant="primary" className="flex-1" onClick={handleAddChallenge}>
-                  Add Challenge
-                </Button>
+                <Button variant="secondary" className="flex-1" onClick={() => setShowAddModal(false)}>Cancel</Button>
+                <Button variant="primary" className="flex-1" onClick={handleAddChallenge}>Add Challenge</Button>
               </div>
             </div>
           </div>
