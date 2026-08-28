@@ -49,3 +49,22 @@ def register():
     )
 
     return success_response({"token": token, "user": user.to_dict()}, 201)
+
+@auth_bp.route("/login", methods=["POST"])
+def login():
+    try:
+        payload = login_schema.load(request.get_json() or {})
+    except ValidationError as err:
+        return error_response(err.messages, 422)
+
+    user = User.query.filter_by(email=payload["email"]).first()
+
+    if not user or not user.check_password(payload["password"]):
+        return error_response("Incorrect email or password.", 401)
+
+    token = create_access_token(
+        identity=user.id,
+        additional_claims={"role": user.role, "name": user.name, "email": user.email},
+    )
+
+    return success_response({"token": token, "user": user.to_dict()})
