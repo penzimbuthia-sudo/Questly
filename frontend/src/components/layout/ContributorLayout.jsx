@@ -1,3 +1,4 @@
+import { useState } from 'react'; // ← add useState to this import
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -12,6 +13,8 @@ import {
 import DashboardLayout from './DashboardLayout';
 import Logo from '../ui/Logo';
 import { useAuth } from '../../hooks/useAuth';
+import AddResourceModal from '../contributor/AddResourceModal'; // ← new import
+import { createResource } from '../../services/resourceService'; // ← new import
 
 const NAV_ITEMS = [
   { key: '/contributor', label: 'Dashboard', icon: LayoutDashboard },
@@ -27,8 +30,6 @@ const ACCOUNT_ITEMS = [
   { key: '/contributor/settings', label: 'Settings', icon: Settings },
 ];
 
-/** Longest matching key wins, so nested contributor routes stay
- *  correctly highlighted while `/contributor` only matches itself. */
 function computeActiveKey(pathname) {
   const all = [...NAV_ITEMS, ...ACCOUNT_ITEMS].sort((a, b) => b.key.length - a.key.length);
   const match = all.find((item) => pathname === item.key || pathname.startsWith(`${item.key}/`));
@@ -50,17 +51,11 @@ function getInitials(name = "") {
     .toUpperCase();
 }
 
-/**
- * ContributorLayout
- * Mirrors LearnerLayout.jsx exactly: supplies <DashboardLayout>'s generic
- * <Sidebar>/<TopBar> with contributor-specific nav, active-route
- * highlighting, navigation, the signed-in user, and logout. Mount this as
- * the layout route for everything under /contributor.
- */
 export default function ContributorLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuth();
+  const [showResourceModal, setShowResourceModal] = useState(false); // ← new state
 
   const activeKey = computeActiveKey(location.pathname);
 
@@ -75,21 +70,40 @@ export default function ContributorLayout() {
     navigate('/', { replace: true });
   };
 
+  // ← new function
+  async function handleAddResource(payload) {
+    setShowResourceModal(false);
+    try {
+      await createResource(payload);
+    } catch {
+      // backend not ready yet — modal already closed either way
+    }
+    navigate('/contributor/my-content');
+  }
+
   return (
-    <DashboardLayout
-      sidebarProps={{
-        logo: <Logo size="md" />,
-        groups: [{ items: NAV_ITEMS }, { label: 'Account', items: ACCOUNT_ITEMS }],
-        activeKey,
-        onNavigate: (key) => navigate(key),
-        user: sidebarUser,
-        onLogout: handleLogout,
-      }}
-      topBarProps={{
-        searchPlaceholder: 'Search your content, paths, resources…',
-        notificationCount: 0,
-        user: sidebarUser,
-      }}
-    />
+    // ← wrapped in a fragment so the modal can render as a sibling of DashboardLayout
+    <>
+      <DashboardLayout
+        theme="contributor"
+        sidebarProps={{
+          logo: <Logo size="md" />,
+          groups: [{ items: NAV_ITEMS }, { label: 'Account', items: ACCOUNT_ITEMS }],
+          activeKey,
+          onNavigate: (key) => navigate(key),
+          user: sidebarUser,
+          onLogout: handleLogout,
+        }}
+        topBarProps={{
+          searchPlaceholder: 'Search your content, paths, resources…', // ← replaced this whole block
+          user: sidebarUser,
+          onLogout: handleLogout,
+          action: { label: 'New resource', onClick: () => setShowResourceModal(true) },
+        }}
+      />
+      {showResourceModal && (
+        <AddResourceModal onClose={() => setShowResourceModal(false)} onSubmit={handleAddResource} />
+      )}
+    </>
   );
 }

@@ -2,22 +2,16 @@ import { useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { X } from 'lucide-react'
 
-// Accepts both `open` (contributor's Add/CreatePathModal) and `isOpen`
-// (admin's EditStatusModal) so this one component works for both sectors
-// without either side needing to change how they call it.
 export default function Modal({ open, isOpen, onClose, title, children }) {
   const visible = open ?? isOpen ?? false
 
   useEffect(() => {
     if (!visible) return
-
     const handleKey = (e) => {
       if (e.key === 'Escape') onClose?.()
     }
-
     document.addEventListener('keydown', handleKey)
     document.body.style.overflow = 'hidden'
-
     return () => {
       document.removeEventListener('keydown', handleKey)
       document.body.style.overflow = ''
@@ -37,12 +31,11 @@ export default function Modal({ open, isOpen, onClose, title, children }) {
         aria-modal="true"
         aria-labelledby={title ? 'modal-title' : undefined}
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-md rounded-2xl border p-6 shadow-xl max-h-[90vh] overflow-y-auto"
-        style={{ background: 'var(--color-surface)', borderColor: 'var(--color-border)' }}
+        className="w-full max-w-md rounded-2xl border border-line/10 bg-card p-6 shadow-xl max-h-[90vh] overflow-y-auto"
       >
         <div className="flex items-center justify-between mb-5">
           {title && (
-            <h2 id="modal-title" className="font-display font-semibold text-[16px]">
+            <h2 id="modal-title" className="font-semibold text-[16px] text-fg">
               {title}
             </h2>
           )}
@@ -50,7 +43,7 @@ export default function Modal({ open, isOpen, onClose, title, children }) {
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="focus-ring grid place-items-center w-8 h-8 rounded-lg ml-auto text-(--color-ink-3) hover:text-white hover:bg-(--color-surface-hover)"
+            className="grid place-items-center w-8 h-8 rounded-lg ml-auto text-fg/40 hover:text-fg hover:bg-page transition-colors"
           >
             <X size={16} />
           </button>
