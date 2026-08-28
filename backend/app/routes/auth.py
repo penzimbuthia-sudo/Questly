@@ -68,3 +68,23 @@ def login():
     )
 
     return success_response({"token": token, "user": user.to_dict()})
+
+@auth_bp.route("/forgot-password", methods=["POST"])
+def forgot_password():
+    try:
+        payload = forgot_password_schema.load(request.get_json() or {})
+    except ValidationError as err:
+        return error_response(err.messages, 422)
+
+    user = User.query.filter_by(email=payload["email"]).first()
+
+    # Always respond the same way whether or not the email exists — this
+    # prevents leaking which emails are registered, a standard requirement
+    # for "forgot password" flows.
+    if user:
+        reset_token = PasswordResetToken(user_id=user.id)
+        db.session.add(reset_token)
+        db.session.commit()
+        send_password_reset_email(user, reset_token.token)
+
+    return success_response({"message": "If that email exists, a reset link has been sent."})
