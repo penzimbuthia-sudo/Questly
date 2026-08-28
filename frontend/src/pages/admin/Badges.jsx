@@ -120,7 +120,7 @@ export default function Badges() {
               <Card key={badge.id} className={`hover:shadow-md transition-shadow border-l-4 ${getBorderColor(badge.color)}`}>
                 <Card.Body>
                   <div className="flex items-start gap-3">
-                    <div className={`w-12 h-12 rounded-xl ${getColorClass(badge.color)} flex items-center justify-center flex-shrink-0`}>
+                    <div className={`w-12 h-12 rounded-xl ${getColorClass(badge.color)} flex items-center justify-center shrink-0`}>
                       <Icon size={24} />
                     </div>
                     <div className="flex-1">
