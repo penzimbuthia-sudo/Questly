@@ -107,7 +107,6 @@ export default function AdminLayout() {
         user: sidebarUser,
       }}
     >
-      <Outlet />
     </DashboardLayout>
   );
 }
