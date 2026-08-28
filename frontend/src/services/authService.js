@@ -11,6 +11,7 @@ export function decodeToken(token) {
 }
 
 const USE_MOCK = import.meta.env.VITE_USE_MOCK_AUTH === 'true';
+   console.log("USE_MOCK is:", USE_MOCK);
 
 // Seeded accounts so you can test each role's dashboard directly.
 // Any other email/password combo on login falls back to role "learner".
