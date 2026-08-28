@@ -23,3 +23,16 @@ class Config:
 
     # Used to build the password-reset link sent in the email.
     FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:5173")
+
+class DevelopmentConfig(Config):
+    DEBUG = True
+
+
+class ProductionConfig(Config):
+    DEBUG = False
+
+
+config_by_name = {
+    "development": DevelopmentConfig,
+    "production": ProductionConfig,
+}
