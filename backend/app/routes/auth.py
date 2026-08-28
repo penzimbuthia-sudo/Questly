@@ -12,3 +12,10 @@ from app.schemas.user_schema import (
     ResetPasswordSchema,
 )
 from app.services.email_service import send_password_reset_email
+
+auth_bp = Blueprint("auth", __name__)
+
+register_schema = RegisterSchema()
+login_schema = LoginSchema()
+forgot_password_schema = ForgotPasswordSchema()
+reset_password_schema = ResetPasswordSchema()
