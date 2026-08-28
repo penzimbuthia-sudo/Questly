@@ -12,8 +12,8 @@ import {
   ScrollText,
   Settings,
 } from "lucide-react";
-
 import DashboardLayout from "./DashboardLayout";
+import Logo from "../ui/Logo";
 import { useAuth } from "../../hooks/useAuth";
 
 const NAV_ITEMS = [
@@ -89,18 +89,19 @@ export default function AdminLayout() {
     <DashboardLayout
       theme="admin"
       sidebarProps={{
-        groups: [
-          { items: NAV_ITEMS },
-          {
-            label: "Account",
-            items: ACCOUNT_ITEMS,
-          },
-        ],
-        activeKey,
-        onNavigate: (key) => navigate(key),
-        user: sidebarUser,
-        onLogout: handleLogout,
-      }}
+      logo: <Logo size="md" />,
+      groups: [
+        { items: NAV_ITEMS },
+        {
+          label: "Account",
+          items: ACCOUNT_ITEMS,
+        },
+      ],
+      activeKey,
+      onNavigate: (key) => navigate(key),
+      user: sidebarUser,
+      onLogout: handleLogout,
+    }}
       topBarProps={{
         searchPlaceholder: "Search users, resources, paths...",
         notificationCount: 0,
