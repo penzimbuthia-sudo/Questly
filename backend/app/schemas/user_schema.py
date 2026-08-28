@@ -18,3 +18,7 @@ class RegisterSchema(Schema):
         validate=validate.OneOf(["learner", "contributor"]),
     )
 
+class LoginSchema(Schema):
+    email = fields.Email(required=True)
+    password = fields.String(required=True)
+
