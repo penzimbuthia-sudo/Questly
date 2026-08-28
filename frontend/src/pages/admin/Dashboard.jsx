@@ -6,9 +6,6 @@ import { Users, BookOpen, MapPin, CheckCircle, XCircle, TrendingUp } from 'lucid
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 
-// From Person A - Auth (if needed for user info)
-import { useAuth } from '../../context/AuthContext';
-
 const stats = [
   { title: 'Total users', value: '8,428', change: '+12.4%', icon: Users },
   { title: 'Active users', value: '2,341', change: '+18.6%', icon: Users },
