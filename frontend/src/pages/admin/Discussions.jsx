@@ -144,7 +144,7 @@ export default function Discussions() {
                   <tr key={discussion.id} className="hover:bg-slate-50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-lg ${getColorClass(discussion.color)} flex items-center justify-center font-semibold text-sm flex-shrink-0`}>
+                        <div className={`w-10 h-10 rounded-lg ${getColorClass(discussion.color)} flex items-center justify-center font-semibold text-sm shrink-0`}>
                           <MessageSquare size={18} />
                         </div>
                         <span className="font-medium text-slate-800">{discussion.title}</span>

@@ -1,6 +1,7 @@
 // src/pages/admin/Dashboard.jsx
 import { useState } from 'react';
 import { Users, BookOpen, MapPin, CheckCircle, XCircle, TrendingUp } from 'lucide-react';
+import { useAuth } from '../../hooks/useAuth';
 
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
@@ -25,6 +26,7 @@ const roleData = [
 ];
 
 export default function Dashboard() {
+  const { user } = useAuth();
   const [reviewStatus, setReviewStatus] = useState({});
 
   const handleApprove = (id) => {
@@ -42,7 +44,7 @@ export default function Dashboard() {
   return (
     <div className="space-y-6">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-fg">Good afternoon, Penzi 🏅</h1>
+        <h1 className="text-2xl font-bold text-fg">Good afternoon, {user?.name || "Admin"}</h1>
         <p className="text-ink-2">Here's what's happening across Questly today.</p>
       </div>
 
