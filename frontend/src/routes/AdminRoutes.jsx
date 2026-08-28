@@ -22,8 +22,8 @@ import DashboardLayout from '../components/layout/DashboardLayout';
 
 export default function AdminRoutes() {
   return (
-    <ProtectedRoute allowedRoles={['admin']}>
-      <RoleRoute allowedRoles={['admin']}>
+    <ProtectedRoute>
+      <RoleRoute>
         <DashboardLayout>
           <Routes>
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
