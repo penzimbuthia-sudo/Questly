@@ -15,7 +15,7 @@ export default function ContributorRoutes() {
     <Routes>
       <Route element={<ContributorLayout />}>
         <Route index element={<Dashboard />} />
-        <Route path="content" element={<MyContent />} />
+        <Route path="my-content" element={<MyContent />} />
         <Route path="community" element={<Community />} />
         <Route path="challenges" element={<Challenges />} />
         <Route path="analytics" element={<Analytics />} />

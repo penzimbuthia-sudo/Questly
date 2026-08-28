@@ -1,7 +1,20 @@
+// src/pages/admin/Users.jsx
 import { useState } from 'react';
 import { Search, Filter, UserPlus, Edit, Trash2, Shield, Mail, X } from 'lucide-react';
+
+// From Person B - UI Components
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
+import { Table, TableHead, TableBody, TableRow, TableCell } from '../../components/ui/Table';
+
+// From Person D - Status Enums
+// import { STATUS } from '../../constants/statusEnums';
+
+// From Person A - Auth (if needed)
+import { useAuth } from '../../context/AuthContext';
+
+// From your own service
+// import { userService } from '../../services/userService';
 
 const initialUsers = [
   { id: 1, name: 'John Doe', email: 'john@example.com', role: 'Admin', status: 'Active', joined: '2024-01-15' },
@@ -35,7 +48,6 @@ export default function Users() {
   const [filterRole, setFilterRole] = useState('All');
   const [showAddModal, setShowAddModal] = useState(false);
   const [newUser, setNewUser] = useState({ name: '', email: '', role: 'Learner', status: 'Active' });
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(null);
 
   const filteredUsers = users.filter(user => {
     const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -44,54 +56,27 @@ export default function Users() {
     return matchesSearch && matchesRole;
   });
 
-  // Handle search
-  const handleSearch = (e) => {
-    e.preventDefault();
-    // Search is already handled by the onChange
-  };
-
-  // Handle filter
-  const handleFilter = () => {
-    alert('🔍 Filter options would open here');
-  };
-
-  // Handle add user
   const handleAddUser = () => {
     if (!newUser.name.trim() || !newUser.email.trim()) {
       alert('Please fill in all fields');
       return;
     }
-    
     const user = {
       id: users.length + 1,
       ...newUser,
       joined: new Date().toISOString().split('T')[0]
     };
-    
     setUsers([...users, user]);
     setShowAddModal(false);
     setNewUser({ name: '', email: '', role: 'Learner', status: 'Active' });
-    alert(`✅ User "${user.name}" added successfully!`);
+    alert(`User "${user.name}" added successfully!`);
   };
 
-  // Handle edit user
-  const handleEdit = (id) => {
-    const user = users.find(u => u.id === id);
-    alert(`✏️ Edit user: ${user.name}\nEmail: ${user.email}\nRole: ${user.role}\nStatus: ${user.status}`);
-  };
-
-  // Handle shield/permissions
-  const handlePermissions = (id) => {
-    const user = users.find(u => u.id === id);
-    alert(`🔒 Manage permissions for: ${user.name}\nCurrent Role: ${user.role}\nStatus: ${user.status}`);
-  };
-
-  // Handle delete user
   const handleDelete = (id) => {
     const user = users.find(u => u.id === id);
     if (window.confirm(`Are you sure you want to delete ${user.name}?`)) {
       setUsers(users.filter(u => u.id !== id));
-      alert(`🗑️ User "${user.name}" deleted successfully!`);
+      alert(`User "${user.name}" deleted successfully!`);
     }
   };
 
@@ -103,27 +88,25 @@ export default function Users() {
           <p className="text-slate-500">Manage all users on the platform</p>
         </div>
         <Button onClick={() => setShowAddModal(true)}>
-          <UserPlus size={18} className="mr-2" />
-          Add User
+          <UserPlus size={18} className="mr-2" /> Add User
         </Button>
       </div>
 
-      {/* Search and Filter */}
       <div className="flex flex-col sm:flex-row gap-4 mb-6">
-        <form onSubmit={handleSearch} className="flex-1 relative">
+        <div className="flex-1 relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-          <input 
-            type="text" 
-            placeholder="Search users..." 
-            value={searchTerm} 
-            onChange={(e) => setSearchTerm(e.target.value)} 
-            className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+          <input
+            type="text"
+            placeholder="Search users..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-        </form>
+        </div>
         <div className="flex gap-2">
-          <select 
-            value={filterRole} 
-            onChange={(e) => setFilterRole(e.target.value)} 
+          <select
+            value={filterRole}
+            onChange={(e) => setFilterRole(e.target.value)}
             className="px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
           >
             <option value="All">All Roles</option>
@@ -131,16 +114,12 @@ export default function Users() {
             <option value="Contributor">Contributor</option>
             <option value="Learner">Learner</option>
           </select>
-          <button 
-            onClick={handleFilter}
-            className="px-4 py-2 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
-          >
+          <Button variant="outline">
             <Filter size={18} className="text-slate-600" />
-          </button>
+          </Button>
         </div>
       </div>
 
-      {/* Users Table */}
       <Card>
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -154,65 +133,35 @@ export default function Users() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">
-              {filteredUsers.length === 0 ? (
-                <tr>
-                  <td colSpan="5" className="px-6 py-8 text-center text-slate-500">
-                    No users found matching your criteria
+              {filteredUsers.map((user) => (
+                <tr key={user.id} className="hover:bg-slate-50 transition-colors">
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-semibold text-sm">
+                        {user.name.split(' ').map(n => n[0]).join('')}
+                      </div>
+                      <div>
+                        <p className="font-medium text-slate-800">{user.name}</p>
+                        <p className="text-sm text-slate-500 flex items-center gap-1"><Mail size={14} />{user.email}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${getRoleColor(user.role)}`}>{user.role}</span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${getStatusColor(user.status)}`}>{user.status}</span>
+                  </td>
+                  <td className="px-6 py-4 text-sm text-slate-600">{user.joined}</td>
+                  <td className="px-6 py-4 text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      <Button variant="ghost" size="sm"><Edit size={16} /></Button>
+                      <Button variant="ghost" size="sm"><Shield size={16} /></Button>
+                      <Button variant="ghost" size="sm" onClick={() => handleDelete(user.id)}><Trash2 size={16} /></Button>
+                    </div>
                   </td>
                 </tr>
-              ) : (
-                filteredUsers.map((user) => (
-                  <tr key={user.id} className="hover:bg-slate-50 transition-colors">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-semibold text-sm">
-                          {user.name.split(' ').map(n => n[0]).join('')}
-                        </div>
-                        <div>
-                          <p className="font-medium text-slate-800">{user.name}</p>
-                          <p className="text-sm text-slate-500 flex items-center gap-1">
-                            <Mail size={14} />
-                            {user.email}
-                          </p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${getRoleColor(user.role)}`}>
-                        {user.role}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${getStatusColor(user.status)}`}>
-                        {user.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-slate-600">{user.joined}</td>
-                    <td className="px-6 py-4 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <button 
-                          onClick={() => handleEdit(user.id)}
-                          className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors text-slate-400 hover:text-slate-600"
-                        >
-                          <Edit size={16} />
-                        </button>
-                        <button 
-                          onClick={() => handlePermissions(user.id)}
-                          className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors text-slate-400 hover:text-slate-600"
-                        >
-                          <Shield size={16} />
-                        </button>
-                        <button 
-                          onClick={() => handleDelete(user.id)}
-                          className="p-1.5 hover:bg-red-50 rounded-lg transition-colors text-slate-400 hover:text-red-600"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
+              ))}
             </tbody>
           </table>
         </div>
@@ -225,14 +174,10 @@ export default function Users() {
           <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-md p-6 mx-4">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-xl font-semibold text-slate-800">Add New User</h3>
-              <button 
-                onClick={() => setShowAddModal(false)}
-                className="p-1 hover:bg-slate-100 rounded-lg transition-colors"
-              >
+              <button onClick={() => setShowAddModal(false)} className="p-1 hover:bg-slate-100 rounded-lg transition-colors">
                 <X size={20} className="text-slate-500" />
               </button>
             </div>
-            
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1.5">Full Name</label>
@@ -279,12 +224,8 @@ export default function Users() {
                 </select>
               </div>
               <div className="flex gap-3 pt-2">
-                <Button variant="secondary" className="flex-1" onClick={() => setShowAddModal(false)}>
-                  Cancel
-                </Button>
-                <Button variant="primary" className="flex-1" onClick={handleAddUser}>
-                  Add User
-                </Button>
+                <Button variant="secondary" className="flex-1" onClick={() => setShowAddModal(false)}>Cancel</Button>
+                <Button variant="primary" className="flex-1" onClick={handleAddUser}>Add User</Button>
               </div>
             </div>
           </div>

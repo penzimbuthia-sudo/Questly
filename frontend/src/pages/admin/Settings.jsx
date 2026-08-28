@@ -1,264 +1,243 @@
+// src/pages/admin/Settings.jsx
 import { useState } from 'react';
-import { Shield, Flag, RotateCw, Award, Power, Save, Edit, Eye, Clock, Users, FileText, MessageSquare, MapPin, Trophy, Settings as SettingsIcon, X } from 'lucide-react';
+import { Save, RefreshCw, Globe, Users, Bell, Shield, Database, Mail, Moon, Sun } from 'lucide-react';
+
+// From Person B - UI Components
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
+import Toggle from '../../components/ui/Toggle';
 
-const initialSettings = [
-  { 
-    id: 1, 
-    title: 'Require review before publishing', 
-    description: 'Contributor resources and paths truly pending until approved.',
-    icon: Shield,
-    status: 'Active',
-    color: 'blue'
-  },
-  { 
-    id: 2, 
-    title: 'Auto-flag reported content after 3 reports', 
-    description: 'Escalates a thread or resource to the region\'s queue automatically.',
-    icon: Flag,
-    status: 'Active',
-    color: 'green'
-  },
-  { 
-    id: 3, 
-    title: 'Weekly leaderboard reset', 
-    description: 'Points reset every Monday at 00:00; all time totals are kept.',
-    icon: RotateCw,
-    status: 'Active',
-    color: 'purple'
-  },
-  { 
-    id: 4, 
-    title: 'Seasonal event badges', 
-    description: 'Show timebox time badges on profiles after the event ends.',
-    icon: Award,
-    status: 'Inactive',
-    color: 'yellow'
-  },
-  { 
-    id: 5, 
-    title: 'Maintenance mode', 
-    description: 'Takes the platform offline for learners while keeping admin access.',
-    icon: Power,
-    status: 'Inactive',
-    color: 'red'
-  },
-];
+// From Person A - Auth
+import { useAuth } from '../../context/AuthContext';
 
-const getStatusColor = (status) => {
-  switch(status) {
-    case 'Active': return 'bg-green-100 text-green-700';
-    case 'Inactive': return 'bg-red-100 text-red-700';
-    case 'Pending': return 'bg-yellow-100 text-yellow-700';
-    default: return 'bg-slate-100 text-slate-700';
-  }
-};
-
-const getStatusDot = (status) => {
-  switch(status) {
-    case 'Active': return 'bg-green-500';
-    case 'Inactive': return 'bg-red-500';
-    case 'Pending': return 'bg-yellow-500';
-    default: return 'bg-slate-500';
-  }
-};
-
-const getColorClass = (color) => {
-  switch(color) {
-    case 'blue': return 'bg-blue-100 text-blue-600';
-    case 'green': return 'bg-green-100 text-green-600';
-    case 'purple': return 'bg-purple-100 text-purple-600';
-    case 'yellow': return 'bg-yellow-100 text-yellow-600';
-    case 'red': return 'bg-red-100 text-red-600';
-    default: return 'bg-blue-100 text-blue-600';
-  }
+const initialSettings = {
+  siteName: 'Questly',
+  siteDescription: 'Learn through community-driven challenges',
+  language: 'en',
+  theme: 'light',
+  allowRegistration: true,
+  requireEmailVerification: true,
+  enableNotifications: true,
+  enableAnalytics: true,
+  maintenanceMode: false,
+  cacheEnabled: true,
+  emailNotifications: true,
 };
 
 export default function Settings() {
   const [settings, setSettings] = useState(initialSettings);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [editingSetting, setEditingSetting] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
 
-  const handleToggle = (id) => {
-    setSettings(prev => 
-      prev.map(setting => 
-        setting.id === id 
-          ? { ...setting, status: setting.status === 'Active' ? 'Inactive' : 'Active' }
-          : setting
-      )
-    );
+  const handleToggle = (key) => {
+    setSettings(prev => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const handleInputChange = (key, value) => {
+    setSettings(prev => ({ ...prev, [key]: value }));
   };
 
   const handleSave = () => {
-    alert('Settings saved successfully!');
+    setIsSaving(true);
+    setTimeout(() => {
+      setIsSaving(false);
+      alert('Settings saved successfully!');
+    }, 1000);
   };
 
-  const handleEdit = (id) => {
-    const setting = settings.find(s => s.id === id);
-    setEditingSetting(setting);
-    setShowEditModal(true);
-  };
-
-  const handleEditSave = () => {
-    setSettings(prev => 
-      prev.map(setting => 
-        setting.id === editingSetting.id ? editingSetting : setting
-      )
-    );
-    setShowEditModal(false);
-    alert('Setting updated successfully!');
+  const handleReset = () => {
+    if (window.confirm('Reset all settings to default?')) {
+      setSettings(initialSettings);
+      alert('Settings reset to default!');
+    }
   };
 
   return (
     <div className="space-y-6">
-      {/* Page Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-slate-800">Settings</h1>
-        <p className="text-slate-500 mt-1">Platform-wide defaults for moderation and gamification.</p>
-      </div>
-
-      {/* Settings Cards */}
-      <div className="space-y-4">
-        {settings.map((setting) => {
-          const Icon = setting.icon;
-          return (
-            <Card key={setting.id} className="hover:shadow-md transition-shadow">
-              <Card.Body>
-                <div className="flex items-start justify-between">
-                  <div className="flex items-start gap-4">
-                    <div className={`w-12 h-12 rounded-xl ${getColorClass(setting.color)} flex items-center justify-center flex-shrink-0`}>
-                      <Icon size={24} />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-semibold text-slate-800">{setting.title}</h3>
-                        <div className="flex items-center gap-1.5">
-                          <span className={`w-2 h-2 rounded-full ${getStatusDot(setting.status)}`}></span>
-                          <span className={`text-xs font-medium px-2.5 py-0.5 rounded-full ${getStatusColor(setting.status)}`}>
-                            {setting.status}
-                          </span>
-                        </div>
-                      </div>
-                      <p className="text-sm text-slate-500 mt-1">{setting.description}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 ml-4">
-                    <div className="flex items-center gap-2">
-                      {/* Toggle Switch */}
-                      <div 
-                        className={`relative inline-flex items-center h-6 rounded-full w-11 transition-colors duration-200 cursor-pointer ${setting.status === 'Active' ? 'bg-green-600' : 'bg-slate-300'}`}
-                        onClick={() => handleToggle(setting.id)}
-                      >
-                        <span className={`inline-block w-4 h-4 transform bg-white rounded-full transition-transform duration-200 ${setting.status === 'Active' ? 'translate-x-6' : 'translate-x-1'}`} />
-                      </div>
-                      <span className="text-sm font-medium text-slate-600">
-                        {setting.status === 'Active' ? 'On' : 'Off'}
-                      </span>
-                    </div>
-                    <button 
-                      className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors text-slate-400 hover:text-slate-600"
-                      onClick={() => handleEdit(setting.id)}
-                    >
-                      <Edit size={16} />
-                    </button>
-                  </div>
-                </div>
-              </Card.Body>
-            </Card>
-          );
-        })}
-      </div>
-
-      {/* Save Button */}
-      <div className="flex justify-end">
-        <Button className="flex items-center gap-2" onClick={handleSave}>
-          <Save size={18} />
-          Save Changes
-        </Button>
-      </div>
-
-      {/* Stats Footer */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
-          <p className="text-sm text-slate-500">Total Settings</p>
-          <p className="text-2xl font-bold text-slate-800">{settings.length}</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-800">Settings</h1>
+          <p className="text-slate-500 mt-1">Manage platform configuration and preferences.</p>
         </div>
-        <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
-          <p className="text-sm text-slate-500">Active</p>
-          <p className="text-2xl font-bold text-green-600">
-            {settings.filter(s => s.status === 'Active').length}
-          </p>
-        </div>
-        <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
-          <p className="text-sm text-slate-500">Inactive</p>
-          <p className="text-2xl font-bold text-red-600">
-            {settings.filter(s => s.status === 'Inactive').length}
-          </p>
-        </div>
-        <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
-          <p className="text-sm text-slate-500">Last Updated</p>
-          <p className="text-lg font-bold text-blue-600">Today, 10:30 AM</p>
+        <div className="flex gap-2">
+          <Button variant="secondary" onClick={handleReset}>
+            <RefreshCw size={18} className="mr-2" /> Reset
+          </Button>
+          <Button onClick={handleSave} disabled={isSaving}>
+            <Save size={18} className="mr-2" /> {isSaving ? 'Saving...' : 'Save Changes'}
+          </Button>
         </div>
       </div>
 
-      {/* Edit Modal */}
-      {showEditModal && editingSetting && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="absolute inset-0 bg-black/50" onClick={() => setShowEditModal(false)} />
-          <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-md p-6 mx-4">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-semibold text-slate-800">Edit Setting</h3>
-              <button 
-                onClick={() => setShowEditModal(false)}
-                className="p-1 hover:bg-slate-100 rounded-lg transition-colors"
+      {/* General Settings */}
+      <Card>
+        <Card.Header>
+          <div className="flex items-center gap-2">
+            <Globe size={20} className="text-blue-600" />
+            <h3 className="font-semibold text-slate-800">General Settings</h3>
+          </div>
+        </Card.Header>
+        <Card.Body className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1.5">Site Name</label>
+            <input
+              type="text"
+              value={settings.siteName}
+              onChange={(e) => handleInputChange('siteName', e.target.value)}
+              className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1.5">Site Description</label>
+            <input
+              type="text"
+              value={settings.siteDescription}
+              onChange={(e) => handleInputChange('siteDescription', e.target.value)}
+              className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1.5">Language</label>
+            <select
+              value={settings.language}
+              onChange={(e) => handleInputChange('language', e.target.value)}
+              className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+            >
+              <option value="en">English</option>
+              <option value="es">Spanish</option>
+              <option value="fr">French</option>
+              <option value="de">German</option>
+              <option value="sw">Swahili</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1.5">Theme</label>
+            <div className="flex gap-2">
+              <button
+                onClick={() => handleInputChange('theme', 'light')}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg border ${
+                  settings.theme === 'light' ? 'border-blue-500 bg-blue-50' : 'border-slate-200 hover:bg-slate-50'
+                }`}
               >
-                <X size={20} className="text-slate-500" />
+                <Sun size={16} /> Light
+              </button>
+              <button
+                onClick={() => handleInputChange('theme', 'dark')}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg border ${
+                  settings.theme === 'dark' ? 'border-blue-500 bg-blue-50' : 'border-slate-200 hover:bg-slate-50'
+                }`}
+              >
+                <Moon size={16} /> Dark
               </button>
             </div>
-            
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">Title</label>
-                <input
-                  type="text"
-                  value={editingSetting.title}
-                  onChange={(e) => setEditingSetting({ ...editingSetting, title: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">Description</label>
-                <textarea
-                  value={editingSetting.description}
-                  onChange={(e) => setEditingSetting({ ...editingSetting, description: e.target.value })}
-                  rows="3"
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">Status</label>
-                <select
-                  value={editingSetting.status}
-                  onChange={(e) => setEditingSetting({ ...editingSetting, status: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="Active">Active</option>
-                  <option value="Inactive">Inactive</option>
-                </select>
-              </div>
-              <div className="flex gap-3 pt-2">
-                <Button variant="secondary" className="flex-1" onClick={() => setShowEditModal(false)}>
-                  Cancel
-                </Button>
-                <Button variant="primary" className="flex-1" onClick={handleEditSave}>
-                  Save Changes
-                </Button>
-              </div>
-            </div>
           </div>
-        </div>
-      )}
+        </Card.Body>
+      </Card>
+
+      {/* User Settings */}
+      <Card>
+        <Card.Header>
+          <div className="flex items-center gap-2">
+            <Users size={20} className="text-green-600" />
+            <h3 className="font-semibold text-slate-800">User Settings</h3>
+          </div>
+        </Card.Header>
+        <Card.Body className="space-y-4">
+          <div className="flex items-center justify-between py-2">
+            <div>
+              <p className="font-medium text-slate-700">Allow Registration</p>
+              <p className="text-sm text-slate-500">Allow new users to sign up</p>
+            </div>
+            <Toggle
+              checked={settings.allowRegistration}
+              onChange={() => handleToggle('allowRegistration')}
+            />
+          </div>
+          <div className="flex items-center justify-between py-2 border-t border-slate-100">
+            <div>
+              <p className="font-medium text-slate-700">Email Verification</p>
+              <p className="text-sm text-slate-500">Require email verification for new accounts</p>
+            </div>
+            <Toggle
+              checked={settings.requireEmailVerification}
+              onChange={() => handleToggle('requireEmailVerification')}
+            />
+          </div>
+        </Card.Body>
+      </Card>
+
+      {/* Notification Settings */}
+      <Card>
+        <Card.Header>
+          <div className="flex items-center gap-2">
+            <Bell size={20} className="text-yellow-600" />
+            <h3 className="font-semibold text-slate-800">Notification Settings</h3>
+          </div>
+        </Card.Header>
+        <Card.Body className="space-y-4">
+          <div className="flex items-center justify-between py-2">
+            <div>
+              <p className="font-medium text-slate-700">Email Notifications</p>
+              <p className="text-sm text-slate-500">Send email notifications for important events</p>
+            </div>
+            <Toggle
+              checked={settings.emailNotifications}
+              onChange={() => handleToggle('emailNotifications')}
+            />
+          </div>
+          <div className="flex items-center justify-between py-2 border-t border-slate-100">
+            <div>
+              <p className="font-medium text-slate-700">In-App Notifications</p>
+              <p className="text-sm text-slate-500">Show notifications within the platform</p>
+            </div>
+            <Toggle
+              checked={settings.enableNotifications}
+              onChange={() => handleToggle('enableNotifications')}
+            />
+          </div>
+        </Card.Body>
+      </Card>
+
+      {/* System Settings */}
+      <Card>
+        <Card.Header>
+          <div className="flex items-center gap-2">
+            <Shield size={20} className="text-purple-600" />
+            <h3 className="font-semibold text-slate-800">System Settings</h3>
+          </div>
+        </Card.Header>
+        <Card.Body className="space-y-4">
+          <div className="flex items-center justify-between py-2">
+            <div>
+              <p className="font-medium text-slate-700">Maintenance Mode</p>
+              <p className="text-sm text-slate-500">Put the platform in maintenance mode</p>
+            </div>
+            <Toggle
+              checked={settings.maintenanceMode}
+              onChange={() => handleToggle('maintenanceMode')}
+            />
+          </div>
+          <div className="flex items-center justify-between py-2 border-t border-slate-100">
+            <div>
+              <p className="font-medium text-slate-700">Analytics</p>
+              <p className="text-sm text-slate-500">Enable platform analytics tracking</p>
+            </div>
+            <Toggle
+              checked={settings.enableAnalytics}
+              onChange={() => handleToggle('enableAnalytics')}
+            />
+          </div>
+          <div className="flex items-center justify-between py-2 border-t border-slate-100">
+            <div>
+              <p className="font-medium text-slate-700">Cache</p>
+              <p className="text-sm text-slate-500">Enable caching for improved performance</p>
+            </div>
+            <Toggle
+              checked={settings.cacheEnabled}
+              onChange={() => handleToggle('cacheEnabled')}
+            />
+          </div>
+        </Card.Body>
+      </Card>
     </div>
   );
 }

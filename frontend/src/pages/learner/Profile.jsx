@@ -4,6 +4,7 @@ import { BadgeCheck, CheckCircle2, Award as AwardIcon, Share2, Pencil } from "lu
 import BadgeCard from "../../components/learner/BadgeCard";
 import { getMyPaths, getUserStats, subscribe } from "../../services/learningPathService";
 import { ACHIEVEMENTS } from "../../data/achievements";
+import { useAuth } from "../../hooks/useAuth";
 
 const RECENT_ACTIVITY = [
   { id: "a1", icon: CheckCircle2, text: 'Completed "Hooks deep dive" module', time: "2h ago" },
@@ -13,6 +14,7 @@ const RECENT_ACTIVITY = [
 
 export default function Profile() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [stats, setStats] = useState(getUserStats());
   const [myPaths, setMyPaths] = useState([]);
   const earnedBadges = ACHIEVEMENTS.filter((b) => b.earned);
@@ -31,13 +33,25 @@ export default function Profile() {
         <div className="flex items-start justify-between px-6 pb-6">
           <div className="-mt-3 flex items-end gap-4">
             <div className="flex h-20 w-20 items-center justify-center rounded-full border-4 border-white bg-purple-600 text-2xl font-bold text-white">
-              PM
+              {user?.initials ||
+                user?.name
+                  ?.trim()
+                  .split(/\s+/)
+                  .map((part) => part[0])
+                  .join("")
+                  .slice(0, 2)
+                  .toUpperCase() ||
+                "L"}
             </div>
             <div className="pb-1">
               <p className="flex items-center gap-1.5 text-lg font-bold text-neutral-900">
-                Penzi Mbuthia <BadgeCheck className="h-4 w-4 text-purple-500" />
+                {user?.name || "Learner"} <BadgeCheck className="h-4 w-4 text-purple-500" />
               </p>
-              <p className="text-sm text-neutral-500">Learner · Joined March 2025</p>
+              <p className="text-sm text-neutral-500">
+                {user?.role
+                  ? user.role.charAt(0).toUpperCase() + user.role.slice(1)
+                  : "Learner"}
+              </p>
             </div>
           </div>
           <button type="button" className="mt-4 inline-flex items-center gap-1.5 rounded-lg border border-neutral-200 px-3.5 py-1.5 text-sm font-medium text-neutral-700">
