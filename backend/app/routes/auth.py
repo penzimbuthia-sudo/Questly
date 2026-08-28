@@ -19,3 +19,10 @@ register_schema = RegisterSchema()
 login_schema = LoginSchema()
 forgot_password_schema = ForgotPasswordSchema()
 reset_password_schema = ResetPasswordSchema()
+
+def success_response(data=None, status=200):
+    return jsonify({"success": True, "data": data}), status
+
+
+def error_response(message, status=400):
+    return jsonify({"success": False, "error": message}), status
