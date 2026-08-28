@@ -6,9 +6,6 @@ import { Search, Filter, Flag, Clock, User, CheckCircle, XCircle, Trash2 } from 
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 
-// From your own service
-// import { reportService } from '../../services/reportService';
-
 const initialReports = [
   { id: 1, title: 'Inappropriate content in resource', item: 'React Performance Optimization', reportedBy: 'User123', time: '2h ago', status: 'Under review', color: 'red' },
   { id: 2, title: 'Spam in discussion', item: 'JavaScript Fundamentals thread', reportedBy: 'User456', time: '5h ago', status: 'Under review', color: 'yellow' },
@@ -115,7 +112,7 @@ export default function Reports() {
               <Card.Body>
                 <div className="flex items-start justify-between">
                   <div className="flex items-start gap-4">
-                    <div className={`w-12 h-12 rounded-xl ${getColorClass(report.color)} flex items-center justify-center flex-shrink-0 mt-1`}>
+                    <div className={`w-12 h-12 rounded-xl ${getColorClass(report.color)} flex items-center justify-center shrink-0 mt-1`}>
                       <Flag size={20} />
                     </div>
                     <div>

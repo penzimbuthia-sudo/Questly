@@ -39,9 +39,6 @@
   --color-fg: #FAF7F0;
   --color-line: #FAF7F0;
 
-  /* Extended tokens the contributor components already reference
-     (StatCard, Modal, ChallengeCard, ContentCard, etc.) but that were
-     never defined — this is what fixed the black-outline/blank-bg bug. */
   --color-surface: var(--color-card);
   --color-surface-active: #2E2836;
   --color-surface-hover: #2E2836;
@@ -70,6 +67,34 @@
   --color-surface-alt: #201C26;
   --color-fg: #FAF7F0;
   --color-line: #FAF7F0;
+
+  /* Same extended tokens as .theme-contributor, added here for the
+     identical reason — admin components (sidebar, StatCard-style
+     widgets, chart legends, timestamps) reference --color-ink-2/-3,
+     --color-violet-*, --color-amber-* for secondary/muted text and
+     accents. Without these defined, that text silently falls back to
+     the browser's default (near-black) and disappears against the dark
+     background — this is almost certainly what "text blending in" is. */
+  --color-surface: var(--color-card);
+  --color-surface-active: #241F2C;
+  --color-surface-hover: #241F2C;
+  --color-border: rgba(250, 247, 240, 0.10);
+  --color-border-soft: rgba(250, 247, 240, 0.06);
+
+  --color-ink-0: var(--color-fg);
+  --color-ink-1: rgba(250, 247, 240, 0.82);
+  --color-ink-2: rgba(250, 247, 240, 0.60);
+  --color-ink-3: rgba(250, 247, 240, 0.40);
+
+  --color-violet-300: #C4B5FD;
+  --color-violet-400: #A78BFA;
+  --color-violet-500: var(--color-royal);
+  --color-violet-600: #7C3AED;
+  --color-violet-700: #6D28D9;
+
+  --color-amber-300: var(--color-butter);
+  --color-amber-400: #EAB53F;
+  --color-amber-500: #D9A82E;
 }
 
 .theme-contributor,
