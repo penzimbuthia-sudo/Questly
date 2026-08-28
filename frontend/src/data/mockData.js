@@ -5,7 +5,7 @@ export const currentUser = {
   level: 7,
   xp: 1248,
   rank: 7,
-  bio: 'Sharing frontend and React resources with the Codalore community.',
+  bio: 'Sharing frontend and React resources with the Questly community.',
   email: 'iann@example.com',
   github: 'DalzWrld',
 };

@@ -6,9 +6,6 @@ import { Search, Plus, Edit, Trash2, Users, Target, Flame, Crown, CheckCircle, F
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 
-// From Person D - Gamification Service
- import { gamificationService } from '../../services/gamificationService';
-
 const initialBadges = [
   { id: 1, title: 'Spark ignited', description: 'First module completed', unlocked: '5,830', icon: Target, color: 'yellow' },
   { id: 2, title: 'Trailblazer', description: 'Finish first learning path', unlocked: '3,240', icon: MapPin, color: 'blue' },
