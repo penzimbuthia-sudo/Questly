@@ -22,6 +22,13 @@ class XPLog(db.Model):
     amount = db.Column(db.Integer, nullable=False)
 
     reason = db.Column(db.String(200))  # e.g. "completed module"
+    # What triggered this XP award, e.g. ("module", 42) or ("quiz", 7).
+    # Optional — lets the leaderboard/activity feed link back to the
+    # source without every caller needing to know its exact table.
+    source_type = db.Column(db.String(30), nullable=True)
+    source_id = db.Column(db.Integer, nullable=True)
+
+    
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def to_dict(self):
