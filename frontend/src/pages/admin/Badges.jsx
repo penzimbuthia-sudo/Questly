@@ -7,7 +7,7 @@ import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 
 // From Person D - Gamification Service
-// import { gamificationService } from '../../services/gamificationService';
+ import { gamificationService } from '../../services/gamificationService';
 
 const initialBadges = [
   { id: 1, title: 'Spark ignited', description: 'First module completed', unlocked: '5,830', icon: Target, color: 'yellow' },
