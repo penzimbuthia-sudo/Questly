@@ -14,7 +14,7 @@ import { Table, TableHead, TableBody, TableRow, TableCell } from '../../componen
 // import { useAuth } from '../../context/AuthContext';
 
 // From your own service
-// import { userService } from '../../services/userService';
+import { userService } from '../../services/userService';
 
 const initialUsers = [
   { id: 1, name: 'John Doe', email: 'john@example.com', role: 'Admin', status: 'Active', joined: '2024-01-15' },
