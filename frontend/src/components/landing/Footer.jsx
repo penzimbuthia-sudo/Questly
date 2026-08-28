@@ -1,4 +1,4 @@
-import { Twitter, Github, Linkedin, Instagram } from "lucide-react";
+import { FaTwitter, FaGithub, FaLinkedin, FaInstagram } from "react-icons/fa6";
 import Logo from "../ui/Logo";
 
 const COLUMNS = [
@@ -6,7 +6,7 @@ const COLUMNS = [
   { title: "Community", links: ["Discussions", "Leaderboard"] },
 ];
 
-const SOCIALS = [Twitter, Github, Linkedin, Instagram];
+const SOCIALS = [FaTwitter, FaGithub, FaLinkedin, FaInstagram];
 
 export default function Footer() {
   return (
