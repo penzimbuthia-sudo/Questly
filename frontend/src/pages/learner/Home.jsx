@@ -46,11 +46,14 @@ export default function Home() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-bold text-neutral-900">Welcome back, {user?.name || "Learner"}</h1>
-        <p className="mt-1 text-sm text-neutral-500">
-          Keep going, you&apos;re doing amazing. 🔥 {stats.streakDays}-day streak
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-neutral-900">Welcome back, Penzi</h1>
+          <p className="mt-1 text-sm text-neutral-500">Keep going, you&apos;re doing amazing.</p>
+        </div>
+        <div className="flex shrink-0 items-center gap-2 rounded-full bg-amber-50 px-4 py-2 text-sm font-semibold text-amber-600">
+          🔥 {stats.streakDays}-day streak
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -64,39 +67,42 @@ export default function Home() {
             <h2 className="text-base font-semibold text-neutral-900">Continue learning</h2>
             <button
               type="button"
-              onClick={() => navigate("/learner/paths")}
+              onClick={() => navigate("/paths")}
               className="text-sm font-medium text-purple-600 hover:underline"
             >
               View all
             </button>
           </div>
-          <div className="mt-4 flex items-center gap-4">
+
+          <div className="mt-4 flex items-start gap-4">
             <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-purple-50 text-lg">
               {primaryPath.path.icon}
             </div>
-            <div className="flex-1">
+            <div>
               <p className="font-medium text-neutral-900">{primaryPath.path.title}</p>
               <span className="mt-0.5 inline-block rounded-full bg-neutral-100 px-2 py-0.5 text-xs font-medium text-neutral-600">
                 {primaryPath.path.category}
               </span>
-              <div className="mt-2 flex items-center gap-3">
-                <div className="h-2 flex-1 overflow-hidden rounded-full bg-neutral-100">
-                  <div className="h-full rounded-full bg-amber-400" style={{ width: `${primaryPath.progress.percent}%` }} />
-                </div>
-                <span className="text-xs text-neutral-500">{primaryPath.progress.percent}%</span>
-              </div>
-              <p className="mt-1 text-xs text-neutral-400">
-                {primaryPath.progress.modulesCompleted} / {primaryPath.progress.totalModules} modules · {primaryPath.progress.xpEarned.toLocaleString()} XP
-              </p>
             </div>
+          </div>
+
+          <div className="mt-4 flex items-center gap-4">
+            <div className="h-2 flex-1 overflow-hidden rounded-full bg-neutral-100">
+              <div className="h-full rounded-full bg-amber-400" style={{ width: `${primaryPath.progress.percent}%` }} />
+            </div>
+            <span className="shrink-0 text-xs text-neutral-500">{primaryPath.progress.percent}%</span>
             <button
               type="button"
-              onClick={() => navigate(`/learner/paths/${primaryPath.path.id}`)}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-purple-600 px-4 py-2 text-sm font-semibold text-white"
+              onClick={() => navigate(`/paths/${primaryPath.path.id}`)}
+              className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-purple-600 px-4 py-2 text-sm font-semibold text-white"
             >
               <PlayCircle className="h-4 w-4" /> Continue
             </button>
           </div>
+
+          <p className="mt-2 text-xs text-neutral-400">
+            {primaryPath.progress.modulesCompleted} / {primaryPath.progress.totalModules} modules · {primaryPath.progress.xpEarned.toLocaleString()} XP
+          </p>
         </section>
       )}
 
