@@ -28,3 +28,19 @@ class User(db.Model):
     reset_tokens = db.relationship(
         "PasswordResetToken", backref="user", lazy=True, cascade="all, delete-orphan"
     )
+
+    def set_password(self, raw_password):
+        self.password_hash = generate_password_hash(raw_password)
+
+    def check_password(self, raw_password):
+        return check_password_hash(self.password_hash, raw_password)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "email": self.email,
+            "role": self.role,
+            "xp_total": self.xp_total,
+            "streak_days": self.streak_days,
+        }
