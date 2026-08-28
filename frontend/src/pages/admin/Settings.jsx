@@ -8,7 +8,7 @@ import Button from '../../components/ui/Button';
 import Toggle from '../../components/ui/Toggle';
 
 // From Person A - Auth
-// import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 
 const initialSettings = {
   siteName: 'Questly',
