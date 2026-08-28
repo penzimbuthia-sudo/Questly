@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 
 from app.extensions import db
 
+
 def generate_uuid():
     return str(uuid.uuid4())
 
