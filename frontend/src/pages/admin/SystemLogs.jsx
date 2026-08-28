@@ -8,7 +8,7 @@ import Button from '../../components/ui/Button';
 import { Table, TableHead, TableBody, TableRow, TableCell } from '../../components/ui/Table';
 
 // From Person A - Auth
-// import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 
 const initialLogs = [
   { id: 1, level: 'info', message: 'User john@example.com logged in', timestamp: '2024-01-15 09:23:45', source: 'Auth Service' },

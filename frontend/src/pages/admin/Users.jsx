@@ -11,7 +11,7 @@ import { Table, TableHead, TableBody, TableRow, TableCell } from '../../componen
 // import { STATUS } from '../../constants/statusEnums';
 
 // From Person A - Auth (if needed)
-// import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 
 // From your own service
 // import { userService } from '../../services/userService';
