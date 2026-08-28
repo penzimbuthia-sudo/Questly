@@ -1,8 +1,5 @@
 import { Routes, Route } from "react-router-dom";
 
-import ProtectedRoute from "./ProtectedRoute";
-import RoleRoute from "./RoleRoute";
-
 import AdminLayout from "../components/layout/AdminLayout";
 
 import Dashboard from "../pages/admin/Dashboard";
