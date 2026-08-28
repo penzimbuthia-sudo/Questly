@@ -30,7 +30,12 @@ function RootRedirect() {
   const { isAuthenticated, role, loading } = useAuth();
   if (loading) return null;
   if (isAuthenticated) return <Navigate to={ROLE_HOME[role] ?? '/login'} replace />;
-  return <Landing />;
+  // ✅ Wrap Landing in Suspense
+  return (
+    <Suspense fallback={<RouteFallback />}>
+      <Landing />
+    </Suspense>
+  );
 }
 
 function RouteFallback() {
@@ -78,5 +83,5 @@ export default function AppRoutes() {
         </Routes>
       </Suspense>
     </RouteErrorBoundary>
-  )
+  );
 }
