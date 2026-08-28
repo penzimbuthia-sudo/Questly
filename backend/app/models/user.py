@@ -16,3 +16,15 @@ class User(db.Model):
     name = db.Column(db.String(120), nullable=False)
     email = db.Column(db.String(255), unique=True, nullable=False, index=True)
     password_hash = db.Column(db.String(255), nullable=False)
+
+    role = db.Column(db.String(20), nullable=False, default="learner")
+
+    xp_total = db.Column(db.Integer, nullable=False, default=0)
+    streak_days = db.Column(db.Integer, nullable=False, default=0)
+
+    created_at = db.Column(db.DateTime, default=datetime.now)
+    updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
+
+    reset_tokens = db.relationship(
+        "PasswordResetToken", backref="user", lazy=True, cascade="all, delete-orphan"
+    )

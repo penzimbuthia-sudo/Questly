@@ -19,10 +19,10 @@ class PasswordResetToken(db.Model):
     user_id = db.Column(db.String(36), db.ForeignKey("users.id"), nullable=False)
     token = db.Column(db.String(128), unique=True, nullable=False, default=generate_token, index=True)
     expires_at = db.Column(
-        db.DateTime, nullable=False, default=lambda: datetime.now() + timedelta(hours=1)
+        db.DateTime, nullable=False, default=lambda: datetime.now + timedelta(hours=1)
     )
     used = db.Column(db.Boolean, nullable=False, default=False)
     created_at = db.Column(db.DateTime, default=datetime.now)
 
     def is_valid(self):
-        return not self.used and self.expires_at > datetime.now()
+        return not self.used and self.expires_at > datetime.now
