@@ -88,3 +88,23 @@ def forgot_password():
         send_password_reset_email(user, reset_token.token)
 
     return success_response({"message": "If that email exists, a reset link has been sent."})
+
+@auth_bp.route("/reset-password", methods=["POST"])
+def reset_password():
+    try:
+        payload = reset_password_schema.load(request.get_json() or {})
+    except ValidationError as err:
+        return error_response(err.messages, 422)
+
+    reset_token = PasswordResetToken.query.filter_by(token=payload["token"]).first()
+
+    if not reset_token or not reset_token.is_valid():
+        return error_response("This reset link is invalid or has expired.", 400)
+
+    user = User.query.get(reset_token.user_id)
+    user.set_password(payload["password"])
+    reset_token.used = True
+
+    db.session.commit()
+
+    return success_response({"message": "Password updated successfully."})
