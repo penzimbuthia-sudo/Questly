@@ -7,3 +7,14 @@ class UserSchema(Schema):
     role = fields.String(dump_only=True)
     xp_total = fields.Integer(dump_only=True)
     streak_days = fields.Integer(dump_only=True)
+
+class RegisterSchema(Schema):
+    name = fields.String(required=True, validate=validate.Length(min=1, max=120))
+    email = fields.Email(required=True)
+    password = fields.String(required=True, validate=validate.Length(min=8))
+    role = fields.String(
+        required=False,
+        load_default="learner",
+        validate=validate.OneOf(["learner", "contributor"]),
+    )
+
