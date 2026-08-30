@@ -1,113 +1,73 @@
-import { useNavigate, useLocation } from "react-router-dom";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import {
-  LayoutDashboard,
-  Users,
-  FileText,
-  BookOpen,
-  ClipboardList,
-  MessageSquare,
-  Flag,
-  Trophy,
-  Award,
-  ScrollText,
-  Settings,
+  LayoutDashboard, Users, FileText, BookOpen, HelpCircle,
+  Trophy, Award, MessageSquare, Flag, Terminal, Settings,
 } from "lucide-react";
-import DashboardLayout from "./DashboardLayout";
-import Logo from "../ui/Logo";
-import { useAuth } from "../../hooks/useAuth";
+import { DashboardLayout } from "@/components/layout";
+import { useAuth } from "@/hooks/useAuth";
 
-const NAV_ITEMS = [
-  { key: "/admin", label: "Dashboard", icon: LayoutDashboard, },
-  { key: "/admin/users", label: "Users", icon: Users, },
-  { key: "/admin/resources", label: "Resources", icon: FileText, },
-  { key: "/admin/learning-paths", label: "Learning paths", icon: BookOpen, },
-  { key: "/admin/quizzes", label: "Quizzes", icon: ClipboardList, },
-  { key: "/admin/discussions", label: "Discussions", icon: MessageSquare, },
-  { key: "/admin/reports", label: "Reports", icon: Flag, },
-  { key: "/admin/challenges", label: "Challenges", icon: Trophy, },
-  { key: "/admin/badges", label: "Badges", icon: Award, },
-  { key: "/admin/system-logs", label: "System logs", icon: ScrollText, },
-];
-
-const ACCOUNT_ITEMS = [
+const navGroups = [
+  { label: null, items: [{ key: "dashboard", label: "Dashboard", icon: LayoutDashboard }] },
   {
-    key: "/admin/settings",
-    label: "Settings",
-    icon: Settings,
+    label: "Manage",
+    items: [
+      { key: "users", label: "Users", icon: Users },
+      { key: "resources", label: "Resources", icon: FileText },
+      { key: "learning-paths", label: "Learning paths", icon: BookOpen },
+      { key: "quizzes", label: "Quizzes", icon: HelpCircle },
+    ],
+  },
+  {
+    label: "Engagement",
+    items: [
+      { key: "challenges", label: "Challenges", icon: Trophy },
+      { key: "badges", label: "Badges", icon: Award },
+      { key: "discussions", label: "Discussions", icon: MessageSquare },
+      { key: "reports", label: "Reports", icon: Flag },
+    ],
+  },
+  {
+    label: "System",
+    items: [
+      { key: "system-logs", label: "System logs", icon: Terminal },
+      { key: "settings", label: "Settings", icon: Settings },
+    ],
   },
 ];
-
-function computeActiveKey(pathname) {
-  const all = [...NAV_ITEMS, ...ACCOUNT_ITEMS].sort(
-    (a, b) => b.key.length - a.key.length
-  );
-
-  const match = all.find(
-    (item) =>
-      pathname === item.key ||
-      pathname.startsWith(`${item.key}/`)
-  );
-
-  return match?.key;
-}
-
-function roleLabel(role) {
-  if (!role) return "Admin";
-
-  return role.charAt(0).toUpperCase() + role.slice(1);
-}
-
-function getInitials(name = "") {
-  return name
-    .trim()
-    .split(/\s+/)
-    .map((part) => part[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
-}
 
 export default function AdminLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuth();
 
-  const activeKey = computeActiveKey(location.pathname);
+  // Works out which sidebar item should be highlighted, by
+  // reading the current URL. "/admin/users" -> activeKey "users"
+  const activeKey = location.pathname.split("/admin/")[1]?.split("/")[0] || "dashboard";
 
-  const sidebarUser = {
-    name: user?.name ?? "Admin",
-    roleLabel: roleLabel(user?.role),
-    initials: user?.initials || getInitials(user?.name),
-  };
-
-  const handleLogout = () => {
-    navigate("/", { replace: true });
-    logout();
+  const currentUser = {
+    name: user?.name || "Admin",
+    roleLabel: "Admin",
+    initials: user?.initials || "A",
   };
 
   return (
     <DashboardLayout
       theme="admin"
       sidebarProps={{
-      logo: <Logo size="md" />,
-      groups: [
-        { items: NAV_ITEMS },
-        {
-          label: "Account",
-          items: ACCOUNT_ITEMS,
-        },
-      ],
-      activeKey,
-      onNavigate: (key) => navigate(key),
-      user: sidebarUser,
-      onLogout: handleLogout,
-    }}
+        groups: navGroups,
+        activeKey,
+        onNavigate: (key) => navigate(`/admin/${key}`),
+        user: currentUser,
+        onLogout: logout,
+      }}
       topBarProps={{
-        searchPlaceholder: "Search users, resources, paths...",
-        notificationCount: 0,
-        user: sidebarUser,
+        searchPlaceholder: "Search users, content...",
+        notificationCount: 3,
+        user: currentUser,
       }}
     >
+      {/* Whichever admin page matches the URL renders here */}
+      <Outlet />
     </DashboardLayout>
   );
 }
