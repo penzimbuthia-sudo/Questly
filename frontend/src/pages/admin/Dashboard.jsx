@@ -3,6 +3,8 @@ import { Server, Database, HardDrive, ShieldCheck } from "lucide-react";
 import { PageHeader } from "@/components/layout";
 import { PieChartCard, AreaChartCard } from "@/components/charts";
 import { StatCard, ReviewQueueCard, ReportCard, SystemHealthCard } from "@/components/admin";
+import Card from "@/components/ui/Card";
+import { useAuth } from "@/hooks/useAuth";
 
 const stats = [
   { label: "Total users", value: "8,428", delta: "+12.4%" },
@@ -33,6 +35,7 @@ const systemHealthItems = [
 ];
 
 export default function Dashboard() {
+  const { user } = useAuth();
   // Starting "pending review" list — clicking Approve/Reject
   // removes the item from this list.
   const [reviewQueue, setReviewQueue] = useState([
@@ -51,7 +54,10 @@ export default function Dashboard() {
 
   return (
     <div>
-      <PageHeader title="Good afternoon, Admin" subtitle="Here's what's happening across Questly today." />
+      <PageHeader
+        title={`Good afternoon, ${user?.name ?? "Admin"}`}
+        subtitle="Here's what's happening across Questly today."
+      />
 
       {/* Stat cards row */}
       <div className="grid grid-cols-4 gap-4 mb-6">
@@ -60,44 +66,49 @@ export default function Dashboard() {
         ))}
       </div>
 
-      {/* Review queue + role distribution */}
-      <div className="grid grid-cols-2 gap-4 mb-6">
-        <div className="flex flex-col gap-2">
-          <h2 className="text-sm font-semibold text-fg mb-2">Content pending review</h2>
-          {reviewQueue.length === 0 && (
-            <p className="text-sm text-fg/50">Queue clear — nothing waiting on you.</p>
-          )}
-          {reviewQueue.map((item) => (
-            <ReviewQueueCard
-              key={item.id}
-              title={item.title}
-              typeLabel={item.typeLabel}
-              submittedBy={item.submittedBy}
-              onApprove={() => removeFromQueue(item.id)}
-              onReject={() => removeFromQueue(item.id)}
-            />
-          ))}
+      {/* Review queue + recent reports (left) / role distribution (right) */}
+      <div className="grid grid-cols-2 gap-4 mb-6 items-stretch">
+        <div className="flex flex-col gap-4">
+          <Card className="p-5">
+            <div className="flex flex-col gap-2">
+              <h2 className="text-sm font-semibold text-fg mb-2">Content pending review</h2>
+              {reviewQueue.length === 0 && (
+                <p className="text-sm text-fg/50">Queue clear — nothing waiting on you.</p>
+              )}
+              {reviewQueue.map((item) => (
+                <ReviewQueueCard
+                  key={item.id}
+                  title={item.title}
+                  typeLabel={item.typeLabel}
+                  submittedBy={item.submittedBy}
+                  onApprove={() => removeFromQueue(item.id)}
+                  onReject={() => removeFromQueue(item.id)}
+                />
+              ))}
+            </div>
+          </Card>
+
+          <Card className="p-5">
+            <h2 className="text-sm font-semibold text-fg mb-2">Recent reports</h2>
+            <div className="flex flex-col gap-2">
+              {recentReports.map((r) => (
+                <ReportCard key={r.title} title={r.title} meta={r.meta} status={r.status} />
+              ))}
+            </div>
+          </Card>
         </div>
 
         <PieChartCard title="User role distribution" data={roleData} centerLabel="total users" />
       </div>
 
-      {/* Activity chart + recent reports + system health */}
+      {/* Activity chart (left) / system health (right) */}
       <div className="grid grid-cols-2 gap-4">
-        <div className="flex flex-col gap-4">
-          <AreaChartCard
-            title="Platform activity"
-            data={activityData}
-            xKey="day"
-            series={[{ key: "users", color: "#8B5CF6" }]}
-          />
-          <div className="flex flex-col gap-2">
-            <h2 className="text-sm font-semibold text-fg mb-1">Recent reports</h2>
-            {recentReports.map((r) => (
-              <ReportCard key={r.title} title={r.title} meta={r.meta} status={r.status} />
-            ))}
-          </div>
-        </div>
+        <AreaChartCard
+          title="Platform activity"
+          data={activityData}
+          xKey="day"
+          series={[{ key: "users", color: "#8B5CF6" }]}
+        />
 
         <SystemHealthCard items={systemHealthItems} />
       </div>

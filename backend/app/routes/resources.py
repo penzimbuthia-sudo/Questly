@@ -3,12 +3,13 @@ resources.py - routes for Contributors managing their own resources.
 """
 
 from flask import Blueprint, request
+from flask_jwt_extended import get_jwt_identity
+
 from app.extensions import db
 from app.models.resource import Resource
-from app.utils.decorators import jwt_required_custom
-from app.utils.responses import success_response, error_response
 from app.schemas.resource_schema import validate_resource_input
-from flask_jwt_extended import get_jwt_identity
+from app.utils.decorators import jwt_required_custom
+from app.utils.responses import error_response, success_response
 
 resources_bp = Blueprint("resources", __name__, url_prefix="/contributor")
 
