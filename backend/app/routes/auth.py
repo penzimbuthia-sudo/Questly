@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 from flask_jwt_extended import create_access_token
 from marshmallow import ValidationError
 
@@ -12,6 +12,7 @@ from app.schemas.user_schema import (
     ResetPasswordSchema,
 )
 from app.services.email_service import send_password_reset_email
+from app.utils.responses import error_response, success_response
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -20,12 +21,6 @@ login_schema = LoginSchema()
 forgot_password_schema = ForgotPasswordSchema()
 reset_password_schema = ResetPasswordSchema()
 
-def success_response(data=None, status=200):
-    return jsonify({"success": True, "data": data}), status
-
-
-def error_response(message, status=400):
-    return jsonify({"success": False, "error": message}), status
 
 @auth_bp.route("/register", methods=["POST"])
 def register():
