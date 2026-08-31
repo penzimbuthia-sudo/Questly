@@ -7,11 +7,11 @@ export default function PieChartCard({ title, data = [], centerLabel, height = 1
   const total = data.reduce((sum, slice) => sum + slice.value, 0);
 
   return (
-    <Card className="p-5">
+    <Card className="p-5 h-full flex flex-col">
       {title && <SectionHeader title={title} />}
 
       {/* The donut itself, with the total number placed on top of it */}
-      <div className="relative" style={{ height }}>
+      <div className="relative flex-1" style={{ minHeight: height }}>
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
