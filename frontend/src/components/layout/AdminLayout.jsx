@@ -4,6 +4,7 @@ import {
   Trophy, Award, MessageSquare, Flag, Terminal, Settings,
 } from "lucide-react";
 import { DashboardLayout } from "@/components/layout";
+import Logo from '../ui/Logo';
 import { useAuth } from "@/hooks/useAuth";
 
 const navGroups = [
@@ -54,6 +55,7 @@ export default function AdminLayout() {
     <DashboardLayout
       theme="admin"
       sidebarProps={{
+        logo: <Logo size="md" />,
         groups: navGroups,
         activeKey,
         onNavigate: (key) => navigate(`/admin/${key}`),
