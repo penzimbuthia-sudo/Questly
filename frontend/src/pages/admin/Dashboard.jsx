@@ -4,6 +4,7 @@ import { PageHeader } from "@/components/layout";
 import { PieChartCard, AreaChartCard } from "@/components/charts";
 import { StatCard, ReviewQueueCard, ReportCard, SystemHealthCard } from "@/components/admin";
 import Card from "@/components/ui/Card";
+import { useAuth } from "@/hooks/useAuth";
 
 const stats = [
   { label: "Total users", value: "8,428", delta: "+12.4%" },
@@ -34,6 +35,7 @@ const systemHealthItems = [
 ];
 
 export default function Dashboard() {
+  const { user } = useAuth();
   // Starting "pending review" list — clicking Approve/Reject
   // removes the item from this list.
   const [reviewQueue, setReviewQueue] = useState([
@@ -52,7 +54,10 @@ export default function Dashboard() {
 
   return (
     <div>
-      <PageHeader title="Good afternoon, Admin" subtitle="Here's what's happening across Questly today." />
+      <PageHeader
+        title={`Good afternoon, ${user?.name ?? "Admin"}`}
+        subtitle="Here's what's happening across Questly today."
+      />
 
       {/* Stat cards row */}
       <div className="grid grid-cols-4 gap-4 mb-6">
