@@ -60,23 +60,32 @@ export default function Dashboard() {
         ))}
       </div>
 
-      {/* Review queue + role distribution */}
+      {/* Review queue + recent reports (left) / role distribution (right) */}
       <div className="grid grid-cols-2 gap-4 mb-6">
-        <div className="flex flex-col gap-2">
-          <h2 className="text-sm font-semibold text-fg mb-2">Content pending review</h2>
-          {reviewQueue.length === 0 && (
-            <p className="text-sm text-fg/50">Queue clear — nothing waiting on you.</p>
-          )}
-          {reviewQueue.map((item) => (
-            <ReviewQueueCard
-              key={item.id}
-              title={item.title}
-              typeLabel={item.typeLabel}
-              submittedBy={item.submittedBy}
-              onApprove={() => removeFromQueue(item.id)}
-              onReject={() => removeFromQueue(item.id)}
-            />
-          ))}
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
+            <h2 className="text-sm font-semibold text-fg mb-2">Content pending review</h2>
+            {reviewQueue.length === 0 && (
+              <p className="text-sm text-fg/50">Queue clear — nothing waiting on you.</p>
+            )}
+            {reviewQueue.map((item) => (
+              <ReviewQueueCard
+                key={item.id}
+                title={item.title}
+                typeLabel={item.typeLabel}
+                submittedBy={item.submittedBy}
+                onApprove={() => removeFromQueue(item.id)}
+                onReject={() => removeFromQueue(item.id)}
+              />
+            ))}
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <h2 className="text-sm font-semibold text-fg mb-1">Recent reports</h2>
+            {recentReports.map((r) => (
+              <ReportCard key={r.title} title={r.title} meta={r.meta} status={r.status} />
+            ))}
+          </div>
         </div>
 
         <PieChartCard title="User role distribution" data={roleData} centerLabel="total users" />

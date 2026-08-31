@@ -1,5 +1,5 @@
-import { Route } from "react-router-dom";
-import AdminLayout from "@/pages/admin/AdminLayout";
+import { Route, Routes } from "react-router-dom";
+import AdminLayout from "@/components/layout/AdminLayout";
 import Dashboard from "@/pages/admin/Dashboard";
 import Users from "@/pages/admin/Users";
 import Resources from "@/pages/admin/Resources";
@@ -14,18 +14,20 @@ import Settings from "@/pages/admin/Settings";
 
 export default function AdminRoutes() {
   return (
-    <Route path="/admin" element={<AdminLayout />}>
-      <Route path="dashboard" element={<Dashboard />} />
-      <Route path="users" element={<Users />} />
-      <Route path="resources" element={<Resources />} />
-      <Route path="learning-paths" element={<LearningPaths />} />
-      <Route path="quizzes" element={<Quizzes />} />
-      <Route path="challenges" element={<Challenges />} />
-      <Route path="badges" element={<Badges />} />
-      <Route path="discussions" element={<Discussions />} />
-      <Route path="reports" element={<Reports />} />
-      <Route path="system-logs" element={<SystemLogs />} />
-      <Route path="settings" element={<Settings />} />
-    </Route>
+    <Routes>
+      <Route element={<AdminLayout />}>
+        <Route index element={<Dashboard />} />
+        <Route path="users" element={<Users />} />
+        <Route path="resources" element={<Resources />} />
+        <Route path="learning-paths" element={<LearningPaths />} />
+        <Route path="quizzes" element={<Quizzes />} />
+        <Route path="challenges" element={<Challenges />} />
+        <Route path="badges" element={<Badges />} />
+        <Route path="discussions" element={<Discussions />} />
+        <Route path="reports" element={<Reports />} />
+        <Route path="system-logs" element={<SystemLogs />} />
+        <Route path="settings" element={<Settings />} />
+      </Route>
+    </Routes>
   );
 }
