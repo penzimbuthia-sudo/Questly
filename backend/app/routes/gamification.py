@@ -9,7 +9,6 @@ from flask_jwt_extended import get_jwt_identity
 from app.extensions import db
 from app.models.badge import Badge
 from app.models.challenge import Challenge
-from app.models.challenge_progress import ChallengeProgress
 from app.models.user_badge import UserBadge
 from app.schemas.challenge_schema import validate_challenge_input
 from app.services.leaderboard_service import get_leaderboard
