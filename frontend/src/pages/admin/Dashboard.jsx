@@ -91,22 +91,14 @@ export default function Dashboard() {
         <PieChartCard title="User role distribution" data={roleData} centerLabel="total users" />
       </div>
 
-      {/* Activity chart + recent reports + system health */}
+      {/* Activity chart (left) / system health (right) */}
       <div className="grid grid-cols-2 gap-4">
-        <div className="flex flex-col gap-4">
-          <AreaChartCard
-            title="Platform activity"
-            data={activityData}
-            xKey="day"
-            series={[{ key: "users", color: "#8B5CF6" }]}
-          />
-          <div className="flex flex-col gap-2">
-            <h2 className="text-sm font-semibold text-fg mb-1">Recent reports</h2>
-            {recentReports.map((r) => (
-              <ReportCard key={r.title} title={r.title} meta={r.meta} status={r.status} />
-            ))}
-          </div>
-        </div>
+        <AreaChartCard
+          title="Platform activity"
+          data={activityData}
+          xKey="day"
+          series={[{ key: "users", color: "#8B5CF6" }]}
+        />
 
         <SystemHealthCard items={systemHealthItems} />
       </div>
