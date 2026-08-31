@@ -17,8 +17,8 @@ flask-bcrypt = "*"
 psycopg2-binary = "*"
 gunicorn = "*"
 requests = "*"
-flask-mail = "*"
 werkzeug = "*"
+flask-mail = "*"
 
 [dev-packages]
 

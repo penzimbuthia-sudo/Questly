@@ -17,6 +17,7 @@ export default function AdminRoutes() {
     <Routes>
       <Route element={<AdminLayout />}>
         <Route index element={<Dashboard />} />
+        <Route path="dashboard" element={<Dashboard />} />
         <Route path="users" element={<Users />} />
         <Route path="resources" element={<Resources />} />
         <Route path="learning-paths" element={<LearningPaths />} />
