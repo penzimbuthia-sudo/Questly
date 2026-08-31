@@ -1,15 +1,19 @@
-import { ArrowUp, ArrowDown } from 'lucide-react';
-export default function StatCard({ title, value, icon: Icon, trend, trendValue, color = 'primary' }) {
-  const colors = { primary: 'bg-blue-50 text-blue-600', green: 'bg-green-50 text-green-600', purple: 'bg-purple-50 text-purple-600', orange: 'bg-orange-50 text-orange-600', red: 'bg-red-50 text-red-600', blue: 'bg-blue-50 text-blue-600' };
+import { TrendingUp } from "lucide-react";
+import { Card } from "@/components/ui";
+
+export default function StatCard({ label, value, delta }) {
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className={`w-12 h-12 rounded-xl ${colors[color]} flex items-center justify-center`}><Icon size={24} /></div>
-          <div><p className="text-sm font-medium text-slate-500">{title}</p><p className="text-2xl font-bold text-slate-800">{value}</p></div>
+    <Card className="p-5">
+      <span className="text-xs text-fg/50 font-medium">{label}</span>
+      <div className="text-2xl font-bold text-fg mt-2">{value}</div>
+
+      {delta && (
+        <div className="flex items-center gap-1 mt-2">
+          <TrendingUp size={12} className="text-success" />
+          <span className="text-xs font-semibold text-success">{delta}</span>
+          <span className="text-xs text-fg/40">vs last month</span>
         </div>
-        {trend && <div className={`flex items-center gap-1 text-sm font-medium ${trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>{trend === 'up' ? <ArrowUp size={16} /> : <ArrowDown size={16} />}{trendValue}%</div>}
-      </div>
-    </div>
+      )}
+    </Card>
   );
 }
