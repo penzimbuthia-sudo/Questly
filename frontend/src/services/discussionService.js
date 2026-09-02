@@ -1,4 +1,4 @@
-import api from "@/services/api";
+import { api } from "@/services/api";
 
 export async function getDiscussions() {
   const response = await api.get("/admin/discussions");
