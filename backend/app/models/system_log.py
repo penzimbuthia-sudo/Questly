@@ -1,17 +1,34 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime
-from sqlalchemy.sql import func
+"""
+system_log.py - System log model for admin audit trail.
+"""
+
+from datetime import datetime, timezone
 from app.extensions import db
+
 
 class SystemLog(db.Model):
     __tablename__ = "system_logs"
 
-    id = Column(Integer, primary_key=True, index=True)
-    level = Column(String(20), nullable=False)
-    message = Column(Text, nullable=False)
-    source = Column(String(100), nullable=True)
-    user_id = Column(Integer, nullable=True)
-    ip_address = Column(String(45), nullable=True)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    id = db.Column(db.Integer, primary_key=True)
+
+    # Log details
+    level = db.Column(db.String(20), nullable=False)  # "INFO" | "WARN" | "ERROR"
+    message = db.Column(db.Text, nullable=False)
+    source = db.Column(db.String(100), nullable=True)
+
+    # Admin who performed the action (Person A's User model)
+    admin_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+
+    # Additional context
+    ip_address = db.Column(db.String(45), nullable=True)
+    user_agent = db.Column(db.String(200), nullable=True)
+    metadata = db.Column(db.JSON, nullable=True)
+
+    # Timestamp
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+
+    # Relationship
+    admin = db.relationship("User", backref="logs")
 
     def to_dict(self):
         return {
@@ -19,7 +36,9 @@ class SystemLog(db.Model):
             "level": self.level,
             "message": self.message,
             "source": self.source,
-            "user_id": self.user_id,
+            "admin_id": self.admin_id,
             "ip_address": self.ip_address,
-            "created_at": self.created_at.isoformat() if self.created_at else None
+            "user_agent": self.user_agent,
+            "metadata": self.metadata,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
         }
