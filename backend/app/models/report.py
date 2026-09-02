@@ -1,33 +1,53 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, Enum
-from sqlalchemy.sql import func
-from app.extensions import db
-import enum
+"""
+report.py - Report model for flagged content.
+"""
 
-class ReportStatus(str, enum.Enum):
-    PENDING = "pending"
-    RESOLVED = "resolved"
-    REJECTED = "rejected"
+from datetime import datetime, timezone
+from app.extensions import db
+
 
 class Report(db.Model):
     __tablename__ = "reports"
 
-    id = Column(Integer, primary_key=True, index=True)
-    reporter_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    target_type = Column(String(50), nullable=False)
-    target_id = Column(Integer, nullable=False)
-    reason = Column(Text, nullable=False)
-    status = Column(Enum(ReportStatus), default=ReportStatus.PENDING)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    id = db.Column(db.Integer, primary_key=True)
+
+    # Reported content metadata
+    content_type = db.Column(db.String(50), nullable=False)  # "resource" | "discussion" | "comment" | "path"
+    content_id = db.Column(db.Integer, nullable=False)
+    content_title = db.Column(db.String(200), nullable=True)
+
+    # Report details
+    reason = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+
+    # Relationships to User (Person A)
+    reporter_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    resolver_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+
+    # Status: "Under review" | "Resolved" | "Rejected"
+    status = db.Column(db.String(20), default="Under review")
+    resolution_note = db.Column(db.Text, nullable=True)
+
+    # Timestamps
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    resolved_at = db.Column(db.DateTime, nullable=True)
+
+    # Relationships
+    reporter = db.relationship("User", foreign_keys=[reporter_id], backref="reports_submitted")
+    resolver = db.relationship("User", foreign_keys=[resolver_id], backref="reports_resolved")
 
     def to_dict(self):
         return {
             "id": self.id,
-            "reporter_id": self.reporter_id,
-            "target_type": self.target_type,
-            "target_id": self.target_id,
+            "content_type": self.content_type,
+            "content_id": self.content_id,
+            "content_title": self.content_title,
             "reason": self.reason,
-            "status": self.status.value if self.status else None,
+            "description": self.description,
+            "reporter_id": self.reporter_id,
+            "resolver_id": self.resolver_id,
+            "status": self.status,
+            "resolution_note": self.resolution_note,
             "created_at": self.created_at.isoformat() if self.created_at else None,
-            "updated_at": self.updated_at.isoformat() if self.updated_at else None
+            "resolved_at": self.resolved_at.isoformat() if self.resolved_at else None,
         }
