@@ -1,90 +1,126 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy.orm import Session
-from typing import List, Optional
-from app.db.session import get_db
-from app.models.report import Report, ReportStatus
-from app.models.user import User
-from app.schemas.report_schema import ReportResponse, ReportUpdate
+"""
+reports.py - Admin routes for report moderation.
+"""
+
+from flask import request, jsonify, Blueprint
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from app import db
+from app.models.report import Report
+from app.models.system_log import SystemLog
+from app.schemas.report_schema import ReportUpdateSchema
 from app.utils.decorators import role_required
-from app.utils.helpers import get_current_user
+from datetime import datetime, timezone
 
-router = APIRouter(prefix="/reports", tags=["reports"])
+reports_bp = Blueprint("reports", __name__, url_prefix="/api/reports")
 
-@router.get("/", response_model=List[ReportResponse])
+
+@reports_bp.route("/", methods=["GET"])
+@jwt_required()
 @role_required("admin")
-def get_reports(
-    skip: int = Query(0, ge=0),
-    limit: int = Query(100, ge=1, le=1000),
-    status: Optional[ReportStatus] = None,
-    target_type: Optional[str] = None,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    query = db.query(Report)
-    
+def get_reports():
+    """Get all reports (admin only)."""
+    page = request.args.get("page", 1, type=int)
+    per_page = request.args.get("per_page", 20, type=int)
+    status = request.args.get("status", None)
+    content_type = request.args.get("content_type", None)
+
+    query = Report.query
+
     if status:
-        query = query.filter(Report.status == status)
-    if target_type:
-        query = query.filter(Report.target_type == target_type)
-    
-    reports = query.order_by(Report.created_at.desc()).offset(skip).limit(limit).all()
-    return reports
+        query = query.filter_by(status=status)
+    if content_type:
+        query = query.filter_by(content_type=content_type)
 
-@router.get("/{report_id}", response_model=ReportResponse)
-@role_required("admin")
-def get_report(
-    report_id: int,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    report = db.query(Report).filter(Report.id == report_id).first()
-    if not report:
-        raise HTTPException(status_code=404, detail="Report not found")
-    return report
+    paginated = query.order_by(Report.created_at.desc()).paginate(
+        page=page, per_page=per_page, error_out=False
+    )
 
-@router.patch("/{report_id}/resolve", response_model=ReportResponse)
-@role_required("admin")
-def resolve_report(
-    report_id: int,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    report = db.query(Report).filter(Report.id == report_id).first()
-    if not report:
-        raise HTTPException(status_code=404, detail="Report not found")
-    
-    report.status = ReportStatus.RESOLVED
-    db.commit()
-    db.refresh(report)
-    return report
+    return jsonify({
+        "data": [r.to_dict() for r in paginated.items],
+        "meta": {
+            "page": page,
+            "per_page": per_page,
+            "total": paginated.total,
+            "pages": paginated.pages,
+        }
+    }), 200
 
-@router.patch("/{report_id}/reject", response_model=ReportResponse)
-@role_required("admin")
-def reject_report(
-    report_id: int,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    report = db.query(Report).filter(Report.id == report_id).first()
-    if not report:
-        raise HTTPException(status_code=404, detail="Report not found")
-    
-    report.status = ReportStatus.REJECTED
-    db.commit()
-    db.refresh(report)
-    return report
 
-@router.delete("/{report_id}", response_model=dict)
+@reports_bp.route("/<int:report_id>/resolve", methods=["POST"])
+@jwt_required()
 @role_required("admin")
-def delete_report(
-    report_id: int,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    report = db.query(Report).filter(Report.id == report_id).first()
-    if not report:
-        raise HTTPException(status_code=404, detail="Report not found")
-    
-    db.delete(report)
-    db.commit()
-    return {"message": "Report deleted successfully"}
+def resolve_report(report_id):
+    """Resolve a report."""
+    data = request.get_json() or {}
+    note = data.get("resolution_note", "Report resolved by admin")
+
+    report = Report.query.get_or_404(report_id)
+    report.status = "Resolved"
+    report.resolution_note = note
+    report.resolver_id = get_jwt_identity()
+    report.resolved_at = datetime.now(timezone.utc)
+
+    log = SystemLog(
+        level="INFO",
+        message=f"Report resolved: {report.content_title}",
+        source="reports.py",
+        admin_id=get_jwt_identity(),
+        metadata={"report_id": report_id, "content_type": report.content_type}
+    )
+    db.session.add(log)
+    db.session.commit()
+
+    return jsonify({"data": report.to_dict(), "message": "Report resolved successfully"}), 200
+
+
+@reports_bp.route("/<int:report_id>/reject", methods=["POST"])
+@jwt_required()
+@role_required("admin")
+def reject_report(report_id):
+    """Reject a report."""
+    data = request.get_json() or {}
+    note = data.get("resolution_note", "Report rejected by admin")
+
+    report = Report.query.get_or_404(report_id)
+    report.status = "Rejected"
+    report.resolution_note = note
+    report.resolver_id = get_jwt_identity()
+    report.resolved_at = datetime.now(timezone.utc)
+
+    log = SystemLog(
+        level="INFO",
+        message=f"Report rejected: {report.content_title}",
+        source="reports.py",
+        admin_id=get_jwt_identity(),
+        metadata={"report_id": report_id, "content_type": report.content_type}
+    )
+    db.session.add(log)
+    db.session.commit()
+
+    return jsonify({"data": report.to_dict(), "message": "Report rejected successfully"}), 200
+
+
+@reports_bp.route("/stats", methods=["GET"])
+@jwt_required()
+@role_required("admin")
+def get_report_stats():
+    """Get report statistics."""
+    total = Report.query.count()
+    under_review = Report.query.filter_by(status="Under review").count()
+    resolved = Report.query.filter_by(status="Resolved").count()
+    rejected = Report.query.filter_by(status="Rejected").count()
+
+    type_stats = {
+        "resource": Report.query.filter_by(content_type="resource").count(),
+        "discussion": Report.query.filter_by(content_type="discussion").count(),
+        "path": Report.query.filter_by(content_type="path").count(),
+        "comment": Report.query.filter_by(content_type="comment").count(),
+    }
+
+    return jsonify({
+        "total": total,
+        "under_review": under_review,
+        "resolved": resolved,
+        "rejected": rejected,
+        "by_type": type_stats,
+    }), 200
