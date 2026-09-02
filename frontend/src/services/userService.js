@@ -1,4 +1,4 @@
-import api from "@/services/api";
+import { api } from "@/services/api";
 
 export async function getUsers() {
   const response = await api.get("/admin/users");
