@@ -1,17 +1,31 @@
-from sqlalchemy import Column, Integer, Text, Boolean, DateTime, ForeignKey
-from sqlalchemy.sql import func
+"""
+comment.py - Comment model for replies to discussions.
+"""
+
+from datetime import datetime, timezone
 from app.extensions import db
+
 
 class Comment(db.Model):
     __tablename__ = "comments"
 
-    id = Column(Integer, primary_key=True, index=True)
-    content = Column(Text, nullable=False)
-    author_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    discussion_id = Column(Integer, ForeignKey("discussions.id"), nullable=False)
-    is_flagged = Column(Boolean, default=False)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.Text, nullable=False)
+
+    # Relationships to User (Person A) and Discussion (E's model)
+    author_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    discussion_id = db.Column(db.Integer, db.ForeignKey("discussions.id"), nullable=False)
+
+    # Moderation fields
+    is_flagged = db.Column(db.Boolean, default=False)
+    flag_reason = db.Column(db.String(100), nullable=True)
+
+    # Timestamps
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+
+    # Relationship
+    author = db.relationship("User", backref="comments")
 
     def to_dict(self):
         return {
@@ -20,6 +34,7 @@ class Comment(db.Model):
             "author_id": self.author_id,
             "discussion_id": self.discussion_id,
             "is_flagged": self.is_flagged,
+            "flag_reason": self.flag_reason,
             "created_at": self.created_at.isoformat() if self.created_at else None,
-            "updated_at": self.updated_at.isoformat() if self.updated_at else None
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None,
         }
