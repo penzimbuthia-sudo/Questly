@@ -1,126 +1,131 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy.orm import Session
-from sqlalchemy import func
-from typing import List, Optional
-from app.db.session import get_db
+"""
+admin.py - General admin dashboard routes.
+"""
+
+from flask import request, jsonify, Blueprint
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from app import db
 from app.models.user import User
 from app.models.discussion import Discussion
-from app.models.report import Report, ReportStatus
+from app.models.report import Report
 from app.models.system_log import SystemLog
 from app.models.resource import Resource
 from app.models.learning_path import LearningPath
+from app.models.quiz import Quiz
+from app.models.badge import Badge
+from app.models.challenge import Challenge
 from app.utils.decorators import role_required
-from app.utils.helpers import get_current_user
+from sqlalchemy import func
+from datetime import datetime, timedelta
 
-router = APIRouter(prefix="/admin", tags=["admin"])
+admin_bp = Blueprint("admin", __name__, url_prefix="/api/admin")
 
-@router.get("/stats")
+
+@admin_bp.route("/dashboard/stats", methods=["GET"])
+@jwt_required()
 @role_required("admin")
-def get_admin_stats(
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    total_users = db.query(func.count(User.id)).scalar()
-    active_users = db.query(func.count(User.id)).filter(User.status == "active").scalar()
-    
-    admin_count = db.query(func.count(User.id)).filter(User.role == "admin").scalar()
-    contributor_count = db.query(func.count(User.id)).filter(User.role == "contributor").scalar()
-    learner_count = db.query(func.count(User.id)).filter(User.role == "learner").scalar()
-    
-    total_discussions = db.query(func.count(Discussion.id)).scalar()
-    flagged_discussions = db.query(func.count(Discussion.id)).filter(Discussion.is_flagged == True).scalar()
-    
-    pending_reports = db.query(func.count(Report.id)).filter(Report.status == ReportStatus.PENDING).scalar()
-    resolved_reports = db.query(func.count(Report.id)).filter(Report.status == ReportStatus.RESOLVED).scalar()
-    rejected_reports = db.query(func.count(Report.id)).filter(Report.status == ReportStatus.REJECTED).scalar()
-    
-    total_resources = db.query(func.count(Resource.id)).scalar()
-    pending_resources = db.query(func.count(Resource.id)).filter(Resource.status == "pending").scalar()
-    
-    total_paths = db.query(func.count(LearningPath.id)).scalar()
-    pending_paths = db.query(func.count(LearningPath.id)).filter(LearningPath.status == "pending").scalar()
-    
-    return {
+def get_dashboard_stats():
+    """Get all dashboard statistics."""
+    week_ago = datetime.now() - timedelta(days=7)
+
+    return jsonify({
         "users": {
-            "total": total_users,
-            "active": active_users,
-            "admin": admin_count,
-            "contributor": contributor_count,
-            "learner": learner_count
+            "total": User.query.count(),
+            "active": User.query.filter_by(status="Active").count(),
         },
-        "discussions": {
-            "total": total_discussions,
-            "flagged": flagged_discussions
+        "content": {
+            "resources": Resource.query.count(),
+            "learning_paths": LearningPath.query.count(),
+            "quizzes": Quiz.query.count(),
+            "discussions": Discussion.query.count(),
         },
         "reports": {
-            "pending": pending_reports,
-            "resolved": resolved_reports,
-            "rejected": rejected_reports
+            "total": Report.query.count(),
+            "pending": Report.query.filter_by(status="Under review").count(),
+            "resolved": Report.query.filter_by(status="Resolved").count(),
+            "rejected": Report.query.filter_by(status="Rejected").count(),
         },
-        "resources": {
-            "total": total_resources,
-            "pending": pending_resources
+        "pending_review": {
+            "resources": Resource.query.filter_by(status="Pending").count(),
+            "learning_paths": LearningPath.query.filter_by(status="Pending").count(),
         },
-        "learning_paths": {
-            "total": total_paths,
-            "pending": pending_paths
+        "recent_activity": {
+            "new_users": User.query.filter(User.created_at >= week_ago).count(),
+            "new_discussions": Discussion.query.filter(Discussion.created_at >= week_ago).count(),
         }
-    }
+    }), 200
 
-@router.get("/logs", response_model=List[dict])
+
+@admin_bp.route("/system-logs", methods=["GET"])
+@jwt_required()
 @role_required("admin")
-def get_system_logs(
-    skip: int = Query(0, ge=0),
-    limit: int = Query(100, ge=1, le=1000),
-    level: Optional[str] = None,
-    source: Optional[str] = None,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    query = db.query(SystemLog)
-    
+def get_system_logs():
+    """Get system logs with pagination and filtering."""
+    page = request.args.get("page", 1, type=int)
+    per_page = request.args.get("per_page", 20, type=int)
+    level = request.args.get("level", None)
+    source = request.args.get("source", None)
+
+    query = SystemLog.query
+
     if level:
-        query = query.filter(SystemLog.level == level)
+        query = query.filter_by(level=level)
     if source:
-        query = query.filter(SystemLog.source.ilike(f"%{source}%"))
-    
-    logs = query.order_by(SystemLog.created_at.desc()).offset(skip).limit(limit).all()
-    return [log.to_dict() for log in logs]
+        query = query.filter_by(source=source)
 
-@router.post("/logs", response_model=dict)
-@role_required("admin")
-def create_system_log(
-    level: str,
-    message: str,
-    source: Optional[str] = None,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    log = SystemLog(
-        level=level,
-        message=message,
-        source=source,
-        user_id=current_user.id
+    paginated = query.order_by(SystemLog.created_at.desc()).paginate(
+        page=page, per_page=per_page, error_out=False
     )
-    db.add(log)
-    db.commit()
-    db.refresh(log)
-    return log.to_dict()
 
-@router.get("/dashboard")
+    return jsonify({
+        "data": [log.to_dict() for log in paginated.items],
+        "meta": {
+            "page": page,
+            "per_page": per_page,
+            "total": paginated.total,
+            "pages": paginated.pages,
+        }
+    }), 200
+
+
+@admin_bp.route("/system-logs/levels", methods=["GET"])
+@jwt_required()
 @role_required("admin")
-def get_dashboard_data(
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    stats = get_admin_stats(db, current_user)
-    
-    recent_logs = db.query(SystemLog).order_by(SystemLog.created_at.desc()).limit(10).all()
-    
-    recent_reports = db.query(Report).order_by(Report.created_at.desc()).limit(10).all()
-    
-    return {
-        "stats": stats,
-        "recent_logs": [log.to_dict() for log in recent_logs],
-        "recent_reports": [report.to_dict() for report in recent_reports]
-    }
+def get_log_level_stats():
+    """Get system log statistics by level."""
+    return jsonify({
+        "INFO": SystemLog.query.filter_by(level="INFO").count(),
+        "WARN": SystemLog.query.filter_by(level="WARN").count(),
+        "ERROR": SystemLog.query.filter_by(level="ERROR").count(),
+    }), 200
+
+
+@admin_bp.route("/role-distribution", methods=["GET"])
+@jwt_required()
+@role_required("admin")
+def get_role_distribution():
+    """Get user role distribution."""
+    return jsonify({
+        "Admin": User.query.filter_by(role="Admin").count(),
+        "Contributor": User.query.filter_by(role="Contributor").count(),
+        "Learner": User.query.filter_by(role="Learner").count(),
+        "total": User.query.count(),
+    }), 200
+
+
+@admin_bp.route("/system-health", methods=["GET"])
+@jwt_required()
+@role_required("admin")
+def get_system_health():
+    """Get system health status."""
+    return jsonify({
+        "reports": {
+            "under_review": Report.query.filter_by(status="Under review").count(),
+            "resolved": Report.query.filter_by(status="Resolved").count(),
+            "rejected": Report.query.filter_by(status="Rejected").count(),
+        },
+        "content": {
+            "resources": Resource.query.count(),
+            "learning_paths": LearningPath.query.count(),
+        }
+    }), 200
