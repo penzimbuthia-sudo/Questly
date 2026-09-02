@@ -3,6 +3,7 @@ system_log.py - System log model for admin audit trail.
 """
 
 from datetime import datetime, timezone
+
 from app.extensions import db
 
 
@@ -22,7 +23,6 @@ class SystemLog(db.Model):
     # Additional context
     ip_address = db.Column(db.String(45), nullable=True)
     user_agent = db.Column(db.String(200), nullable=True)
-    metadata = db.Column(db.JSON, nullable=True)
 
     # Timestamp
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
