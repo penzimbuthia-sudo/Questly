@@ -1,95 +1,134 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy.orm import Session
-from typing import List, Optional
-from app.db.session import get_db
+"""
+discussions.py - Admin routes for discussion moderation.
+"""
+
+from flask import request, jsonify, Blueprint
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from app import db
 from app.models.discussion import Discussion
-from app.models.user import User
-from app.schemas.discussion_schema import DiscussionResponse, DiscussionUpdate
+from app.models.system_log import SystemLog
+from app.schemas.discussion_schema import DiscussionUpdateSchema
 from app.utils.decorators import role_required
-from app.utils.helpers import get_current_user
 
-router = APIRouter(prefix="/discussions", tags=["discussions"])
+discussions_bp = Blueprint("discussions", __name__, url_prefix="/api/discussions")
 
-@router.get("/", response_model=List[DiscussionResponse])
+
+@discussions_bp.route("/", methods=["GET"])
+@jwt_required()
 @role_required("admin")
-def get_discussions(
-    skip: int = Query(0, ge=0),
-    limit: int = Query(100, ge=1, le=1000),
-    flagged: Optional[bool] = None,
-    status: Optional[str] = None,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    query = db.query(Discussion)
-    
-    if flagged is not None:
-        query = query.filter(Discussion.is_flagged == flagged)
+def get_discussions():
+    """Get all discussions for moderation (admin only)."""
+    page = request.args.get("page", 1, type=int)
+    per_page = request.args.get("per_page", 20, type=int)
+    status = request.args.get("status", None)
+
+    query = Discussion.query
+
     if status:
-        query = query.filter(Discussion.status == status)
-    
-    discussions = query.order_by(Discussion.created_at.desc()).offset(skip).limit(limit).all()
-    return discussions
+        query = query.filter_by(status=status)
 
-@router.get("/{discussion_id}", response_model=DiscussionResponse)
-@role_required("admin")
-def get_discussion(
-    discussion_id: int,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    discussion = db.query(Discussion).filter(Discussion.id == discussion_id).first()
-    if not discussion:
-        raise HTTPException(status_code=404, detail="Discussion not found")
-    return discussion
+    paginated = query.order_by(Discussion.created_at.desc()).paginate(
+        page=page, per_page=per_page, error_out=False
+    )
 
-@router.patch("/{discussion_id}/flag", response_model=DiscussionResponse)
-@role_required("admin")
-def flag_discussion(
-    discussion_id: int,
-    is_flagged: bool,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    discussion = db.query(Discussion).filter(Discussion.id == discussion_id).first()
-    if not discussion:
-        raise HTTPException(status_code=404, detail="Discussion not found")
-    
-    discussion.is_flagged = is_flagged
-    discussion.status = "flagged" if is_flagged else "active"
-    db.commit()
-    db.refresh(discussion)
-    return discussion
+    return jsonify({
+        "data": [d.to_dict() for d in paginated.items],
+        "meta": {
+            "page": page,
+            "per_page": per_page,
+            "total": paginated.total,
+            "pages": paginated.pages,
+        }
+    }), 200
 
-@router.patch("/{discussion_id}", response_model=DiscussionResponse)
+
+@discussions_bp.route("/<int:discussion_id>", methods=["PATCH"])
+@jwt_required()
 @role_required("admin")
-def update_discussion(
-    discussion_id: int,
-    update_data: DiscussionUpdate,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    discussion = db.query(Discussion).filter(Discussion.id == discussion_id).first()
-    if not discussion:
-        raise HTTPException(status_code=404, detail="Discussion not found")
-    
-    for key, value in update_data.dict(exclude_unset=True).items():
+def update_discussion(discussion_id):
+    """Update a discussion (title, content, flag status)."""
+    data = request.get_json()
+    schema = DiscussionUpdateSchema()
+    validated = schema.load(data, partial=True)
+
+    discussion = Discussion.query.get_or_404(discussion_id)
+
+    for key, value in validated.items():
         setattr(discussion, key, value)
-    
-    db.commit()
-    db.refresh(discussion)
-    return discussion
 
-@router.delete("/{discussion_id}", response_model=dict)
+    log = SystemLog(
+        level="INFO",
+        message=f"Discussion updated: {discussion.title}",
+        source="discussions.py",
+        admin_id=get_jwt_identity(),
+        metadata={"discussion_id": discussion_id, "changes": validated}
+    )
+    db.session.add(log)
+    db.session.commit()
+
+    return jsonify({"data": discussion.to_dict(), "message": "Discussion updated successfully"}), 200
+
+
+@discussions_bp.route("/<int:discussion_id>/flag", methods=["POST"])
+@jwt_required()
 @role_required("admin")
-def delete_discussion(
-    discussion_id: int,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    discussion = db.query(Discussion).filter(Discussion.id == discussion_id).first()
-    if not discussion:
-        raise HTTPException(status_code=404, detail="Discussion not found")
-    
-    db.delete(discussion)
-    db.commit()
-    return {"message": "Discussion deleted successfully"}
+def flag_discussion(discussion_id):
+    """Flag a discussion."""
+    data = request.get_json()
+    reason = data.get("reason", "Flagged by admin")
+
+    discussion = Discussion.query.get_or_404(discussion_id)
+    discussion.is_flagged = True
+    discussion.flag_reason = reason
+    discussion.status = "Flagged"
+
+    log = SystemLog(
+        level="WARN",
+        message=f"Discussion flagged: {discussion.title}",
+        source="discussions.py",
+        admin_id=get_jwt_identity(),
+        metadata={"discussion_id": discussion_id, "reason": reason}
+    )
+    db.session.add(log)
+    db.session.commit()
+
+    return jsonify({"data": discussion.to_dict(), "message": "Discussion flagged successfully"}), 200
+
+
+@discussions_bp.route("/<int:discussion_id>/unflag", methods=["POST"])
+@jwt_required()
+@role_required("admin")
+def unflag_discussion(discussion_id):
+    """Unflag a discussion."""
+    discussion = Discussion.query.get_or_404(discussion_id)
+    discussion.is_flagged = False
+    discussion.flag_reason = None
+    discussion.status = "Clear"
+
+    log = SystemLog(
+        level="INFO",
+        message=f"Discussion unflagged: {discussion.title}",
+        source="discussions.py",
+        admin_id=get_jwt_identity(),
+        metadata={"discussion_id": discussion_id}
+    )
+    db.session.add(log)
+    db.session.commit()
+
+    return jsonify({"data": discussion.to_dict(), "message": "Discussion unflagged successfully"}), 200
+
+
+@discussions_bp.route("/stats", methods=["GET"])
+@jwt_required()
+@role_required("admin")
+def get_discussion_stats():
+    """Get discussion statistics."""
+    total = Discussion.query.count()
+    clear = Discussion.query.filter_by(status="Clear").count()
+    flagged = Discussion.query.filter_by(is_flagged=True).count()
+
+    return jsonify({
+        "total": total,
+        "clear": clear,
+        "flagged": flagged,
+    }), 200

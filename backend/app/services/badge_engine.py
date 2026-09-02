@@ -14,9 +14,9 @@ check_and_award_badges(user_id).
 
 from app.extensions import db
 from app.models.badge import Badge
-from app.models.user_badge import UserBadge
 from app.models.resource import Resource
 from app.models.user import User
+from app.models.user_badge import UserBadge
 
 
 def _has_badge(user_id, badge_name):
