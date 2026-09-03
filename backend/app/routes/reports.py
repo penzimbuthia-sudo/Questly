@@ -12,7 +12,7 @@ from app.models.report import Report
 from app.models.system_log import SystemLog
 from app.utils.decorators import role_required
 
-reports_bp = Blueprint("reports", __name__, url_prefix="/reports")
+reports_bp = Blueprint("reports", __name__, url_prefix="/admin/reports")
 
 
 @reports_bp.route("/", methods=["GET"])
