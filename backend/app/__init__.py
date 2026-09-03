@@ -28,7 +28,7 @@ def create_app(config_name="development"):
     # Add each one as it's ready:
     app.register_blueprint(auth_bp, url_prefix="/auth")
 
-    app.register_blueprint(resources_bp, url_prefix="/resources")
+    app.register_blueprint(resources_bp)
 
     app.register_blueprint(gamification_bp, url_prefix="/gamification")
 

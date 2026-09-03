@@ -8,6 +8,7 @@ date?" and it makes the numbers much easier to double-check.
 """
 
 from datetime import datetime
+
 from app.extensions import db
 
 

@@ -5,6 +5,7 @@ date."
 """
 
 from datetime import datetime
+
 from app.extensions import db
 
 

@@ -48,7 +48,7 @@ export default function Home() {
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-neutral-900">Welcome back, Penzi</h1>
+          <h1 className="text-2xl font-bold text-neutral-900">Welcome back, {user?.name?.split(" ")[0] ?? "there"}</h1>
           <p className="mt-1 text-sm text-neutral-500">Keep going, you&apos;re doing amazing.</p>
         </div>
         <div className="flex shrink-0 items-center gap-2 rounded-full bg-amber-50 px-4 py-2 text-sm font-semibold text-amber-600">
@@ -67,7 +67,7 @@ export default function Home() {
             <h2 className="text-base font-semibold text-neutral-900">Continue learning</h2>
             <button
               type="button"
-              onClick={() => navigate("/paths")}
+              onClick={() => navigate("paths")}
               className="text-sm font-medium text-purple-600 hover:underline"
             >
               View all
@@ -93,7 +93,7 @@ export default function Home() {
             <span className="shrink-0 text-xs text-neutral-500">{primaryPath.progress.percent}%</span>
             <button
               type="button"
-              onClick={() => navigate(`/paths/${primaryPath.path.id}`)}
+              onClick={() => navigate(`paths/${primaryPath.path.id}`)}
               className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-purple-600 px-4 py-2 text-sm font-semibold text-white"
             >
               <PlayCircle className="h-4 w-4" /> Continue
@@ -115,7 +115,7 @@ export default function Home() {
         </div>
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
           {recommended.map((path) => (
-            <LearningPathCard key={path.id} path={path} onOpen={() => navigate(`/learner/paths/${path.id}`)} onStart={() => navigate(`/paths/${path.id}`)} />
+            <LearningPathCard key={path.id} path={path} onOpen={() => navigate(`/learner/paths/${path.id}`)} onStart={() => navigate(`paths/${path.id}`)} />
           ))}
         </div>
       </section>
