@@ -37,7 +37,7 @@ def get_leaderboard(role=None, limit=10):
     if role is not None:
         query = query.filter_by(role=role)
 
-    top_users = query.order_by(User.xp.desc()).limit(limit).all()
+    top_users = query.order_by(User.xp_total.desc()).limit(limit).all()
 
     leaderboard = []
     for position, user in enumerate(top_users, start=1):
@@ -46,7 +46,7 @@ def get_leaderboard(role=None, limit=10):
                 "rank": position,
                 "id": user.id,
                 "name": user.name,
-                "xp": user.xp,
+                "xp": user.xp_total,
             }
         )
 
@@ -54,16 +54,15 @@ def get_leaderboard(role=None, limit=10):
 
 
 def get_user_rank(user_id, role=None):
-    
     query = User.query
 
     if role is not None:
         query = query.filter_by(role=role)
 
-    all_users = query.order_by(User.xp.desc()).all()
+    all_users = query.order_by(User.xp_total.desc()).all()
 
     for position, user in enumerate(all_users, start=1):
         if user.id == user_id:
             return position
 
-    return None 
+    return None
