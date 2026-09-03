@@ -14,7 +14,7 @@ class Comment(db.Model):
     content = db.Column(db.Text, nullable=False)
 
     # Relationships to User (Person A) and Discussion (E's model)
-    author_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    author_id = db.Column(db.String(36), db.ForeignKey("users.id"), nullable=False)
     discussion_id = db.Column(db.Integer, db.ForeignKey("discussions.id"), nullable=False)
 
     # Moderation fields

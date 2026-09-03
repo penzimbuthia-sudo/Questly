@@ -22,8 +22,8 @@ class Report(db.Model):
     description = db.Column(db.Text, nullable=True)
 
     # Relationships to User (Person A)
-    reporter_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    resolver_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    reporter_id = db.Column(db.String(36), db.ForeignKey("users.id"), nullable=False)
+    resolver_id = db.Column(db.String(36), db.ForeignKey("users.id"), nullable=True)
 
     # Status: "Under review" | "Resolved" | "Rejected"
     status = db.Column(db.String(20), default="Under review")

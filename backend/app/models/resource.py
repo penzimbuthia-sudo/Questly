@@ -17,7 +17,7 @@ class Resource(db.Model):
     # this is allowed to be empty (nullable=True).
     module_id = db.Column(db.Integer, db.ForeignKey("modules.id"), nullable=True)
 
-    contributor_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    contributor_id = db.Column(db.String(36), db.ForeignKey("users.id"), nullable=False)
 
     title = db.Column(db.String(200), nullable=False)
     type = db.Column(db.String(20), nullable=False)  # "Video" | "Article" | "Tutorial"

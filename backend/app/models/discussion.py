@@ -15,7 +15,7 @@ class Discussion(db.Model):
     content = db.Column(db.Text, nullable=False)
 
     # Relationship to User (Person A's model)
-    author_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    author_id = db.Column(db.String(36), db.ForeignKey("users.id"), nullable=False)
     learning_path_id = db.Column(db.Integer, db.ForeignKey("learning_paths.id"), nullable=True)
 
     # Moderation fields
