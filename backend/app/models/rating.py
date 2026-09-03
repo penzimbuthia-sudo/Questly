@@ -1,6 +1,7 @@
 # app/models/rating.py
 
 from datetime import datetime, timezone
+
 from app.extensions import db
 
 
@@ -8,7 +9,7 @@ class Rating(db.Model):
     __tablename__ = "ratings"
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    user_id = db.Column(db.String(36), db.ForeignKey("users.id"), nullable=False)
     resource_id = db.Column(db.Integer, db.ForeignKey("resources.id"), nullable=False)
 
     score = db.Column(db.Integer, nullable=False)  # 1-5

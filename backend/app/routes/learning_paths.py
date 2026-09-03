@@ -1,22 +1,22 @@
 # app/routes/learning_paths.py
 
-from flask import Blueprint, request, jsonify
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask import Blueprint, jsonify, request
+from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from app.extensions import db
 from app.models.learning_path import LearningPath
 from app.models.progress import Progress
 from app.schemas.learning_path_schema import (
-    LearningPathSchema,
-    LearningPathDetailSchema,
     FollowedPathSchema,
+    LearningPathDetailSchema,
+    LearningPathSchema,
 )
 
 # NOTE: uses flask_jwt_extended's @jwt_required() directly. Swap for B's
 # custom decorator (app.utils.decorators) once it exists, if it does more
 # than plain token validation (e.g. role checks) — see task dependencies.
 
-learning_paths_bp = Blueprint("learning_paths", __name__, url_prefix="/api/learning-paths")
+learning_paths_bp = Blueprint("learning_paths", __name__, url_prefix="/learning-paths")
 
 path_list_schema = LearningPathSchema(many=True)
 path_detail_schema = LearningPathDetailSchema()
@@ -40,7 +40,7 @@ def browse_paths():
 def my_paths():
     """Paths the current user follows, each with progress computed
     on the fly from Progress rows (no cached counter to drift out of sync)."""
-    user_id = int(get_jwt_identity())
+    user_id = get_jwt_identity()
 
     followed = (
         Progress.query.filter_by(user_id=user_id, module_id=None)
@@ -99,7 +99,7 @@ def follow_path(path_id):
     """Enroll the current user in a path. Idempotent — following an
     already-followed path just returns the existing state."""
     LearningPath.query.get_or_404(path_id)
-    user_id = int(get_jwt_identity())
+    user_id = get_jwt_identity()
 
     existing = Progress.query.filter_by(
         user_id=user_id, learning_path_id=path_id, module_id=None

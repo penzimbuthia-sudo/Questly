@@ -1,6 +1,5 @@
-# app/models/module.py
-
 from datetime import datetime, timezone
+
 from app.extensions import db
 
 
@@ -11,16 +10,20 @@ class Module(db.Model):
     learning_path_id = db.Column(
         db.Integer, db.ForeignKey("learning_paths.id"), nullable=False
     )
-    # Nullable: not every module wraps a contributor-submitted resource
-    # (some may just be a quiz/checkpoint). D's Resource model.
-    resource_id = db.Column(db.Integer, db.ForeignKey("resources.id"), nullable=True)
+    # resource_id column removed — a module can hold many resources,
+    # via Resource.module_id (see resource.py). See commit message /
+    # migration for why this changed from a 1-to-1 to a 1-to-many.
 
     title = db.Column(db.String(200), nullable=False)
     order_index = db.Column(db.Integer, nullable=False, default=0)
     xp_value = db.Column(db.Integer, nullable=False, default=100)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
-    resource = db.relationship("Resource")
+    resources = db.relationship(
+        "Resource",
+        backref="module",
+        foreign_keys="Resource.module_id",
+    )
     quiz = db.relationship(
         "Quiz", backref="module", uselist=False, cascade="all, delete-orphan"
     )
@@ -40,7 +43,7 @@ class Module(db.Model):
             "order_index": self.order_index,
             "xp_value": self.xp_value,
             "has_quiz": self.quiz is not None,
-            "resource": self.resource.to_dict() if self.resource else None,
+            "resources": [r.to_dict() for r in self.resources],
         }
         if viewer_progress is not None:
             data["completed"] = viewer_progress

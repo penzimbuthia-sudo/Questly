@@ -3,6 +3,7 @@ report.py - Report model for flagged content.
 """
 
 from datetime import datetime, timezone
+
 from app.extensions import db
 
 
