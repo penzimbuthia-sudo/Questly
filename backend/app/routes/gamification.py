@@ -15,7 +15,7 @@ from app.services.leaderboard_service import get_leaderboard
 from app.utils.decorators import jwt_required_custom, role_required
 from app.utils.responses import error_response, success_response
 
-gamification_bp = Blueprint("gamification", __name__, url_prefix="/gamification")
+gamification_bp = Blueprint("gamification", __name__, url_prefix="/api/gamification")
 
 
 @gamification_bp.route("/challenges", methods=["GET"])

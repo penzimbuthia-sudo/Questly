@@ -1,4 +1,4 @@
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export class ApiError extends Error {
   constructor(message, status, data) {
@@ -43,6 +43,14 @@ async function request(path, { method = 'GET', body, headers = {}, auth = true }
   if (!res.ok) {
     const message = data?.message || data?.error || `Request failed (${res.status})`;
     throw new ApiError(message, res.status, data);
+  }
+
+  // Backend routes wrap successful responses as { success: true, data: ... }
+  // (see app/utils/responses.py's success_response). Unwrap it here, once,
+  // so every service file gets the same flat shape instead of each one
+  // reaching into `.data` itself.
+  if (data && typeof data === 'object' && 'success' in data && 'data' in data) {
+    return data.data;
   }
 
   return data;

@@ -12,7 +12,7 @@ from app.utils.responses import success_response
 from app.services.leaderboard_service import get_user_rank
 from flask_jwt_extended import get_jwt_identity
 
-contributor_bp = Blueprint("contributor", __name__, url_prefix="/contributor")
+contributor_bp = Blueprint("contributor", __name__, url_prefix="/api/contributor")
 
 
 @contributor_bp.route("/me/stats", methods=["GET"])

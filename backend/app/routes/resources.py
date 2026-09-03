@@ -11,7 +11,7 @@ from app.schemas.resource_schema import validate_resource_input
 from app.utils.decorators import jwt_required_custom
 from app.utils.responses import error_response, success_response
 
-resources_bp = Blueprint("resources", __name__, url_prefix="/contributor")
+resources_bp = Blueprint("resources", __name__, url_prefix="/api/resources")
 
 
 @resources_bp.route("/resources", methods=["GET"])

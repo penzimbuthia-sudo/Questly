@@ -2,12 +2,14 @@ import os
 from datetime import timedelta
 
 basedir = os.path.abspath(os.path.dirname(__file__))
+instance_dir = os.path.join(basedir, "..", "instance")
+os.makedirs(instance_dir, exist_ok=True)
 
 class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-change-me")
 
     SQLALCHEMY_DATABASE_URI = os.environ.get(
-        "DATABASE_URL", f"sqlite:///{os.path.join(basedir, '..', 'instance', 'app.db')}"
+        "DATABASE_URL", f"sqlite:///{os.path.join(instance_dir, 'app.db')}"
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 

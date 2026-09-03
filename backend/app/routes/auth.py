@@ -39,7 +39,7 @@ def register():
     db.session.commit()
 
     token = create_access_token(
-        identity=user.id,
+        identity=str(user.id),
         additional_claims={"role": user.role, "name": user.name, "email": user.email},
     )
 
@@ -58,7 +58,7 @@ def login():
         return error_response("Incorrect email or password.", 401)
 
     token = create_access_token(
-        identity=user.id,
+        identity=str(user.id),
         additional_claims={"role": user.role, "name": user.name, "email": user.email},
     )
 
