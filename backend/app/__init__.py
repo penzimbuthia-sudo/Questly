@@ -24,9 +24,6 @@ def create_app(config_name="development"):
     from app.routes.learning_paths import learning_paths_bp
     app.register_blueprint(learning_paths_bp)
 
-    from app.routes.modules import modules_bp
-    app.register_blueprint(modules_bp)
-
     from app.routes.quizzes import quizzes_bp
     app.register_blueprint(quizzes_bp)
 

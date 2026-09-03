@@ -64,7 +64,7 @@ def update_user_status(user_id):
         message=f"User status updated to {data['status']}",
         source="users.py",
         admin_id=get_jwt_identity(),
-        metadata={"user_id": user_id, "status": data["status"]}
+        metadata_json={"user_id": user_id, "status": data["status"]}
     )
     db.session.add(log)
     db.session.commit()

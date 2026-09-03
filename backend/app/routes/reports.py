@@ -66,7 +66,7 @@ def resolve_report(report_id):
         message=f"Report resolved: {report.content_title}",
         source="reports.py",
         admin_id=get_jwt_identity(),
-        metadata={"report_id": report_id, "content_type": report.content_type}
+        metadata_json={"report_id": report_id, "content_type": report.content_type}
     )
     db.session.add(log)
     db.session.commit()
@@ -93,7 +93,7 @@ def reject_report(report_id):
         message=f"Report rejected: {report.content_title}",
         source="reports.py",
         admin_id=get_jwt_identity(),
-        metadata={"report_id": report_id, "content_type": report.content_type}
+        metadata_json={"report_id": report_id, "content_type": report.content_type}
     )
     db.session.add(log)
     db.session.commit()

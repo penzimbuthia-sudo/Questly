@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { MessageSquare, Clock } from "lucide-react";
 import { PageHeader } from "@/components/layout";
 import { Card, Avatar } from "@/components/ui";
@@ -10,7 +10,7 @@ const sampleActivity = [
 ];
 
 export default function Community() {
-  const [activity, setActivity] = useState(sampleActivity);
+  const [activity] = useState(sampleActivity);
 
   return (
     <div>

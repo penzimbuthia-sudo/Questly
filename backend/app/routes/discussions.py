@@ -62,7 +62,7 @@ def update_discussion(discussion_id):
         message=f"Discussion updated: {discussion.title}",
         source="discussions.py",
         admin_id=get_jwt_identity(),
-        metadata={"discussion_id": discussion_id, "changes": validated}
+        metadata_json={"discussion_id": discussion_id, "changes": validated}
     )
     db.session.add(log)
     db.session.commit()
@@ -88,7 +88,7 @@ def flag_discussion(discussion_id):
         message=f"Discussion flagged: {discussion.title}",
         source="discussions.py",
         admin_id=get_jwt_identity(),
-        metadata={"discussion_id": discussion_id, "reason": reason}
+        metadata_json={"discussion_id": discussion_id, "reason": reason}
     )
     db.session.add(log)
     db.session.commit()
@@ -111,7 +111,7 @@ def unflag_discussion(discussion_id):
         message=f"Discussion unflagged: {discussion.title}",
         source="discussions.py",
         admin_id=get_jwt_identity(),
-        metadata={"discussion_id": discussion_id}
+        metadata_json={"discussion_id": discussion_id}
     )
     db.session.add(log)
     db.session.commit()
