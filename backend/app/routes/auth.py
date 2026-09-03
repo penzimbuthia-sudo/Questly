@@ -14,7 +14,7 @@ from app.schemas.user_schema import (
 from app.services.email_service import send_password_reset_email
 from app.utils.responses import error_response, success_response
 
-auth_bp = Blueprint("auth", __name__)
+auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 
 register_schema = RegisterSchema()
 login_schema = LoginSchema()
