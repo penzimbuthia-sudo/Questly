@@ -79,7 +79,7 @@ def complete_module(module_id):
     with a quiz must go through POST /modules/<id>/quiz/submit instead —
     that's the only path that can actually grade and award XP for them."""
     module = Module.query.get_or_404(module_id)
-    user_id = int(get_jwt_identity())
+    user_id = get_jwt_identity()
 
     if module.quiz is not None:
         return (

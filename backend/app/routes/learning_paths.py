@@ -40,7 +40,7 @@ def browse_paths():
 def my_paths():
     """Paths the current user follows, each with progress computed
     on the fly from Progress rows (no cached counter to drift out of sync)."""
-    user_id = int(get_jwt_identity())
+    user_id = get_jwt_identity()
 
     followed = (
         Progress.query.filter_by(user_id=user_id, module_id=None)
@@ -99,7 +99,7 @@ def follow_path(path_id):
     """Enroll the current user in a path. Idempotent — following an
     already-followed path just returns the existing state."""
     LearningPath.query.get_or_404(path_id)
-    user_id = int(get_jwt_identity())
+    user_id = get_jwt_identity()
 
     existing = Progress.query.filter_by(
         user_id=user_id, learning_path_id=path_id, module_id=None

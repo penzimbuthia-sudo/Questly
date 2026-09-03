@@ -16,7 +16,7 @@ class XPLog(db.Model):
     __tablename__ = "xp_logs"
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    user_id = db.Column(db.String(36), db.ForeignKey("users.id"), nullable=False)
 
     # Can be negative, in case XP ever needs to be taken away
     # (e.g. a resource gets rejected after already being counted).
@@ -27,7 +27,7 @@ class XPLog(db.Model):
     # Optional — lets the leaderboard/activity feed link back to the
     # source without every caller needing to know its exact table.
     source_type = db.Column(db.String(30), nullable=True)
-    source_id = db.Column(db.Integer, nullable=True)
+    source_id = db.Column(db.String(36), nullable=True)
 
     
     created_at = db.Column(db.DateTime, default=datetime.utcnow)

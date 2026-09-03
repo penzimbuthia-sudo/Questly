@@ -57,7 +57,7 @@ def submit_quiz(module_id):
     score = round((correct_count / total) * 100) if total else 0
     passed = score >= quiz.pass_score
 
-    user_id = int(get_jwt_identity())
+    user_id = get_jwt_identity()
     xp_awarded = 0
 
     if passed:

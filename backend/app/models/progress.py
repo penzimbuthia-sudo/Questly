@@ -10,6 +10,7 @@
 # defensively so duplicates can't slip in locally on SQLite either.
 
 from datetime import datetime, timezone
+
 from app.extensions import db
 
 
@@ -17,11 +18,11 @@ class Progress(db.Model):
     __tablename__ = "progress"
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    user_id = db.Column(db.String(36), db.ForeignKey("users.id"), nullable=False)
     learning_path_id = db.Column(
-        db.Integer, db.ForeignKey("learning_paths.id"), nullable=False
+        db.String(36), db.ForeignKey("learning_paths.id"), nullable=False
     )
-    module_id = db.Column(db.Integer, db.ForeignKey("modules.id"), nullable=True)
+    module_id = db.Column(db.String(36), db.ForeignKey("modules.id"), nullable=True)
 
     status = db.Column(db.String(20), nullable=False, default="following")  # following | completed
     score = db.Column(db.Integer, nullable=True)  # quiz score (%) when completed via a quiz
