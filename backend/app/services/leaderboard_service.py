@@ -1,5 +1,6 @@
 from app.extensions import db
 from app.models.user import User
+from app.models.xp_log import XPLog
 
 
 def award_xp(user_id, amount, reason=None, source_type=None, source_id=None):
@@ -18,6 +19,15 @@ def award_xp(user_id, amount, reason=None, source_type=None, source_id=None):
         return None
 
     user.xp_total += amount
+    db.session.add(
+        XPLog(
+            user_id=user_id,
+            amount=amount,
+            reason=reason,
+            source_type=source_type,
+            source_id=source_id,
+        )
+    )
     db.session.commit()
     return user.xp_total
 
