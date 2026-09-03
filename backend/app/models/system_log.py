@@ -1,7 +1,6 @@
 """
 system_log.py - System log model for admin audit trail.
 """
-
 from datetime import datetime, timezone
 
 from app.extensions import db
@@ -9,7 +8,6 @@ from app.extensions import db
 
 class SystemLog(db.Model):
     __tablename__ = "system_logs"
-
     id = db.Column(db.Integer, primary_key=True)
 
     # Log details
