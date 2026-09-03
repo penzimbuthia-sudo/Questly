@@ -18,6 +18,7 @@ class User(db.Model):
     password_hash = db.Column(db.String(255), nullable=False)
 
     role = db.Column(db.String(20), nullable=False, default="learner")
+    status = db.Column(db.String(20), nullable=False, default="Active")  # Active | Inactive | Pending
 
     xp_total = db.Column(db.Integer, nullable=False, default=0)
     streak_days = db.Column(db.Integer, nullable=False, default=0)

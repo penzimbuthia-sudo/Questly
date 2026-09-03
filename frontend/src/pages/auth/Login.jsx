@@ -26,6 +26,11 @@ export default function Login() {
 
     try {
       const user = await login(form.email, form.password);
+
+      console.log("LOGIN USER:", user);
+      console.log("ROLE:", user?.role);
+      console.log("FROM:", location.state?.from?.pathname);
+
       const from = location.state?.from?.pathname;
       navigate(from || `/${user?.role ?? 'learner'}`, { replace: true });
     } catch (err) {

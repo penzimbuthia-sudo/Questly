@@ -16,7 +16,7 @@ class SystemLog(db.Model):
     source = db.Column(db.String(100), nullable=True)
 
     # Admin who performed the action (Person A's User model)
-    admin_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    admin_id = db.Column(db.String(36), db.ForeignKey("users.id"), nullable=True)
 
     # Additional context
     ip_address = db.Column(db.String(45), nullable=True)
