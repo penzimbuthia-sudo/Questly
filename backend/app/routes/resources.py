@@ -50,4 +50,4 @@ def create_resource():
 
     check_and_award_badges(user_id)
 
-    return success_response(data=new_resource.to_dict(), message="Resource submitted for review.", status_code=201)
+    return success_response(data=new_resource.to_dict(), message="Resource submitted for review.", status=201)
