@@ -3,8 +3,19 @@ import { api } from './api';
 export function decodeToken(token) {
   try {
     const payload = token.split('.')[1];
-    const normalized = payload.replace(/-/g, '+').replace(/_/g, '/');
-    return JSON.parse(atob(normalized));
+
+    if (!payload) return null;
+
+    const normalized = payload
+      .replace(/-/g, '+')
+      .replace(/_/g, '/');
+
+    const padded = normalized.padEnd(
+      normalized.length + ((4 - (normalized.length % 4)) % 4),
+      '='
+    );
+
+    return JSON.parse(atob(padded));
   } catch {
     return null;
   }
@@ -73,25 +84,51 @@ async function mockResetPassword() {
 }
 
 export const authService = {
-  login: (email, password) =>
-    USE_MOCK
-      ? mockLogin(email, password)
-      : api.post('/auth/login', { email, password }, { auth: false }),
+  login: async (email, password) => {
+    if (USE_MOCK) {
+      return mockLogin(email, password);
+    }
 
-  register: (payload) =>
-    USE_MOCK
-      ? mockRegister(payload)
-      : api.post('/auth/register', payload, { auth: false }),
+    const response = await api.post(
+      '/auth/login',
+      { email, password },
+      { auth: false }
+    );
 
-  forgotPassword: (email) =>
-    USE_MOCK
-      ? mockForgotPassword(email)
-      : api.post('/auth/forgot-password', { email }, { auth: false }),
+    return response.data;
+  },
 
-  resetPassword: (token, password) =>
-    USE_MOCK
-      ? mockResetPassword(token, password)
-      : api.post('/auth/reset-password', { token, password }, { auth: false }),
+  register: async (payload) => {
+    if (USE_MOCK) {
+      return mockRegister(payload);
+    }
+
+    const response = await api.post(
+      '/auth/register',
+      payload,
+      { auth: false }
+    );
+
+    return response.data;
+  },
+
+  forgotPassword: async (email) => {
+    if (USE_MOCK) {
+      return mockForgotPassword(email);
+    }
+
+    const response = await api.post('/auth/forgot-password', { email }, { auth: false });
+    return response.data;
+  },
+
+  resetPassword: async (token, password) => {
+    if (USE_MOCK) {
+      return mockResetPassword(token, password);
+    }
+
+    const response = await api.post('/auth/reset-password', { token, password }, { auth: false });
+    return response.data;
+  },
 
   logout: () => {
     localStorage.removeItem('token');
