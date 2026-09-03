@@ -2,6 +2,26 @@ from app.extensions import db
 from app.models.user import User
 
 
+def award_xp(user_id, amount, reason=None, source_type=None, source_id=None):
+    """Credits XP to a user. Called from module completion and quiz
+    submission — this is what actually makes gamification real, rather
+    than just a number sitting in the database that nothing updates.
+
+    TODO: also write an XPLog row here once its exact column names are
+    confirmed (source_type/source_id are already being passed in by
+    callers specifically so they can be logged) — intentionally left
+    out for now rather than guessing field names and adding a fourth
+    mismatch bug today.
+    """
+    user = User.query.get(user_id)
+    if user is None:
+        return None
+
+    user.xp_total += amount
+    db.session.commit()
+    return user.xp_total
+
+
 def get_leaderboard(role=None, limit=10):
     """
     Returns the top users, ranked by XP, highest first.

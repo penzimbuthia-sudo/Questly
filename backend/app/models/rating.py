@@ -10,7 +10,7 @@ class Rating(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.String(36), db.ForeignKey("users.id"), nullable=False)
-    resource_id = db.Column(db.String(36), db.ForeignKey("resources.id"), nullable=False)
+    resource_id = db.Column(db.Integer, db.ForeignKey("resources.id"), nullable=False)
 
     score = db.Column(db.Integer, nullable=False)  # 1-5
     comment = db.Column(db.Text, nullable=True)

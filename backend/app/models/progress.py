@@ -20,7 +20,7 @@ class Progress(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.String(36), db.ForeignKey("users.id"), nullable=False)
     learning_path_id = db.Column(
-        db.String(36), db.ForeignKey("learning_paths.id"), nullable=False
+        db.Integer, db.ForeignKey("learning_paths.id"), nullable=False
     )
     module_id = db.Column(db.String(36), db.ForeignKey("modules.id"), nullable=True)
 
