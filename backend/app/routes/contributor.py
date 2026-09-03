@@ -13,7 +13,7 @@ from app.services.leaderboard_service import get_user_rank
 from app.utils.decorators import jwt_required_custom
 from app.utils.responses import success_response
 
-contributor_bp = Blueprint("contributor", __name__, url_prefix="/contributor/me/stats")
+contributor_bp = Blueprint("contributor", __name__, url_prefix="/contributor")
 
 
 @contributor_bp.route("/me/stats", methods=["GET"])

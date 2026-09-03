@@ -27,7 +27,7 @@ def minutes_from_now(minutes):
     "30 minutes from right now" — useful for setting an
     expires_at value on a password reset token.
     """
-    return datetime.utcnow() + timedelta(minutes=minutes)  # noqa: DTZ003
+    return datetime.now + timedelta(minutes=minutes)  # noqa: DTZ003
 
 
 def is_expired(expires_at):
@@ -36,7 +36,7 @@ def is_expired(expires_at):
     past — meaning whatever it was protecting (like a reset
     token) is no longer valid.
     """
-    return datetime.utcnow() > expires_at  # noqa: DTZ003
+    return datetime.now > expires_at  # noqa: DTZ003
 
 
 def paginate(query, page=1, per_page=20):
