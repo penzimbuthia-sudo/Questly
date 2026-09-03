@@ -2,21 +2,23 @@
 admin.py - General admin dashboard routes.
 """
 
-from flask import request, jsonify, Blueprint
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from datetime import datetime, timedelta
+
+from flask import Blueprint, jsonify, request
+from flask_jwt_extended import get_jwt_identity, jwt_required
+from sqlalchemy import func
+
 from app import db
-from app.models.user import User
-from app.models.discussion import Discussion
-from app.models.report import Report
-from app.models.system_log import SystemLog
-from app.models.resource import Resource
-from app.models.learning_path import LearningPath
-from app.models.quiz import Quiz
 from app.models.badge import Badge
 from app.models.challenge import Challenge
+from app.models.discussion import Discussion
+from app.models.learning_path import LearningPath
+from app.models.quiz import Quiz
+from app.models.report import Report
+from app.models.resource import Resource
+from app.models.system_log import SystemLog
+from app.models.user import User
 from app.utils.decorators import role_required
-from sqlalchemy import func
-from datetime import datetime, timedelta
 
 admin_bp = Blueprint("admin", __name__, url_prefix="/api/admin")
 

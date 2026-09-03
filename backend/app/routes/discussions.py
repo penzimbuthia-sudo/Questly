@@ -2,8 +2,9 @@
 discussions.py - Admin routes for discussion moderation.
 """
 
-from flask import request, jsonify, Blueprint
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask import Blueprint, jsonify, request
+from flask_jwt_extended import get_jwt_identity, jwt_required
+
 from app import db
 from app.models.discussion import Discussion
 from app.models.system_log import SystemLog

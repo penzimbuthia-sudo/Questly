@@ -1,15 +1,15 @@
 # app/routes/learning_paths.py
 
-from flask import Blueprint, request, jsonify
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask import Blueprint, jsonify, request
+from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from app.extensions import db
 from app.models.learning_path import LearningPath
 from app.models.progress import Progress
 from app.schemas.learning_path_schema import (
-    LearningPathSchema,
-    LearningPathDetailSchema,
     FollowedPathSchema,
+    LearningPathDetailSchema,
+    LearningPathSchema,
 )
 
 # NOTE: uses flask_jwt_extended's @jwt_required() directly. Swap for B's

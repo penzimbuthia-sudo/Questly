@@ -3,6 +3,7 @@ comment.py - Comment model for replies to discussions.
 """
 
 from datetime import datetime, timezone
+
 from app.extensions import db
 
 

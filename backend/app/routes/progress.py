@@ -4,15 +4,15 @@
 # Learner file list, and rating a resource is a learner activity, so it
 # lives here alongside the other progress-tracking endpoints.
 
-from flask import Blueprint, request, jsonify
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask import Blueprint, jsonify, request
+from flask_jwt_extended import get_jwt_identity, jwt_required
 from sqlalchemy import func
 
 from app.extensions import db
-from app.models.progress import Progress
 from app.models.learning_path import LearningPath
-from app.models.resource import Resource
+from app.models.progress import Progress
 from app.models.rating import Rating
+from app.models.resource import Resource
 
 progress_bp = Blueprint("progress", __name__, url_prefix="/api")
 

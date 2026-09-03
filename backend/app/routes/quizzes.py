@@ -1,20 +1,21 @@
 # app/routes/quizzes.py
 
 from datetime import datetime, timezone
-from flask import Blueprint, request, jsonify
-from flask_jwt_extended import jwt_required, get_jwt_identity
+
+from flask import Blueprint, jsonify, request
+from flask_jwt_extended import get_jwt_identity, jwt_required
 from marshmallow import ValidationError
 
 from app.extensions import db
 from app.models.module import Module
 from app.models.progress import Progress
-from app.services import leaderboard_service
 from app.routes.modules import _ensure_following
 from app.schemas.quiz_schema import (
+    QuizResultSchema,
     QuizSchema,
     QuizSubmissionSchema,
-    QuizResultSchema,
 )
+from app.services import leaderboard_service
 
 quizzes_bp = Blueprint("quizzes", __name__, url_prefix="/api")
 

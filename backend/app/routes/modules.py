@@ -1,15 +1,16 @@
 # app/routes/modules.py
 
 from datetime import datetime, timezone
+
 from flask import Blueprint, jsonify
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from app.extensions import db
-from app.models.module import Module
 from app.models.learning_path import LearningPath
+from app.models.module import Module
 from app.models.progress import Progress
-from app.services import leaderboard_service
 from app.schemas.learning_path_schema import ModuleSchema
+from app.services import leaderboard_service
 
 modules_bp = Blueprint("modules", __name__, url_prefix="/api")
 
