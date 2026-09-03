@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { startTransition, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, CheckCircle2, Circle, PlayCircle, Sparkles } from "lucide-react";
 import QuizQuestion from "../../components/learner/QuizQuestion";
@@ -18,6 +18,7 @@ export default function PathDetail() {
   const [progress, setProgress] = useState(null);
   const [activeModule, setActiveModule] = useState(null); // module currently taking a quiz
   const [quizState, setQuizState] = useState(null);
+  const [quizError, setQuizError] = useState(null);
 
   const refresh = async () => {
     const [pathData, progressData] = await Promise.all([getPathById(pathId), startPath(pathId).then(() => getPathProgress(pathId))]);
@@ -26,16 +27,25 @@ export default function PathDetail() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     refresh();
-    setActiveModule(null);
-    setQuizState(null);
+    startTransition(() => {
+      setActiveModule(null);
+      setQuizState(null);
+      setQuizError(null);
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathId]);
 
   const beginQuiz = async (module) => {
-    const quiz = await getQuizForModule(pathId, module.id, { pathTitle: path.title, moduleTitle: module.title });
-    setActiveModule(module);
-    setQuizState({ quiz, index: 0, answers: {}, isAnswered: false, feedback: null, result: null });
+    try {
+      setQuizError(null);
+      const quiz = await getQuizForModule(pathId, module.id, { pathTitle: path.title, moduleTitle: module.title });
+      setActiveModule(module);
+      setQuizState({ quiz, index: 0, answers: {}, selected: null, isAnswered: false, feedback: null, result: null });
+    } catch (error) {
+      setQuizError(error.message || "Unable to load this quiz.");
+    }
   };
 
   const selectOption = (optionId) => {
@@ -61,11 +71,17 @@ export default function PathDetail() {
       setQuizState((prev) => ({ ...prev, index: prev.index + 1, selected: null, isAnswered: false, feedback: null }));
       return;
     }
-    const result = await submitQuiz(pathId, activeModule.id, quizState.answers, quizState.quiz.questions);
-    setQuizState((prev) => ({ ...prev, result }));
-    if (result.passed) {
-      const updated = await getPathProgress(pathId);
-      setProgress(updated);
+    const question = quizState.quiz.questions[quizState.index];
+    const answers = { ...quizState.answers, [question.id]: quizState.selected };
+    try {
+      const result = await submitQuiz(pathId, activeModule.id, answers, quizState.quiz.questions);
+      setQuizState((prev) => ({ ...prev, answers, result }));
+      if (result.passed) {
+        const updated = await getPathProgress(pathId);
+        setProgress(updated);
+      }
+    } catch (error) {
+      setQuizError(error.message || "Unable to submit this quiz.");
     }
   };
 
@@ -85,13 +101,14 @@ export default function PathDetail() {
         onSubmit={submitAnswer}
         onNext={nextQuestion}
         onClose={closeQuiz}
+        error={quizError}
       />
     );
   }
 
   return (
     <div className="flex flex-col gap-6">
-      <button type="button" onClick={() => navigate("/paths")} className="inline-flex w-fit items-center gap-1.5 text-sm font-medium text-neutral-500 hover:text-neutral-800">
+      <button type="button" onClick={() => navigate("..")} className="inline-flex w-fit items-center gap-1.5 text-sm font-medium text-neutral-500 hover:text-neutral-800">
         <ArrowLeft className="h-4 w-4" /> Back to paths
       </button>
 
@@ -115,6 +132,8 @@ export default function PathDetail() {
           {progress.modulesCompleted}/{progress.totalModules} modules · {progress.xpEarned.toLocaleString()} XP earned
         </p>
       </div>
+
+      {quizError && <p className="text-sm text-rose-600">{quizError}</p>}
 
       <div className="rounded-2xl border border-black/5 bg-white p-6">
         <h2 className="text-base font-semibold text-neutral-900">Modules</h2>
@@ -153,7 +172,7 @@ export default function PathDetail() {
   );
 }
 
-function QuizFlow({ moduleTitle, quizState, onSelect, onSubmit, onNext, onClose }) {
+function QuizFlow({ moduleTitle, quizState, onSelect, onSubmit, onNext, onClose, error }) {
   const { quiz, index, isAnswered, feedback, selected, result } = quizState;
 
   if (result) {
@@ -183,6 +202,7 @@ function QuizFlow({ moduleTitle, quizState, onSelect, onSubmit, onNext, onClose 
       <button type="button" onClick={onClose} className="inline-flex w-fit items-center gap-1.5 text-sm font-medium text-neutral-500 hover:text-neutral-800">
         <ArrowLeft className="h-4 w-4" /> Exit quiz
       </button>
+      {error && <p className="text-sm text-rose-600">{error}</p>}
       <p className="text-sm text-neutral-500">Quiz · {moduleTitle}</p>
       <QuizQuestion
         question={quiz.questions[index]}
