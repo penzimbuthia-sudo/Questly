@@ -1,6 +1,19 @@
-import { Zap, Flag, Shield, Users, Flame, Crown, Lock, Check } from "lucide-react";
+import { Zap, Flag, Shield, Users, Flame, Crown, Lock, Check, Brain, MessageCircle, Compass, Target, Calendar } from "lucide-react";
 
-const ICONS = { zap: Zap, flag: Flag, shield: Shield, users: Users, flame: Flame, crown: Crown, lock: Lock };
+const ICONS = {
+  zap: Zap,
+  flag: Flag,
+  shield: Shield,
+  users: Users,
+  flame: Flame,
+  crown: Crown,
+  lock: Lock,
+  brain: Brain,
+  message: MessageCircle,
+  compass: Compass,
+  target: Target,
+  calendar: Calendar,
+};
 
 /**
  * BadgeCard

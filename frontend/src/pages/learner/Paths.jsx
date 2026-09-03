@@ -20,7 +20,7 @@ export default function Paths() {
     await startPath(path.id);
     const updated = await getMyPaths();
     setMyPaths(updated);
-    navigate(`/paths/${path.id}`);
+    navigate(path.id);
   };
 
   return (
@@ -61,7 +61,7 @@ export default function Paths() {
                 </div>
                 <button
                   type="button"
-                  onClick={() => navigate(`/paths/${path.id}`)}
+                  onClick={() => navigate(path.id)}
                   className="rounded-lg bg-purple-600 px-4 py-2 text-sm font-semibold text-white"
                 >
                   Resume
@@ -73,7 +73,7 @@ export default function Paths() {
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {allPaths.map((path) => (
-            <LearningPathCard key={path.id} path={path} onOpen={() => navigate(`/paths/${path.id}`)} onStart={handleStart} />
+            <LearningPathCard key={path.id} path={path} onOpen={() => navigate(path.id)} onStart={handleStart} />
           ))}
         </div>
       )}
