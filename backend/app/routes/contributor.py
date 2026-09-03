@@ -5,12 +5,13 @@ stats for the Contributor's own dashboard/profile.
 """
 
 from flask import Blueprint
+from flask_jwt_extended import get_jwt_identity
+
 from app.models.resource import Resource
 from app.models.user import User
+from app.services.leaderboard_service import get_user_rank
 from app.utils.decorators import jwt_required_custom
 from app.utils.responses import success_response
-from app.services.leaderboard_service import get_user_rank
-from flask_jwt_extended import get_jwt_identity
 
 contributor_bp = Blueprint("contributor", __name__, url_prefix="/contributor")
 

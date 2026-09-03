@@ -4,17 +4,17 @@
 # Learner file list, and rating a resource is a learner activity, so it
 # lives here alongside the other progress-tracking endpoints.
 
-from flask import Blueprint, request, jsonify
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask import Blueprint, jsonify, request
+from flask_jwt_extended import get_jwt_identity, jwt_required
 from sqlalchemy import func
 
 from app.extensions import db
-from app.models.progress import Progress
 from app.models.learning_path import LearningPath
-from app.models.resource import Resource
+from app.models.progress import Progress
 from app.models.rating import Rating
+from app.models.resource import Resource
 
-progress_bp = Blueprint("progress", __name__, url_prefix="/api")
+progress_bp = Blueprint("progress", __name__, url_prefix="")
 
 
 @progress_bp.get("/progress/me")
@@ -22,7 +22,7 @@ progress_bp = Blueprint("progress", __name__, url_prefix="/api")
 def my_progress():
     """Every progress row (path follows + module completions) for the
     current user — a flat activity log, not summarized per path."""
-    user_id = int(get_jwt_identity())
+    user_id = get_jwt_identity()
     entries = Progress.query.filter_by(user_id=user_id).order_by(Progress.created_at.desc()).all()
     return jsonify([e.to_dict() for e in entries]), 200
 
@@ -32,7 +32,7 @@ def my_progress():
 def path_progress(path_id):
     """Progress summary for one path: modules completed / total, percent."""
     path = LearningPath.query.get_or_404(path_id)
-    user_id = int(get_jwt_identity())
+    user_id = get_jwt_identity()
 
     completed_count = Progress.query.filter(
         Progress.user_id == user_id,
@@ -68,7 +68,7 @@ def rate_resource(resource_id):
     if not isinstance(score, int) or not (1 <= score <= 5):
         return jsonify({"error": "score must be an integer from 1 to 5"}), 400
 
-    user_id = int(get_jwt_identity())
+    user_id = get_jwt_identity()
     rating = Rating.query.filter_by(user_id=user_id, resource_id=resource_id).first()
 
     if rating:

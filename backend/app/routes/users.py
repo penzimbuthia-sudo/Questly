@@ -2,14 +2,15 @@
 users.py - Admin routes for user management.
 """
 
-from flask import request, jsonify, Blueprint
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask import Blueprint, jsonify, request
+from flask_jwt_extended import get_jwt_identity, jwt_required
+
 from app import db
-from app.models.user import User
 from app.models.system_log import SystemLog
+from app.models.user import User
 from app.utils.decorators import role_required
 
-users_bp = Blueprint("users", __name__, url_prefix="/api/users")
+users_bp = Blueprint("users", __name__, url_prefix="/users")
 
 
 @users_bp.route("/", methods=["GET"])
