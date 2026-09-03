@@ -636,8 +636,6 @@ def run_seed():
     app = create_app()
 
     with app.app_context():
-        db.create_all()
-
         users = _seed_users()
         badges = _seed_badges()
         learning_paths = _seed_learning_paths(users)
