@@ -5,12 +5,8 @@ admin.py - General admin dashboard routes.
 from datetime import datetime, timedelta
 
 from flask import Blueprint, jsonify, request
-from flask_jwt_extended import get_jwt_identity, jwt_required
-from sqlalchemy import func
+from flask_jwt_extended import jwt_required
 
-from app import db
-from app.models.badge import Badge
-from app.models.challenge import Challenge
 from app.models.discussion import Discussion
 from app.models.learning_path import LearningPath
 from app.models.quiz import Quiz
@@ -28,7 +24,7 @@ admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
 @role_required("admin")
 def get_dashboard_stats():
     """Get all dashboard statistics."""
-    week_ago = datetime.now() - timedelta(days=7)
+    week_ago = datetime.now - timedelta(days=7)
 
     return jsonify({
         "users": {

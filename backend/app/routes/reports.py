@@ -10,7 +10,6 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 from app import db
 from app.models.report import Report
 from app.models.system_log import SystemLog
-from app.schemas.report_schema import ReportUpdateSchema
 from app.utils.decorators import role_required
 
 reports_bp = Blueprint("reports", __name__, url_prefix="/reports")
