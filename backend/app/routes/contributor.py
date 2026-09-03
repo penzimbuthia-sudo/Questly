@@ -5,14 +5,15 @@ stats for the Contributor's own dashboard/profile.
 """
 
 from flask import Blueprint
-from app.models.resource import Resource
-from app.models.user import User
-from app.utils.decorators import jwt_required_custom
-from app.utils.responses import success_response
-from app.services.leaderboard_service import get_user_rank
 from flask_jwt_extended import get_jwt_identity
 
-contributor_bp = Blueprint("contributor", __name__, url_prefix="/api/contributor")
+from app.models.resource import Resource
+from app.models.user import User
+from app.services.leaderboard_service import get_user_rank
+from app.utils.decorators import jwt_required_custom
+from app.utils.responses import success_response
+
+contributor_bp = Blueprint("contributor", __name__, url_prefix="/contributor/me/stats")
 
 
 @contributor_bp.route("/me/stats", methods=["GET"])
@@ -35,8 +36,7 @@ def get_my_stats():
 
     return success_response(
         data={
-            "xp": user.xp,
-            "level": user.level,
+            "xp": user.xp_total,
             "resources": len(published_resources),
             "upvotes": total_upvotes,
             "rank": rank,

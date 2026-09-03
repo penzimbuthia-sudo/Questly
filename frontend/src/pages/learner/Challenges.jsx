@@ -16,6 +16,10 @@ const MORE_CHALLENGES = [
   { id: "resource-rally", title: "Resource rally", description: "Share 3 new resources with the community", xp: 300, daysLeft: 4 },
   { id: "perfect-week", title: "Perfect week", description: "Score 90%+ on every quiz you take this week", xp: 400, daysLeft: 4 },
   { id: "consistency-streak", title: "Consistency streak", description: "Log in and complete a module 5 days in a row", xp: 250, daysLeft: 2 },
+  { id: "quiz-sprint", title: "Quiz sprint", description: "Complete 5 module quizzes before the weekend", xp: 350, daysLeft: 6 },
+  { id: "community-helper", title: "Community helper", description: "Answer 3 learner questions in a discussion", xp: 275, daysLeft: 8 },
+  { id: "path-explorer", title: "Path explorer", description: "Complete a module in 3 different learning paths", xp: 450, daysLeft: 12 },
+  { id: "early-riser", title: "Early riser", description: "Finish a learning session before 9 AM three times", xp: 200, daysLeft: 5 },
 ];
 
 export default function Challenges() {

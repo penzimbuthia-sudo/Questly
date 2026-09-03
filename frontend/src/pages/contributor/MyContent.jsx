@@ -9,12 +9,14 @@ const FILTERS = ["All", "Video", "Article", "Learning Path"];
 export default function MyContent() {
   const [content, setContent] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [search, setSearch] = useState("");
   const [activeFilter, setActiveFilter] = useState("All");
 
   useEffect(() => {
     getMyResources()
       .then(setContent)
+      .catch((requestError) => setError(requestError.message || "Unable to load your content."))
       .finally(() => setLoading(false));
   }, []);
 
@@ -50,7 +52,9 @@ export default function MyContent() {
 
       {loading && <p className="text-sm text-fg/50">Loading your content...</p>}
 
-      {!loading && filteredContent.length === 0 && (
+      {!loading && error && <p className="text-sm text-red-500">{error}</p>}
+
+      {!loading && !error && filteredContent.length === 0 && (
         <EmptyState title="No content found" description="Try a different filter or search term." />
       )}
 

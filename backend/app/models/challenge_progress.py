@@ -12,7 +12,7 @@ class ChallengeProgress(db.Model):
     __tablename__ = "challenge_progress"
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    user_id = db.Column(db.String(36), db.ForeignKey("users.id"), nullable=False)
     challenge_id = db.Column(db.Integer, db.ForeignKey("challenges.id"), nullable=False)
 
     progress = db.Column(db.Integer, default=0)  # e.g. 3 (out of a goal of 5)

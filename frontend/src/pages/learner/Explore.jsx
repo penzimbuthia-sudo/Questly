@@ -15,11 +15,25 @@ export default function Explore() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setLoading(true);
-    getAllPaths({ category: activeTab }).then((result) => {
-      setPaths(result);
-      setLoading(false);
-    });
+    let cancelled = false;
+
+    getAllPaths({ category: activeTab })
+      .then((result) => {
+        if (!cancelled) {
+          setPaths(result);
+          setLoading(false);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setPaths([]);
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, [activeTab]);
 
   const toggleBookmark = (path) => {
@@ -32,7 +46,7 @@ export default function Explore() {
 
   const handleStart = async (path) => {
     await startPath(path.id);
-    navigate(`/paths/${path.id}`);
+    navigate(`../paths/${path.id}`);
   };
 
   const emptyState = useMemo(() => !loading && paths.length === 0, [loading, paths]);
@@ -50,7 +64,12 @@ export default function Explore() {
             <button
               key={tab}
               type="button"
-              onClick={() => setActiveTab(tab)}
+              onClick={() => {
+                if (tab !== activeTab) {
+                  setLoading(true);
+                  setActiveTab(tab);
+                }
+              }}
               className={`rounded-full px-4 py-1.5 text-sm font-medium ${
                 activeTab === tab ? "bg-purple-600 text-white" : "bg-white text-neutral-600 hover:bg-neutral-100"
               }`}
@@ -78,7 +97,7 @@ export default function Explore() {
               showMeta
               bookmarked={bookmarked.has(path.id)}
               onToggleBookmark={toggleBookmark}
-              onOpen={() => navigate(`/paths/${path.id}`)}
+              onOpen={() => navigate(`../paths/${path.id}`)}
               onStart={handleStart}
             />
           ))}

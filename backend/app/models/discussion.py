@@ -3,6 +3,7 @@ discussion.py - Discussion model for community threads under learning paths.
 """
 
 from datetime import datetime, timezone
+
 from app.extensions import db
 
 

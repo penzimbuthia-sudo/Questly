@@ -1,22 +1,23 @@
 # app/routes/quizzes.py
 
 from datetime import datetime, timezone
-from flask import Blueprint, request, jsonify
-from flask_jwt_extended import jwt_required, get_jwt_identity
+
+from flask import Blueprint, jsonify, request
+from flask_jwt_extended import get_jwt_identity, jwt_required
 from marshmallow import ValidationError
 
 from app.extensions import db
 from app.models.module import Module
 from app.models.progress import Progress
-from app.services import leaderboard_service
 from app.routes.modules import _ensure_following
 from app.schemas.quiz_schema import (
+    QuizResultSchema,
     QuizSchema,
     QuizSubmissionSchema,
-    QuizResultSchema,
 )
+from app.services import leaderboard_service
 
-quizzes_bp = Blueprint("quizzes", __name__, url_prefix="/api")
+quizzes_bp = Blueprint("quizzes", __name__, url_prefix="")
 
 quiz_schema = QuizSchema()
 submission_schema = QuizSubmissionSchema()
@@ -56,7 +57,7 @@ def submit_quiz(module_id):
     score = round((correct_count / total) * 100) if total else 0
     passed = score >= quiz.pass_score
 
-    user_id = int(get_jwt_identity())
+    user_id = get_jwt_identity()
     xp_awarded = 0
 
     if passed:

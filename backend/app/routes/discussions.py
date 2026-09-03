@@ -2,15 +2,16 @@
 discussions.py - Admin routes for discussion moderation.
 """
 
-from flask import request, jsonify, Blueprint
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask import Blueprint, jsonify, request
+from flask_jwt_extended import get_jwt_identity, jwt_required
+
 from app import db
 from app.models.discussion import Discussion
 from app.models.system_log import SystemLog
 from app.schemas.discussion_schema import DiscussionUpdateSchema
 from app.utils.decorators import role_required
 
-discussions_bp = Blueprint("discussions", __name__, url_prefix="/api/discussions")
+discussions_bp = Blueprint("discussions", __name__, url_prefix="/discussions")
 
 
 @discussions_bp.route("/", methods=["GET"])
@@ -61,7 +62,7 @@ def update_discussion(discussion_id):
         message=f"Discussion updated: {discussion.title}",
         source="discussions.py",
         admin_id=get_jwt_identity(),
-        metadata={"discussion_id": discussion_id, "changes": validated}
+        metadata_json={"discussion_id": discussion_id, "changes": validated}
     )
     db.session.add(log)
     db.session.commit()
@@ -87,7 +88,7 @@ def flag_discussion(discussion_id):
         message=f"Discussion flagged: {discussion.title}",
         source="discussions.py",
         admin_id=get_jwt_identity(),
-        metadata={"discussion_id": discussion_id, "reason": reason}
+        metadata_json={"discussion_id": discussion_id, "reason": reason}
     )
     db.session.add(log)
     db.session.commit()
@@ -110,7 +111,7 @@ def unflag_discussion(discussion_id):
         message=f"Discussion unflagged: {discussion.title}",
         source="discussions.py",
         admin_id=get_jwt_identity(),
-        metadata={"discussion_id": discussion_id}
+        metadata_json={"discussion_id": discussion_id}
     )
     db.session.add(log)
     db.session.commit()

@@ -1,17 +1,18 @@
 # app/routes/modules.py
 
 from datetime import datetime, timezone
+
 from flask import Blueprint, jsonify
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from app.extensions import db
-from app.models.module import Module
 from app.models.learning_path import LearningPath
+from app.models.module import Module
 from app.models.progress import Progress
-from app.services import leaderboard_service
 from app.schemas.learning_path_schema import ModuleSchema
+from app.services import leaderboard_service
 
-modules_bp = Blueprint("modules", __name__, url_prefix="/api")
+modules_bp = Blueprint("modules", __name__, url_prefix="")
 
 module_list_schema = ModuleSchema(many=True)
 module_schema = ModuleSchema()
@@ -78,7 +79,7 @@ def complete_module(module_id):
     with a quiz must go through POST /modules/<id>/quiz/submit instead —
     that's the only path that can actually grade and award XP for them."""
     module = Module.query.get_or_404(module_id)
-    user_id = int(get_jwt_identity())
+    user_id = get_jwt_identity()
 
     if module.quiz is not None:
         return (
