@@ -111,8 +111,4 @@ def downgrade():
         batch_op.drop_column('flag_reason')
         batch_op.drop_column('learning_path_id')
 
-    with op.batch_alter_table('comments', schema=None) as batch_op:
-        batch_op.create_index(batch_op.f('ix_comments_id'), ['id'], unique=False)
-        batch_op.drop_column('flag_reason')
-
     # ### end Alembic commands ###

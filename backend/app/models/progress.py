@@ -22,7 +22,7 @@ class Progress(db.Model):
     learning_path_id = db.Column(
         db.Integer, db.ForeignKey("learning_paths.id"), nullable=False
     )
-    module_id = db.Column(db.String(36), db.ForeignKey("modules.id"), nullable=True)
+    module_id = db.Column(db.Integer, db.ForeignKey("modules.id"), nullable=True)
 
     status = db.Column(db.String(20), nullable=False, default="following")  # following | completed
     score = db.Column(db.Integer, nullable=True)  # quiz score (%) when completed via a quiz
@@ -34,6 +34,7 @@ class Progress(db.Model):
             "uq_progress_follow",
             "user_id",
             "learning_path_id",
+            "module_id",
             unique=True,
             postgresql_where=db.text("module_id IS NULL"),
             sqlite_where=db.text("module_id IS NULL"),
