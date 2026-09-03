@@ -8,10 +8,11 @@ from flask_jwt_extended import get_jwt_identity
 from app.extensions import db
 from app.models.resource import Resource
 from app.schemas.resource_schema import validate_resource_input
+from app.services.badge_engine import check_and_award_badges
 from app.utils.decorators import jwt_required_custom
 from app.utils.responses import error_response, success_response
 
-resources_bp = Blueprint("resources", __name__, url_prefix="/contributor")
+resources_bp = Blueprint("resources", __name__, url_prefix="/contributor/resources")
 
 
 @resources_bp.route("/resources", methods=["GET"])
@@ -46,5 +47,7 @@ def create_resource():
 
     db.session.add(new_resource)
     db.session.commit()
+
+    check_and_award_badges(user_id)
 
     return success_response(data=new_resource.to_dict(), message="Resource submitted for review.", status_code=201)

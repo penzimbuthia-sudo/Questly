@@ -27,10 +27,10 @@ class XPLog(db.Model):
     # Optional — lets the leaderboard/activity feed link back to the
     # source without every caller needing to know its exact table.
     source_type = db.Column(db.String(30), nullable=True)
-    source_id = db.Column(db.String(36), nullable=True)
+    source_id = db.Column(db.Integer, nullable=True)
 
     
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.now)
 
     def to_dict(self):
         return {
