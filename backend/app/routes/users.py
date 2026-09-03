@@ -10,7 +10,7 @@ from app.models.system_log import SystemLog
 from app.models.user import User
 from app.utils.decorators import role_required
 
-users_bp = Blueprint("users", __name__, url_prefix="/users")
+users_bp = Blueprint("users", __name__, url_prefix="/admin/users")
 
 
 @users_bp.route("/", methods=["GET"])

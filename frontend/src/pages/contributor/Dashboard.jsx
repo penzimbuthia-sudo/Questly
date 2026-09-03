@@ -25,9 +25,9 @@ export default function Dashboard() {
   const [content, setContent] = useState([]);
   const [stats, setStats] = useState({
     xp: 0,
-    level: 1,
     resources: 0,
     upvotes: 0,
+    rank: null,
   });
 
   const [leaderboard, setLeaderboard] = useState([]);
@@ -36,7 +36,7 @@ export default function Dashboard() {
   const [showPathModal, setShowPathModal] = useState(false);
 
   useEffect(() => {
-    getMyResources().then((data) => setContent(data.resources ?? []));
+    getMyResources().then(setContent);
     getMyStats().then(setStats);
     getContributorLeaderboard().then(setLeaderboard);
   }, []);

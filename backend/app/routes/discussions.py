@@ -11,7 +11,7 @@ from app.models.system_log import SystemLog
 from app.schemas.discussion_schema import DiscussionUpdateSchema
 from app.utils.decorators import role_required
 
-discussions_bp = Blueprint("discussions", __name__, url_prefix="/discussions")
+discussions_bp = Blueprint("discussions", __name__, url_prefix="/admin/discussions")
 
 
 @discussions_bp.route("/", methods=["GET"])

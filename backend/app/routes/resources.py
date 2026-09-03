@@ -12,7 +12,7 @@ from app.services.badge_engine import check_and_award_badges
 from app.utils.decorators import jwt_required_custom
 from app.utils.responses import error_response, success_response
 
-resources_bp = Blueprint("resources", __name__, url_prefix="/resources")
+resources_bp = Blueprint("resources", __name__, url_prefix="/contributor")
 
 
 @resources_bp.route("/resources", methods=["GET"])
@@ -50,4 +50,4 @@ def create_resource():
 
     check_and_award_badges(user_id)
 
-    return success_response(data=new_resource.to_dict(), message="Resource submitted for review.", status_code=201)
+    return success_response(data=new_resource.to_dict(), message="Resource submitted for review.", status=201)
