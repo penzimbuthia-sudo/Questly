@@ -17,7 +17,7 @@ from app.schemas.quiz_schema import (
 )
 from app.services import leaderboard_service
 
-quizzes_bp = Blueprint("quizzes", __name__, url_prefix="/api")
+quizzes_bp = Blueprint("quizzes", __name__, url_prefix="")
 
 quiz_schema = QuizSchema()
 submission_schema = QuizSubmissionSchema()

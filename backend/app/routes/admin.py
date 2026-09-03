@@ -20,7 +20,7 @@ from app.models.system_log import SystemLog
 from app.models.user import User
 from app.utils.decorators import role_required
 
-admin_bp = Blueprint("admin", __name__, url_prefix="/api/admin")
+admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
 
 
 @admin_bp.route("/dashboard/stats", methods=["GET"])

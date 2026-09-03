@@ -16,7 +16,7 @@ from app.schemas.learning_path_schema import (
 # custom decorator (app.utils.decorators) once it exists, if it does more
 # than plain token validation (e.g. role checks) — see task dependencies.
 
-learning_paths_bp = Blueprint("learning_paths", __name__, url_prefix="/api/learning-paths")
+learning_paths_bp = Blueprint("learning_paths", __name__, url_prefix="/learning-paths")
 
 path_list_schema = LearningPathSchema(many=True)
 path_detail_schema = LearningPathDetailSchema()

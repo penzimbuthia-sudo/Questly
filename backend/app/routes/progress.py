@@ -14,7 +14,7 @@ from app.models.progress import Progress
 from app.models.rating import Rating
 from app.models.resource import Resource
 
-progress_bp = Blueprint("progress", __name__, url_prefix="/api")
+progress_bp = Blueprint("progress", __name__, url_prefix="")
 
 
 @progress_bp.get("/progress/me")

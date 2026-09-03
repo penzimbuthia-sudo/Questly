@@ -12,7 +12,7 @@ from app.models.progress import Progress
 from app.schemas.learning_path_schema import ModuleSchema
 from app.services import leaderboard_service
 
-modules_bp = Blueprint("modules", __name__, url_prefix="/api")
+modules_bp = Blueprint("modules", __name__, url_prefix="")
 
 module_list_schema = ModuleSchema(many=True)
 module_schema = ModuleSchema()
