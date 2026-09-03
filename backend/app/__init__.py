@@ -24,9 +24,6 @@ def create_app(config_name="development"):
     from app.routes.learning_paths import learning_paths_bp
     app.register_blueprint(learning_paths_bp)
 
-    from app.routes.modules import modules_bp
-    app.register_blueprint(modules_bp)
-
     from app.routes.quizzes import quizzes_bp
     app.register_blueprint(quizzes_bp)
 
@@ -39,16 +36,8 @@ def create_app(config_name="development"):
     from app.routes.gamification import gamification_bp
     app.register_blueprint(gamification_bp)
 
-<<<<<<< HEAD
-    app.register_blueprint(resources_bp)
-
-    app.register_blueprint(gamification_bp, url_prefix="/gamification")
-
-    app.register_blueprint(contributor_bp, url_prefix="/contributor")
-=======
     from app.routes.contributor import contributor_bp
     app.register_blueprint(contributor_bp)
->>>>>>> f5efc1d411f06c517868a81af5817bca358fcc60
 
     @app.errorhandler(404)
     def not_found(_e):
