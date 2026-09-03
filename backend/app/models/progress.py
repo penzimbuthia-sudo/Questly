@@ -35,6 +35,7 @@ class Progress(db.Model):
             "learning_path_id",
             unique=True,
             postgresql_where=db.text("module_id IS NULL"),
+            sqlite_where=db.text("module_id IS NULL"),
         ),
         db.Index(
             "uq_progress_module_complete",
@@ -42,6 +43,7 @@ class Progress(db.Model):
             "module_id",
             unique=True,
             postgresql_where=db.text("module_id IS NOT NULL"),
+            sqlite_where=db.text("module_id IS NOT NULL"),
         ),
     )
 
