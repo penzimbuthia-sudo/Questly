@@ -1,5 +1,5 @@
 from flask import Blueprint, request
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 from marshmallow import ValidationError
 
 from app.extensions import db
@@ -103,3 +103,12 @@ def reset_password():
     db.session.commit()
 
     return success_response({"message": "Password updated successfully."})
+
+
+@auth_bp.route("/me", methods=["GET"])
+@jwt_required()
+def get_me():
+    user = User.query.get(get_jwt_identity())
+    if user is None:
+        return error_response("User not found.", 404)
+    return success_response(user.to_dict())
