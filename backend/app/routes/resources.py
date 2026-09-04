@@ -6,12 +6,12 @@ from flask import Blueprint, request
 from flask_jwt_extended import get_jwt_identity
 
 from app.extensions import db
+from app.models.learning_path import LearningPath
 from app.models.resource import Resource
 from app.schemas.resource_schema import validate_resource_input
 from app.services.badge_engine import check_and_award_badges
 from app.utils.decorators import jwt_required_custom
 from app.utils.responses import error_response, success_response
-from app.models.learning_path import LearningPath
 
 resources_bp = Blueprint("resources", __name__, url_prefix="/contributor")
 
