@@ -48,3 +48,11 @@ export async function getPathProgress(pathId) {
   const response = await api.get(`/progress/paths/${pathId}`);
   return response.data;
 }
+
+export function isModuleComplete(pathId, moduleId) {
+  return enrollments.get(pathId)?.modulesCompleted.has(moduleId) ?? false;
+}
+
+export function getUserStats() {
+  return getSnapshot().stats;
+}
