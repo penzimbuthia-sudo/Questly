@@ -177,3 +177,47 @@ def update_resource_status(resource_id):
     db.session.commit()
 
     return jsonify({"data": resource.to_dict(), "message": f"Resource {status.lower()}."}), 200
+
+
+@admin_bp.route("/learning-paths", methods=["GET"])
+@jwt_required()
+@role_required("admin")
+def get_all_learning_paths():
+    paths = LearningPath.query.order_by(LearningPath.created_at.desc()).all()
+    result = []
+    for p in paths:
+        contributor = User.query.get(p.contributor_id) if p.contributor_id else None
+        result.append({
+            "id": p.id,
+            "title": p.title,
+            "modules": f"{p.total_modules} modules",
+            "by": contributor.name if contributor else "Unknown",
+            "status": p.status,
+        })
+    return jsonify({"data": result}), 200
+
+
+@admin_bp.route("/learning-paths/<int:path_id>/status", methods=["PATCH"])
+@jwt_required()
+@role_required("admin")
+def update_learning_path_status(path_id):
+    data = request.get_json() or {}
+    status = data.get("status")
+    if status not in ["Published", "Pending", "Rejected"]:
+        return jsonify({"error": "status must be Published, Pending, or Rejected"}), 400
+
+    path = LearningPath.query.get_or_404(path_id)
+    path.status = status
+    db.session.commit()
+
+    log = SystemLog(
+        level="INFO",
+        message=f"Learning path {status.lower()}: {path.title}",
+        source="admin.py",
+        admin_id=get_jwt_identity(),
+        log_metadata={"learning_path_id": path_id, "status": status},
+    )
+    db.session.add(log)
+    db.session.commit()
+
+    return jsonify({"data": path.to_dict(), "message": f"Learning path {status.lower()}."}), 200
