@@ -30,7 +30,7 @@ class Resource(db.Model):
     # "Published" | "Pending" | "Rejected"
     status = db.Column(db.String(20), default="Pending")
 
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.now)
 
     def to_dict(self):
         """
