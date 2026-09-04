@@ -1,9 +1,11 @@
 import { Avatar } from "@/components/ui";
 
 export default function ContributorLeaderboard({ entries = [] }) {
+  const list = Array.isArray(entries) ? entries : (entries?.leaderboard ?? entries?.data ?? []);
+
   return (
     <div className="flex flex-col gap-3">
-      {entries.map((entry) => (
+      {list.map((entry) => (
         <div
           key={entry.rank}
           className={`flex items-center gap-3 rounded-lg px-2 py-1.5 ${

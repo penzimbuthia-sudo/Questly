@@ -23,7 +23,10 @@ export default function Dashboard() {
     getMyResources().then(setContent);
     getMyStats().then(setStats);
     getContributorLeaderboard().then(setLeaderboard);
-    getChallenges().then((all) => setChallenge(all.find((c) => c.status === "Active") ?? null));
+    getChallenges().then((all) => {
+      const list = Array.isArray(all) ? all : (all?.challenges ?? all?.data ?? []);
+      setChallenge(list.find((c) => c.status === "Active") ?? null);
+    });
   }, []);
 
   async function handleAddResource(formData) {
