@@ -1,36 +1,29 @@
 import { api } from "../services/api";
 
 export async function getChallenges() {
-  const response = await api.get("/gamification/challenges");
-  return response.data;
+  return api.get("/gamification/challenges");
 }
 
 export async function getMyBadges() {
-  const response = await api.get("/gamification/badges/me");
-  return response.data;
+  return api.get("/gamification/badges/me");
 }
 
 export async function getContributorLeaderboard() {
-  const response = await api.get("/gamification/leaderboard?role=contributor");
-  return response.data;
+  return api.get("/gamification/leaderboard?role=contributor");
 }
 
 export async function getMyStats() {
-  const response = await api.get("/contributor/me/stats");
-  return response.data;
+  return api.get("/contributor/me/stats");
 }
 
 export async function getBadgeStats() {
-  const response = await api.get("/gamification/badges/stats");
-  return response.data;
+  return api.get("/gamification/badges/stats");
 }
 
 export async function updateChallenge(challengeId, updates) {
-  const response = await api.patch(`/gamification/challenges/${challengeId}`, updates);
-  return response.data;
+  return api.patch(`/gamification/challenges/${challengeId}`, updates);
 }
 
 export async function getLeaderboard({ role } = {}) {
-  const response = await api.get("/gamification/leaderboard", { params: role ? { role } : {} });
-  return response.data;
+  return api.get("/gamification/leaderboard", { params: role ? { role } : {} });
 }
