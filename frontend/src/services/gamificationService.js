@@ -29,3 +29,8 @@ export async function updateChallenge(challengeId, updates) {
   const response = await api.patch(`/gamification/challenges/${challengeId}`, updates);
   return response.data;
 }
+
+export async function getLeaderboard({ role } = {}) {
+  const response = await api.get("/gamification/leaderboard", { params: role ? { role } : {} });
+  return response.data;
+}
