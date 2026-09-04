@@ -5,8 +5,9 @@ admin.py - General admin dashboard routes.
 from datetime import datetime, timedelta
 
 from flask import Blueprint, jsonify, request
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import get_jwt_identity, jwt_required
 
+from app.extensions import db
 from app.models.discussion import Discussion
 from app.models.learning_path import LearningPath
 from app.models.quiz import Quiz
@@ -127,3 +128,52 @@ def get_system_health():
             "learning_paths": LearningPath.query.count(),
         }
     }), 200
+
+@admin_bp.route("/resources/pending", methods=["GET"])
+@jwt_required()
+@role_required("admin")
+def get_pending_resources():
+    """Every resource platform-wide still awaiting review — powers the
+    admin dashboard's review queue. Distinct from Contributor's
+    /contributor/resources, which only returns the logged-in
+    contributor's own submissions."""
+    pending = Resource.query.filter_by(status="Pending").order_by(Resource.created_at.desc()).all()
+    result = []
+    for r in pending:
+        contributor = User.query.get(r.contributor_id)
+        result.append({
+            "id": r.id,
+            "title": r.title,
+            "type_label": f"Resource · {r.type}",
+            "submitted_by": contributor.name if contributor else "Unknown",
+        })
+    return jsonify({"data": result}), 200
+
+
+@admin_bp.route("/resources/<int:resource_id>/status", methods=["PATCH"])
+@jwt_required()
+@role_required("admin")
+def update_resource_status(resource_id):
+    """Approve or reject a contributor's submitted resource — this is
+    the endpoint that was missing entirely; Dashboard's Approve/Reject
+    buttons previously only updated local React state."""
+    data = request.get_json() or {}
+    status = data.get("status")
+    if status not in ["Published", "Rejected"]:
+        return jsonify({"error": "status must be 'Published' or 'Rejected'"}), 400
+
+    resource = Resource.query.get_or_404(resource_id)
+    resource.status = status
+    db.session.commit()
+
+    log = SystemLog(
+        level="INFO",
+        message=f"Resource {status.lower()}: {resource.title}",
+        source="admin.py",
+        admin_id=get_jwt_identity(),
+        log_metadata={"resource_id": resource_id, "status": status},
+    )
+    db.session.add(log)
+    db.session.commit()
+
+    return jsonify({"data": resource.to_dict(), "message": f"Resource {status.lower()}."}), 200
