@@ -19,3 +19,13 @@ export async function updateResourceStatus(resourceId, status) {
   const response = await api.patch(`/admin/resources/${resourceId}/status`, { status });
   return response.data;
 }
+
+export async function getAllLearningPaths() {
+  const response = await api.get("/admin/learning-paths");
+  return response.data;
+}
+
+export async function updateLearningPathStatus(pathId, status) {
+  const response = await api.patch(`/admin/learning-paths/${pathId}/status`, { status });
+  return response.data;
+}
