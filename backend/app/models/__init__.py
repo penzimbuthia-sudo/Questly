@@ -24,3 +24,4 @@ from .password_reset_token import PasswordResetToken
 from .report import Report
 from .system_log import SystemLog
 from .user_badge import UserBadge
+from .platform_settings import PlatformSettings

@@ -12,6 +12,7 @@ class LearningPath(db.Model):
     category = db.Column(db.String(50), nullable=True)  # e.g. Frontend, Backend, Data science
     level = db.Column(db.String(20), nullable=False, default="Beginner")  # Beginner | Intermediate | Advanced
     xp_reward = db.Column(db.Integer, nullable=False, default=0)
+    status = db.Column(db.String(20), nullable=False, default="Pending")  # Published | Pending | Rejected
     contributor_id = db.Column(db.String(36), db.ForeignKey("users.id"), nullable=True)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
@@ -37,6 +38,7 @@ class LearningPath(db.Model):
             "category": self.category,
             "level": self.level,
             "xp_reward": self.xp_reward,
+            "status": self.status,
             "total_modules": self.total_modules,
         }
         if include_modules:
