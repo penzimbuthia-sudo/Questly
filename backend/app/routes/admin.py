@@ -6,10 +6,12 @@ from datetime import datetime, timedelta
 
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
+from sqlalchemy import func
 
 from app.extensions import db
 from app.models.discussion import Discussion
 from app.models.learning_path import LearningPath
+from app.models.progress import Progress
 from app.models.quiz import Quiz
 from app.models.report import Report
 from app.models.resource import Resource
@@ -221,3 +223,27 @@ def update_learning_path_status(path_id):
     db.session.commit()
 
     return jsonify({"data": path.to_dict(), "message": f"Learning path {status.lower()}."}), 200
+
+
+@admin_bp.route("/quizzes", methods=["GET"])
+@jwt_required()
+@role_required("admin")
+def get_all_quizzes():
+    quizzes = Quiz.query.all()
+    result = []
+    for q in quizzes:
+        module = q.module
+        path = module.learning_path if module else None
+        avg_score = (
+            db.session.query(func.avg(Progress.score))
+            .filter(Progress.module_id == q.module_id, Progress.score.isnot(None))
+            .scalar()
+        )
+        result.append({
+            "id": q.id,
+            "title": q.title,
+            "path": path.title if path else "Unknown",
+            "length": f"{len(q.questions)} questions",
+            "score": f"{round(avg_score)}%" if avg_score is not None else "—",
+        })
+    return jsonify({"data": result}), 200
