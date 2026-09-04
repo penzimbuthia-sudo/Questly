@@ -19,3 +19,13 @@ export async function getMyStats() {
   const response = await api.get("/contributor/me/stats");
   return response.data;
 }
+
+export async function getBadgeStats() {
+  const response = await api.get("/gamification/badges/stats");
+  return response.data;
+}
+
+export async function updateChallenge(challengeId, updates) {
+  const response = await api.patch(`/gamification/challenges/${challengeId}`, updates);
+  return response.data;
+}
