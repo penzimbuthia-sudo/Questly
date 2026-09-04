@@ -5,10 +5,14 @@ admin.py - General admin dashboard routes.
 from datetime import datetime, timedelta
 
 from flask import Blueprint, jsonify, request
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import get_jwt_identity, jwt_required
+from sqlalchemy import func
 
+from app.extensions import db
 from app.models.discussion import Discussion
 from app.models.learning_path import LearningPath
+from app.models.platform_settings import PlatformSettings
+from app.models.progress import Progress
 from app.models.quiz import Quiz
 from app.models.report import Report
 from app.models.resource import Resource
@@ -17,6 +21,14 @@ from app.models.user import User
 from app.utils.decorators import role_required
 
 admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
+
+FIELD_MAP = {
+    "reviewBeforePublish": "review_before_publish",
+    "autoFlag": "auto_flag",
+    "weeklyReset": "weekly_reset",
+    "seasonalBadges": "seasonal_badges",
+    "maintenanceMode": "maintenance_mode",
+}
 
 
 @admin_bp.route("/dashboard/stats", methods=["GET"])
@@ -127,3 +139,141 @@ def get_system_health():
             "learning_paths": LearningPath.query.count(),
         }
     }), 200
+
+@admin_bp.route("/resources/pending", methods=["GET"])
+@jwt_required()
+@role_required("admin")
+def get_pending_resources():
+    """Every resource platform-wide still awaiting review — powers the
+    admin dashboard's review queue. Distinct from Contributor's
+    /contributor/resources, which only returns the logged-in
+    contributor's own submissions."""
+    pending = Resource.query.filter_by(status="Pending").order_by(Resource.created_at.desc()).all()
+    result = []
+    for r in pending:
+        contributor = User.query.get(r.contributor_id)
+        result.append({
+            "id": r.id,
+            "title": r.title,
+            "type_label": f"Resource · {r.type}",
+            "submitted_by": contributor.name if contributor else "Unknown",
+        })
+    return jsonify({"data": result}), 200
+
+
+@admin_bp.route("/resources/<int:resource_id>/status", methods=["PATCH"])
+@jwt_required()
+@role_required("admin")
+def update_resource_status(resource_id):
+    """Approve or reject a contributor's submitted resource — this is
+    the endpoint that was missing entirely; Dashboard's Approve/Reject
+    buttons previously only updated local React state."""
+    data = request.get_json() or {}
+    status = data.get("status")
+    if status not in ["Published", "Rejected"]:
+        return jsonify({"error": "status must be 'Published' or 'Rejected'"}), 400
+
+    resource = Resource.query.get_or_404(resource_id)
+    resource.status = status
+    db.session.commit()
+
+    log = SystemLog(
+        level="INFO",
+        message=f"Resource {status.lower()}: {resource.title}",
+        source="admin.py",
+        admin_id=get_jwt_identity(),
+        log_metadata={"resource_id": resource_id, "status": status},
+    )
+    db.session.add(log)
+    db.session.commit()
+
+    return jsonify({"data": resource.to_dict(), "message": f"Resource {status.lower()}."}), 200
+
+
+@admin_bp.route("/learning-paths", methods=["GET"])
+@jwt_required()
+@role_required("admin")
+def get_all_learning_paths():
+    paths = LearningPath.query.order_by(LearningPath.created_at.desc()).all()
+    result = []
+    for p in paths:
+        contributor = User.query.get(p.contributor_id) if p.contributor_id else None
+        result.append({
+            "id": p.id,
+            "title": p.title,
+            "modules": f"{p.total_modules} modules",
+            "by": contributor.name if contributor else "Unknown",
+            "status": p.status,
+        })
+    return jsonify({"data": result}), 200
+
+
+@admin_bp.route("/learning-paths/<int:path_id>/status", methods=["PATCH"])
+@jwt_required()
+@role_required("admin")
+def update_learning_path_status(path_id):
+    data = request.get_json() or {}
+    status = data.get("status")
+    if status not in ["Published", "Pending", "Rejected"]:
+        return jsonify({"error": "status must be Published, Pending, or Rejected"}), 400
+
+    path = LearningPath.query.get_or_404(path_id)
+    path.status = status
+    db.session.commit()
+
+    log = SystemLog(
+        level="INFO",
+        message=f"Learning path {status.lower()}: {path.title}",
+        source="admin.py",
+        admin_id=get_jwt_identity(),
+        log_metadata={"learning_path_id": path_id, "status": status},
+    )
+    db.session.add(log)
+    db.session.commit()
+
+    return jsonify({"data": path.to_dict(), "message": f"Learning path {status.lower()}."}), 200
+
+
+@admin_bp.route("/quizzes", methods=["GET"])
+@jwt_required()
+@role_required("admin")
+def get_all_quizzes():
+    quizzes = Quiz.query.all()
+    result = []
+    for q in quizzes:
+        module = q.module
+        path = module.learning_path if module else None
+        avg_score = (
+            db.session.query(func.avg(Progress.score))
+            .filter(Progress.module_id == q.module_id, Progress.score.isnot(None))
+            .scalar()
+        )
+        result.append({
+            "id": q.id,
+            "title": q.title,
+            "path": path.title if path else "Unknown",
+            "length": f"{len(q.questions)} questions",
+            "score": f"{round(avg_score)}%" if avg_score is not None else "—",
+        })
+    return jsonify({"data": result}), 200
+
+
+@admin_bp.route("/settings", methods=["GET"])
+@jwt_required()
+@role_required("admin")
+def get_settings():
+    return jsonify({"data": PlatformSettings.get_or_create().to_dict()}), 200
+
+
+@admin_bp.route("/settings", methods=["PATCH"])
+@jwt_required()
+@role_required("admin")
+def update_settings():
+    data = request.get_json() or {}
+    settings = PlatformSettings.get_or_create()
+    for key, value in data.items():
+        column = FIELD_MAP.get(key)
+        if column:
+            setattr(settings, column, bool(value))
+    db.session.commit()
+    return jsonify({"data": settings.to_dict(), "message": "Settings updated."}), 200

@@ -5,9 +5,12 @@ export async function getReports() {
   return response.data;
 }
 
-export async function resolveReport(reportId) {
-  const response = await api.patch(`/admin/reports/${reportId}`, {
-    status: "Resolved",
-  });
+export async function resolveReport(reportId, note) {
+  const response = await api.post(`/admin/reports/${reportId}/resolve`, { resolution_note: note });
+  return response.data;
+}
+
+export async function rejectReport(reportId, note) {
+  const response = await api.post(`/admin/reports/${reportId}/reject`, { resolution_note: note });
   return response.data;
 }
