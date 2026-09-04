@@ -9,6 +9,7 @@ from flask_jwt_extended import get_jwt_identity
 from app.extensions import db
 from app.models.badge import Badge
 from app.models.challenge import Challenge
+from app.models.challenge_progress import ChallengeProgress
 from app.models.user_badge import UserBadge
 from app.schemas.challenge_schema import validate_challenge_input
 from app.services.leaderboard_service import get_leaderboard
@@ -21,9 +22,13 @@ gamification_bp = Blueprint("gamification", __name__, url_prefix="/gamification"
 @gamification_bp.route("/challenges", methods=["GET"])
 @jwt_required_custom
 def get_challenges():
-    """Returns every challenge, regardless of status."""
     challenges = Challenge.query.all()
-    return success_response(data=[c.to_dict() for c in challenges])
+    result = []
+    for c in challenges:
+        data = c.to_dict()
+        data["participants"] = ChallengeProgress.query.filter_by(challenge_id=c.id).count()
+        result.append(data)
+    return success_response(data=result)
 
 
 @gamification_bp.route("/badges/me", methods=["GET"])
