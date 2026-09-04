@@ -11,6 +11,7 @@ from sqlalchemy import func
 from app.extensions import db
 from app.models.discussion import Discussion
 from app.models.learning_path import LearningPath
+from app.models.platform_settings import PlatformSettings
 from app.models.progress import Progress
 from app.models.quiz import Quiz
 from app.models.report import Report
@@ -20,6 +21,14 @@ from app.models.user import User
 from app.utils.decorators import role_required
 
 admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
+
+FIELD_MAP = {
+    "reviewBeforePublish": "review_before_publish",
+    "autoFlag": "auto_flag",
+    "weeklyReset": "weekly_reset",
+    "seasonalBadges": "seasonal_badges",
+    "maintenanceMode": "maintenance_mode",
+}
 
 
 @admin_bp.route("/dashboard/stats", methods=["GET"])
@@ -247,3 +256,24 @@ def get_all_quizzes():
             "score": f"{round(avg_score)}%" if avg_score is not None else "—",
         })
     return jsonify({"data": result}), 200
+
+
+@admin_bp.route("/settings", methods=["GET"])
+@jwt_required()
+@role_required("admin")
+def get_settings():
+    return jsonify({"data": PlatformSettings.get_or_create().to_dict()}), 200
+
+
+@admin_bp.route("/settings", methods=["PATCH"])
+@jwt_required()
+@role_required("admin")
+def update_settings():
+    data = request.get_json() or {}
+    settings = PlatformSettings.get_or_create()
+    for key, value in data.items():
+        column = FIELD_MAP.get(key)
+        if column:
+            setattr(settings, column, bool(value))
+    db.session.commit()
+    return jsonify({"data": settings.to_dict(), "message": "Settings updated."}), 200
