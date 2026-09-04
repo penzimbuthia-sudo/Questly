@@ -29,3 +29,8 @@ export async function updateLearningPathStatus(pathId, status) {
   const response = await api.patch(`/admin/learning-paths/${pathId}/status`, { status });
   return response.data;
 }
+
+export async function getAllQuizzes() {
+  const response = await api.get("/admin/quizzes");
+  return response.data;
+}
