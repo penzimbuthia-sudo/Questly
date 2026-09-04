@@ -11,6 +11,7 @@ from app.schemas.resource_schema import validate_resource_input
 from app.services.badge_engine import check_and_award_badges
 from app.utils.decorators import jwt_required_custom
 from app.utils.responses import error_response, success_response
+from app.models.learning_path import LearningPath
 
 resources_bp = Blueprint("resources", __name__, url_prefix="/contributor")
 
@@ -51,3 +52,27 @@ def create_resource():
     check_and_award_badges(user_id)
 
     return success_response(data=new_resource.to_dict(), message="Resource submitted for review.", status=201)
+
+
+@resources_bp.route("/learning-paths", methods=["POST"])
+@jwt_required_custom
+def create_learning_path():
+    """Contributor creates a new learning path — starts 'Pending' until
+    Admin approves it, same lifecycle as a Resource."""
+    data = request.get_json() or {}
+    if not data.get("title", "").strip():
+        return error_response("Title is required.", 400)
+
+    user_id = get_jwt_identity()
+    path = LearningPath(
+        title=data["title"],
+        description=data.get("description"),
+        category=data.get("category"),
+        level=data.get("level", "Beginner"),
+        xp_reward=data.get("xp_reward", 0),
+        contributor_id=user_id,
+        status="Pending",
+    )
+    db.session.add(path)
+    db.session.commit()
+    return success_response(data=path.to_dict(), message="Learning path submitted for review.", status_code=201)
