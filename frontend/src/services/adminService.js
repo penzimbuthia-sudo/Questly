@@ -34,3 +34,13 @@ export async function getAllQuizzes() {
   const response = await api.get("/admin/quizzes");
   return response.data;
 }
+
+export async function getSettings() {
+  const response = await api.get("/admin/settings");
+  return response.data;
+}
+
+export async function updateSettings(updates) {
+  const response = await api.patch("/admin/settings", updates);
+  return response.data;
+}
