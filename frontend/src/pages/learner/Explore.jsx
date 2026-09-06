@@ -54,8 +54,8 @@ export default function Explore() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-bold text-neutral-900">Explore</h1>
-        <p className="mt-1 text-sm text-neutral-500">Discover paths built by the community.</p>
+        <h1 className="text-2xl font-bold text-fg">Explore</h1>
+        <p className="mt-1 text-sm text-fg/60">Discover paths built by the community.</p>
       </div>
 
       <div className="flex items-center justify-between">
@@ -71,22 +71,22 @@ export default function Explore() {
                 }
               }}
               className={`rounded-full px-4 py-1.5 text-sm font-medium ${
-                activeTab === tab ? "bg-purple-600 text-white" : "bg-white text-neutral-600 hover:bg-neutral-100"
+                activeTab === tab ? "bg-royal text-ivory" : "bg-card text-fg/70 hover:bg-surface-active"
               }`}
             >
               {tab}
             </button>
           ))}
         </div>
-        <button type="button" className="inline-flex items-center gap-1.5 rounded-lg border border-neutral-200 bg-white px-3 py-1.5 text-sm font-medium text-neutral-700">
+        <button type="button" className="inline-flex items-center gap-1.5 rounded-lg border border-line/15 bg-card px-3 py-1.5 text-sm font-medium text-fg/80">
           <SlidersHorizontal className="h-4 w-4" /> Filter
         </button>
       </div>
 
       {emptyState ? (
-        <div className="rounded-2xl border border-dashed border-neutral-300 bg-white p-10 text-center">
-          <p className="font-medium text-neutral-800">No paths in this category yet</p>
-          <p className="mt-1 text-sm text-neutral-500">Try a different category, or check back soon.</p>
+        <div className="rounded-2xl border border-dashed border-line/20 bg-card p-10 text-center">
+          <p className="font-medium text-fg">No paths in this category yet</p>
+          <p className="mt-1 text-sm text-fg/60">Try a different category, or check back soon.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

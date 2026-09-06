@@ -1,3 +1,4 @@
+// Community.jsx
 import { useState } from "react";
 import DiscussionCard from "../../components/learner/DiscussionCard";
 
@@ -14,8 +15,8 @@ export default function Community() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-bold text-neutral-900">Community</h1>
-        <p className="mt-1 text-sm text-neutral-500">Discussions, questions, and insights from fellow learners.</p>
+        <h1 className="text-2xl font-bold text-fg">Community</h1>
+        <p className="mt-1 text-sm text-fg/60">Discussions, questions, and insights from fellow learners.</p>
       </div>
 
       <div className="flex flex-col gap-4">
@@ -25,8 +26,8 @@ export default function Community() {
       </div>
 
       {selected && (
-        <div className="rounded-2xl border border-purple-200 bg-purple-50 p-4 text-sm text-purple-800">
-          Opening “{selected.title}” — thread view isn&apos;t wired up in this mock yet.
+        <div className="rounded-2xl border border-tone-info-fg/20 bg-tone-info-bg p-4 text-sm text-tone-info-fg">
+          Opening "{selected.title}" — thread view isn&apos;t wired up in this mock yet.
         </div>
       )}
     </div>
