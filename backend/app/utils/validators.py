@@ -1,4 +1,5 @@
 import re
+from urllib.parse import urlparse
 
 # A simple pattern for "does this look like an email address".
 # It's not perfect, but it catches the obvious mistakes.
@@ -10,6 +11,17 @@ def is_valid_email(email):
     if not email:
         return False
     return bool(EMAIL_PATTERN.match(email))
+
+
+def is_valid_url(url):
+    """Return True for absolute HTTP(S) URLs with a hostname."""
+    if not isinstance(url, str) or not url.strip():
+        return False
+    try:
+        parsed = urlparse(url.strip())
+    except ValueError:
+        return False
+    return parsed.scheme in {"http", "https"} and bool(parsed.netloc)
 
 
 def is_valid_password(password, min_length=8):

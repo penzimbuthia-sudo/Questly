@@ -1,3 +1,4 @@
+import { Flame } from "lucide-react";
 import { Avatar } from "@/components/ui";
 
 export default function ContributorLeaderboard({ entries = [] }) {
@@ -24,6 +25,9 @@ export default function ContributorLeaderboard({ entries = [] }) {
             {entry.isYou ? `${entry.name} (You)` : entry.name}
           </span>
           <span className="text-xs text-fg/40">{entry.xp.toLocaleString()} XP</span>
+          <span className="flex items-center gap-1 text-xs text-butter" title="Current streak">
+            <Flame size={12} /> {entry.streak_days ?? 0}d
+          </span>
         </div>
       ))}
     </div>

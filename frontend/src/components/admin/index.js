@@ -5,3 +5,4 @@ export { default as ChallengeAdminCard } from "./ChallengeAdminCard";
 export { default as BadgeAdminCard } from "./BadgeAdminCard";
 export { default as ReportCard } from "./ReportCard";
 export { default as SystemHealthCard } from "./SystemHealthCard";
+export { default as ResourceReviewModal } from "./ResourceReviewModal";

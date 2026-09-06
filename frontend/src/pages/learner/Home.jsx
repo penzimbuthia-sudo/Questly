@@ -6,9 +6,10 @@ import LevelCard from "../../components/learner/LevelCard";
 import LearningPathCard from "../../components/learner/LearningPathCard";
 import WeeklyChallengeCard from "../../components/learner/WeeklyChallengeCard";
 import BadgeCard from "../../components/learner/BadgeCard";
-import { getAllPaths, getMyPaths, getUserStats, subscribe } from "../../services/learningPathService";
+import { getAllPaths, getMyPaths, getUserStats, getEarnedBadges, subscribe } from "../../services/learningPathService";
 import { ACHIEVEMENTS } from "../../data/achievements";
 import { useAuth } from "../../hooks/useAuth";
+import { checkInStreak } from "../../services/gamificationService";
 
 const WEEKLY_CHALLENGE = {
   title: "The 5-day builder",
@@ -32,9 +33,19 @@ export default function Home() {
   const [stats, setStats] = useState(getUserStats());
   const [primaryPath, setPrimaryPath] = useState(null);
   const [recommended, setRecommended] = useState([]);
-  const earnedBadges = ACHIEVEMENTS.filter((b) => b.earned);
+  const [earnedBadgeNames, setEarnedBadgeNames] = useState(getEarnedBadges());
+  const earnedBadges = ACHIEVEMENTS.filter((badge) => earnedBadgeNames.includes(badge.title));
 
-  useEffect(() => subscribe((snapshot) => setStats(snapshot.stats)), []);
+  useEffect(() => subscribe((snapshot) => {
+    setStats(snapshot.stats);
+    setEarnedBadgeNames(getEarnedBadges());
+  }), []);
+
+  useEffect(() => {
+    checkInStreak()
+      .then((streak) => setStats((current) => ({ ...current, streakDays: streak.streak_days ?? current.streakDays })))
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     getMyPaths().then((mine) => {
@@ -57,9 +68,22 @@ export default function Home() {
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <XPCard totalXP={stats.totalXP} weeklyXP={stats.weeklyXP} />
+        <XPCard totalXP={stats.totalXP} weeklyXP={stats.weeklyXP} percent={(stats.totalXP % stats.xpToNextLevel) / stats.xpToNextLevel * 100} />
         <LevelCard level={stats.level} xpToNextLevel={stats.xpToNextLevel} />
       </div>
+
+      <section className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-wider text-amber-700">Your reward progress</p>
+            <h2 className="mt-1 text-lg font-bold text-neutral-900">{earnedBadges.length} badges unlocked</h2>
+            <p className="mt-1 text-sm text-neutral-600">Complete a module or pass a quiz to keep building your streak.</p>
+          </div>
+          <button type="button" onClick={() => navigate("/learner/achievements")} className="shrink-0 rounded-lg bg-neutral-900 px-3 py-2 text-xs font-semibold text-white">
+            View badges
+          </button>
+        </div>
+      </section>
 
       {primaryPath && (
         <section className="rounded-2xl border border-black/5 bg-white p-6">

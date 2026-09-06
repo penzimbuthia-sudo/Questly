@@ -9,10 +9,12 @@ import {
   startPath,
 } from "../../services/learningPathService";
 import { getQuizForModule, gradeAnswer, submitQuiz } from "../../services/quizService";
+import { useAuth } from "../../hooks/useAuth";
 
 export default function PathDetail() {
   const { pathId } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [path, setPath] = useState(null);
   const [progress, setProgress] = useState(null);
@@ -27,6 +29,7 @@ export default function PathDetail() {
   };
 
   useEffect(() => {
+    if (!user) return;
     // eslint-disable-next-line react-hooks/set-state-in-effect
     refresh();
     startTransition(() => {
@@ -35,7 +38,7 @@ export default function PathDetail() {
       setQuizError(null);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathId]);
+  }, [pathId, user?.sub]); // refetch on path change AND on user change
 
   const beginQuiz = async (module) => {
     try {
@@ -189,6 +192,11 @@ function QuizFlow({ moduleTitle, quizState, onSelect, onSubmit, onNext, onClose,
         </p>
         {result.passed && result.xpAwarded > 0 && (
           <p className="rounded-full bg-amber-50 px-3 py-1 text-sm font-semibold text-amber-600">+{result.xpAwarded} XP awarded</p>
+        )}
+        {result.passed && result.badgesAwarded?.length > 0 && (
+          <p className="rounded-full bg-purple-50 px-3 py-1 text-sm font-semibold text-purple-700">
+            Badge unlocked: {result.badgesAwarded.join(", ")}
+          </p>
         )}
         <button type="button" onClick={onClose} className="mt-2 rounded-lg bg-neutral-900 px-5 py-2 text-sm font-semibold text-white">
           Back to path

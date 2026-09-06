@@ -11,33 +11,104 @@
  * exists. Every exported function returns a Promise, mirrors REST-ish
  * naming, and can be swapped for real `fetch` calls later without
  * touching any calling component.
+ *
+ * State is keyed per user id (see setCurrentUser/clearCurrentUser below)
+ * so switching accounts in the same browser session never leaks one
+ * learner's progress into another's.
  */
 
-import { PATH_CATALOG, MY_PATHS_SEED } from "../data/learningPaths";
+import { PATH_CATALOG } from "../data/learningPaths";
 
 // ---------------------------------------------------------------------------
-// In-memory store (stands in for the backend/DB during frontend dev)
+// Catalog (shared, not user-specific)
 // ---------------------------------------------------------------------------
 
 const clone = (value) => JSON.parse(JSON.stringify(value));
 
-let paths = clone(PATH_CATALOG);
+const paths = clone(PATH_CATALOG);
 
-/** enrollments: pathId -> { modulesCompleted: Set<moduleId>, xpEarned } */
-const enrollments = new Map(
-  MY_PATHS_SEED.map((seed) => {
-    const path = paths.find((p) => p.id === seed.pathId);
-    const completedIds = path ? path.modules.slice(0, seed.modulesCompleted).map((m) => m.id) : [];
-    return [seed.pathId, { modulesCompleted: new Set(completedIds), xpEarned: seed.xpEarned }];
-  })
-);
+// ---------------------------------------------------------------------------
+// Per-user store
+// ---------------------------------------------------------------------------
 
-const userStats = {
-  totalXP: 2480,
-  weeklyXP: 320,
-  level: 12,
-  streakDays: 12,
-};
+/** userId -> { enrollments, userStats, earnedBadges } */
+const stores = new Map();
+const STORAGE_PREFIX = "questly-learning-state:";
+
+let currentUserId = null;
+
+function buildSeedStore() {
+  const enrollments = new Map();
+  const userStats = {
+    totalXP: 0,
+    weeklyXP: 0,
+    level: 1,
+    streakDays: 0,
+  };
+
+  return { enrollments, userStats, earnedBadges: new Set() };
+}
+
+function loadStore(userId) {
+  const seed = buildSeedStore();
+  try {
+    const saved = JSON.parse(localStorage.getItem(`${STORAGE_PREFIX}${userId}`) || "null");
+    if (!saved) return seed;
+
+    seed.userStats = { ...seed.userStats, ...saved.userStats };
+    seed.earnedBadges = new Set(saved.earnedBadges || []);
+    seed.enrollments = new Map(
+      (saved.enrollments || []).map(([pathId, enrollment]) => [
+        pathId,
+        { ...enrollment, modulesCompleted: new Set(enrollment.modulesCompleted || []) },
+      ])
+    );
+  } catch {
+    return seed;
+  }
+  return seed;
+}
+
+function persistStore(userId, store) {
+  if (!userId || !store) return;
+  localStorage.setItem(`${STORAGE_PREFIX}${userId}`, JSON.stringify({
+    userStats: store.userStats,
+    earnedBadges: [...store.earnedBadges],
+    enrollments: [...store.enrollments.entries()].map(([pathId, enrollment]) => [
+      pathId,
+      { ...enrollment, modulesCompleted: [...enrollment.modulesCompleted] },
+    ]),
+  }));
+}
+
+/** Call on login/register (and on mount if a session is restored from storage). */
+export function setCurrentUser(userId) {
+  if (!userId) {
+    clearCurrentUser();
+    return;
+  }
+  currentUserId = userId;
+  if (!stores.has(userId)) {
+    stores.set(userId, loadStore(userId));
+  }
+  notify();
+}
+
+/** Call on logout. */
+export function clearCurrentUser() {
+  currentUserId = null;
+  notify();
+}
+
+function getStore() {
+  if (!currentUserId) {
+    throw new Error("learningPathService: no current user set (call setCurrentUser after login)");
+  }
+  if (!stores.has(currentUserId)) {
+    stores.set(currentUserId, loadStore(currentUserId));
+  }
+  return stores.get(currentUserId);
+}
 
 // Illustrative level curve only — swap for the real progression rule
 // once product/backend defines it.
@@ -47,6 +118,10 @@ const listeners = new Set();
 const notify = () => listeners.forEach((fn) => fn(getSnapshot()));
 
 function getSnapshot() {
+  if (!currentUserId) {
+    return { stats: null };
+  }
+  const { userStats } = getStore();
   return {
     stats: { ...userStats, xpToNextLevel: xpForNextLevel(userStats.level) },
   };
@@ -82,6 +157,7 @@ export async function getPathById(pathId) {
 /** Paths the learner is currently enrolled in, with computed progress. */
 export async function getMyPaths() {
   await delay();
+  const { enrollments } = getStore();
   return Array.from(enrollments.keys()).map((pathId) => {
     const path = paths.find((p) => p.id === pathId);
     return { path: clone(path), progress: computeProgress(pathId) };
@@ -90,6 +166,7 @@ export async function getMyPaths() {
 
 export function computeProgress(pathId) {
   const path = paths.find((p) => p.id === pathId);
+  const { enrollments } = getStore();
   const enrollment = enrollments.get(pathId);
   if (!path || !enrollment) return null;
   const total = path.modules.length;
@@ -109,17 +186,19 @@ export async function getPathProgress(pathId) {
 }
 
 export function isEnrolled(pathId) {
-  return enrollments.has(pathId);
+  return getStore().enrollments.has(pathId);
 }
 
 export function isModuleComplete(pathId, moduleId) {
-  return enrollments.get(pathId)?.modulesCompleted.has(moduleId) ?? false;
+  return getStore().enrollments.get(pathId)?.modulesCompleted.has(moduleId) ?? false;
 }
 
 export async function startPath(pathId) {
   await delay();
+  const { enrollments } = getStore();
   if (!enrollments.has(pathId)) {
     enrollments.set(pathId, { modulesCompleted: new Set(), xpEarned: 0 });
+    persistStore(currentUserId, getStore());
   }
   return computeProgress(pathId);
 }
@@ -135,22 +214,35 @@ export async function completeModule(pathId, moduleId) {
   const module = path?.modules.find((m) => m.id === moduleId);
   if (!path || !module) throw new Error(`Unknown module ${moduleId} on ${pathId}`);
 
+  const { enrollments } = getStore();
   if (!enrollments.has(pathId)) enrollments.set(pathId, { modulesCompleted: new Set(), xpEarned: 0 });
   const enrollment = enrollments.get(pathId);
 
   let xpAwarded = 0;
+  const badgesAwarded = [];
   if (!enrollment.modulesCompleted.has(moduleId)) {
     enrollment.modulesCompleted.add(moduleId);
     enrollment.xpEarned += module.xp;
     xpAwarded = module.xp;
     awardXP(module.xp);
+
+    if (!getStore().earnedBadges.has("Spark Ignited")) {
+      getStore().earnedBadges.add("Spark Ignited");
+      badgesAwarded.push("Spark Ignited");
+    }
+    if (computeProgress(pathId).isComplete && !getStore().earnedBadges.has("Pathfinder")) {
+      getStore().earnedBadges.add("Pathfinder");
+      badgesAwarded.push("Pathfinder");
+    }
+    persistStore(currentUserId, getStore());
   }
 
-  return { progress: computeProgress(pathId), xpAwarded };
+  return { progress: computeProgress(pathId), xpAwarded, badgesAwarded };
 }
 
 /** Adds XP to the learner's total and recomputes level, notifying subscribers. */
 export function awardXP(amount) {
+  const { userStats } = getStore();
   userStats.totalXP += amount;
   userStats.weeklyXP += amount;
   let needed = xpForNextLevel(userStats.level);
@@ -158,10 +250,15 @@ export function awardXP(amount) {
     userStats.level += 1;
     needed = xpForNextLevel(userStats.level);
   }
+  persistStore(currentUserId, getStore());
   notify();
   return getSnapshot().stats;
 }
 
 export function getUserStats() {
   return getSnapshot().stats;
+}
+
+export function getEarnedBadges() {
+  return [...getStore().earnedBadges];
 }

@@ -30,16 +30,17 @@ def upgrade():
             ["module_id"],
         )
 
-    # Update the rating score check constraint name.
+    # Update the rating score check constraint name. Some databases created
+    # before this migration do not have the original named constraint.
+    inspector = sa.inspect(op.get_bind())
+    check_names = {constraint.get("name") for constraint in inspector.get_check_constraints("ratings")}
     with op.batch_alter_table("ratings", schema=None) as batch_op:
-        batch_op.drop_constraint(
-            batch_op.f("ck_rating_score_range"),
-            type_="check",
-        )
-        batch_op.create_check_constraint(
-            batch_op.f("ck_ratings_ck_rating_score_range"),
-            "score >= 1 AND score <= 5",
-        )
+        old_name = batch_op.f("ck_rating_score_range")
+        new_name = batch_op.f("ck_ratings_ck_rating_score_range")
+        if old_name in check_names:
+            batch_op.drop_constraint(old_name, type_="check")
+        if new_name not in check_names:
+            batch_op.create_check_constraint(new_name, "score >= 1 AND score <= 5")
 
 
 def downgrade():

@@ -15,6 +15,11 @@ export async function getPendingResources() {
   return response.data;
 }
 
+export async function getAllResources() {
+  const response = await api.get("/admin/resources");
+  return response.data;
+}
+
 export async function updateResourceStatus(resourceId, status) {
   const response = await api.patch(`/admin/resources/${resourceId}/status`, { status });
   return response.data;

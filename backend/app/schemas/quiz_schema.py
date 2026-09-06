@@ -59,4 +59,5 @@ class QuizResultSchema(Schema):
     pass_score = fields.Int()
     passed = fields.Bool()
     xp_awarded = fields.Int()
+    badges_awarded = fields.List(fields.Str())
     questions = fields.List(fields.Nested(QuizQuestionReviewSchema))

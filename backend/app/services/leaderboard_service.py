@@ -57,6 +57,7 @@ def get_leaderboard(role=None, limit=10):
                 "id": user.id,
                 "name": user.name,
                 "xp": user.xp_total,
+                "streak_days": user.streak_days,
             }
         )
 
