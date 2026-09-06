@@ -1,14 +1,96 @@
 @import "tailwindcss";
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-
 @theme {
   --color-ink: #17151A;
   --color-dark-purple: #332D3A;
   --color-butter: #F4D35E;
+  --color-butter-dark: #8A6200;
   --color-royal: #8B5CF6;
   --color-ivory: #FAF7F0;
-
+  --color-success: #1F7A44;
+  --color-danger: #B3492B;
   --font-sans: 'Inter', sans-serif;
+
+  --color-page: #FAF7F0;
+  --color-card: #FFFFFF;
+  --color-surface-alt: #FAF7F0;
+  --color-fg: #17151A;
+  --color-line: #17151A;
+
+  --color-surface: var(--color-card);
+  --color-surface-active: #F0EBE0;
+  --color-surface-hover: #F0EBE0;
+  --color-border: rgba(23, 21, 26, 0.10);
+  --color-border-soft: rgba(23, 21, 26, 0.06);
+
+  --color-ink-0: var(--color-fg);
+  --color-ink-1: rgba(23, 21, 26, 0.82);
+  --color-ink-2: rgba(23, 21, 26, 0.60);
+  --color-ink-3: rgba(23, 21, 26, 0.40);
+
+  --color-violet-300: #C4B5FD;
+  --color-violet-400: #A78BFA;
+  --color-violet-500: var(--color-royal);
+  --color-violet-600: #7C3AED;
+  --color-violet-700: #6D28D9;
+
+  --color-amber-300: var(--color-butter);
+  --color-amber-400: #EAB53F;
+  --color-amber-500: #D9A82E;
+
+  --color-tone-success-bg: #E7F6EC;
+  --color-tone-success-fg: #1F7A44;
+  --color-tone-danger-bg: #FBEAE5;
+  --color-tone-danger-fg: #B3492B;
+  --color-tone-warning-bg: #FFF3D6;
+  --color-tone-warning-fg: #8A6200;
+  --color-tone-info-bg: rgba(139, 92, 246, 0.12);
+  --color-tone-info-fg: #6D28D9;
 }
 
+/* One shared dark theme, replacing the old per-role .theme-contributor/
+   .theme-admin split — they were nearly identical, so this merges them
+   into a single theme any role can opt into via the switcher. */
+.theme-dark {
+  --color-page: #17151A;
+  --color-card: #211D28;
+  --color-surface-alt: #2A2431;
+  --color-fg: #FAF7F0;
+  --color-line: #FAF7F0;
+
+  --color-surface: var(--color-card);
+  --color-surface-active: #2E2836;
+  --color-surface-hover: #2E2836;
+  --color-border: rgba(250, 247, 240, 0.10);
+  --color-border-soft: rgba(250, 247, 240, 0.06);
+
+  --color-ink-0: var(--color-fg);
+  --color-ink-1: rgba(250, 247, 240, 0.82);
+  --color-ink-2: rgba(250, 247, 240, 0.60);
+  --color-ink-3: rgba(250, 247, 240, 0.40);
+
+  --color-violet-300: #C4B5FD;
+  --color-violet-400: #A78BFA;
+  --color-violet-500: var(--color-royal);
+  --color-violet-600: #7C3AED;
+  --color-violet-700: #6D28D9;
+
+  --color-amber-300: var(--color-butter);
+  --color-amber-400: #EAB53F;
+  --color-amber-500: #D9A82E;
+
+  --color-tone-success-bg: rgba(127, 217, 154, 0.14);
+  --color-tone-success-fg: #7FD99A;
+  --color-tone-danger-bg: rgba(232, 138, 125, 0.16);
+  --color-tone-danger-fg: #E88A7D;
+  --color-tone-warning-bg: rgba(244, 211, 94, 0.16);
+  --color-tone-warning-fg: #F4D35E;
+  --color-tone-info-bg: rgba(139, 92, 246, 0.16);
+  --color-tone-info-fg: #C4B5FD;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-page);
+  color: var(--color-fg);
+}

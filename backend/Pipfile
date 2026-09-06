@@ -12,6 +12,13 @@ flask-cors = "*"
 marshmallow = "*"
 marshmallow-sqlalchemy = "*"
 python-dotenv = "*"
+flask-restful = "*"
+flask-bcrypt = "*"
+psycopg2-binary = "*"
+gunicorn = "*"
+requests = "*"
+werkzeug = "*"
+flask-mail = "*"
 
 [dev-packages]
 
