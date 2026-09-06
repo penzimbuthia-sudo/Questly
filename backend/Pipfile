@@ -15,10 +15,10 @@ python-dotenv = "*"
 flask-restful = "*"
 flask-bcrypt = "*"
 psycopg2-binary = "*"
-gunicorn = "*"
 requests = "*"
 werkzeug = "*"
 flask-mail = "*"
+gunicorn = "*"
 
 [dev-packages]
 
