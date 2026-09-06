@@ -41,6 +41,13 @@ def path_progress(path_id):
         Progress.status == "completed",
     ).count()
     total = path.total_modules
+    xp_earned = db.session.query(func.coalesce(func.sum(Module.xp_value), 0)).join(
+        Progress, Progress.module_id == Module.id
+    ).filter(
+        Progress.user_id == user_id,
+        Progress.learning_path_id == path_id,
+        Progress.status == "completed",
+    ).scalar()
 
     return (
         jsonify(
@@ -49,6 +56,7 @@ def path_progress(path_id):
                 "modules_completed": completed_count,
                 "total_modules": total,
                 "percent": round((completed_count / total) * 100) if total else 0,
+                "xp_earned": xp_earned or 0,
             }
         ),
         200,

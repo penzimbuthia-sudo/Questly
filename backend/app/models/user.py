@@ -42,6 +42,7 @@ class User(db.Model):
             "name": self.name,
             "email": self.email,
             "role": self.role,
+            "status": self.status,
             "xp_total": self.xp_total,
             "streak_days": self.streak_days,
         }

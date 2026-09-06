@@ -8,6 +8,7 @@ export default function EditStatusModal({
   onChange,
   onCancel,
   onSave,
+  details,
 }) {
   return (
     // Dark see-through backdrop that covers the whole screen
@@ -16,6 +17,17 @@ export default function EditStatusModal({
       <div className="bg-card border border-line/10 rounded-2xl p-6 w-full max-w-sm">
         <div className="text-base font-semibold text-fg">{title}</div>
         {subtitle && <div className="text-xs text-fg/50 mt-1">{subtitle}</div>}
+        {details && (
+          <div className="mt-4 rounded-lg bg-page p-3 text-xs text-fg/70">
+            {details.type && <div><span className="font-semibold">Type:</span> {details.type}</div>}
+            {details.description && <p className="mt-2">{details.description}</p>}
+            {details.url && (
+              <a className="mt-2 block truncate text-royal hover:underline" href={details.url} target="_blank" rel="noreferrer">
+                Open submitted resource
+              </a>
+            )}
+          </div>
+        )}
 
         <div className="mt-5">
           <FormField

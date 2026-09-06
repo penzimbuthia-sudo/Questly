@@ -1,11 +1,13 @@
 # app/routes/learning_paths.py
 
 from flask import Blueprint, jsonify, request
+from sqlalchemy import func
 from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from app.extensions import db
 from app.models.learning_path import LearningPath
 from app.models.progress import Progress
+from app.models.module import Module
 from app.schemas.learning_path_schema import (
     FollowedPathSchema,
     LearningPathDetailSchema,
@@ -28,6 +30,7 @@ def browse_paths():
     """Public browse, matches the frontend's Explore page. Optional
     ?category=Frontend filter."""
     query = LearningPath.query
+    query = query.filter_by(status="Published")
     category = request.args.get("category")
     if category and category != "All":
         query = query.filter_by(category=category)
@@ -58,12 +61,20 @@ def my_paths():
             Progress.status == "completed",
         ).count()
         total = path.total_modules
+        xp_earned = db.session.query(func.coalesce(func.sum(Module.xp_value), 0)).join(
+            Progress, Progress.module_id == Module.id
+        ).filter(
+            Progress.user_id == user_id,
+            Progress.learning_path_id == path.id,
+            Progress.status == "completed",
+        ).scalar()
         results.append(
             {
                 "learning_path": path,
                 "modules_completed": completed_count,
                 "total_modules": total,
                 "percent": round((completed_count / total) * 100) if total else 0,
+                "xp_earned": xp_earned or 0,
             }
         )
 
@@ -80,7 +91,7 @@ def get_path(path_id):
 
     identity = get_jwt_identity()
     if identity is not None:
-        user_id = int(identity)
+        user_id = identity
         completed_ids = {
             p.module_id
             for p in Progress.query.filter_by(

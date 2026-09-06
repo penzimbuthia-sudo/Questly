@@ -7,24 +7,8 @@ import LearningPathCard from "../../components/learner/LearningPathCard";
 import WeeklyChallengeCard from "../../components/learner/WeeklyChallengeCard";
 import BadgeCard from "../../components/learner/BadgeCard";
 import { getAllPaths, getMyPaths, getUserStats, subscribe } from "../../services/learningPathService";
-import { ACHIEVEMENTS } from "../../data/achievements";
+import { getChallenges, getMyBadges, getLeaderboard, getLearnerStats } from "../../services/gamificationService";
 import { useAuth } from "../../hooks/useAuth";
-
-const WEEKLY_CHALLENGE = {
-  title: "The 5-day builder",
-  description: "Complete 5 modules this week",
-  current: 3,
-  total: 5,
-  xpReward: 500,
-};
-
-const TOP_LEARNERS = [
-  { name: "Aisha K.", xp: 4820 },
-  { name: "Brian O.", xp: 4560 },
-  { name: "Penzi M.", xp: 4230, isCurrentUser: true },
-  { name: "Chinedu M.", xp: 3980 },
-  { name: "Damilola A.", xp: 3710 },
-];
 
 export default function Home() {
   const navigate = useNavigate();
@@ -32,7 +16,9 @@ export default function Home() {
   const [stats, setStats] = useState(getUserStats());
   const [primaryPath, setPrimaryPath] = useState(null);
   const [recommended, setRecommended] = useState([]);
-  const earnedBadges = ACHIEVEMENTS.filter((b) => b.earned);
+  const [earnedBadges, setEarnedBadges] = useState([]);
+  const [challenges, setChallenges] = useState([]);
+  const [topLearners, setTopLearners] = useState([]);
 
   useEffect(() => subscribe((snapshot) => setStats(snapshot.stats)), []);
 
@@ -42,6 +28,10 @@ export default function Home() {
       if (top) setPrimaryPath(top);
     });
     getAllPaths().then((all) => setRecommended(all.slice(0, 4)));
+    getMyBadges().then((badges) => setEarnedBadges(badges.filter((badge) => badge.earned)));
+    getChallenges().then(setChallenges);
+    getLeaderboard().then(setTopLearners);
+    getLearnerStats().then(setStats);
   }, []);
 
   return (
@@ -134,7 +124,14 @@ export default function Home() {
         </div>
       </section>
 
-      <WeeklyChallengeCard {...WEEKLY_CHALLENGE} onAction={() => navigate("/learner/challenges")} />
+      {challenges[0] && (
+        <WeeklyChallengeCard
+          title={challenges[0].title}
+          description={challenges[0].description}
+          xpReward={challenges[0].reward_xp}
+          onAction={() => navigate("/learner/challenges")}
+        />
+      )}
 
       <section className="rounded-2xl border border-black/5 bg-white p-6">
         <div className="flex items-center justify-between">
@@ -144,7 +141,7 @@ export default function Home() {
           </button>
         </div>
         <div className="mt-3 flex flex-col">
-          {TOP_LEARNERS.map((learner, i) => (
+          {topLearners.map((learner, i) => (
             <div key={learner.name} className="flex items-center gap-4 border-b border-neutral-100 py-3 last:border-0">
               <span className="w-5 text-sm text-neutral-400">{i + 1}</span>
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-neutral-200 text-xs font-semibold text-neutral-700">

@@ -5,6 +5,16 @@ export async function getChallenges() {
   return response.data;
 }
 
+export async function createChallenge(payload) {
+  const response = await api.post("/gamification/challenges", payload);
+  return response.data;
+}
+
+export async function joinChallenge(challengeId) {
+  const response = await api.post(`/gamification/challenges/${challengeId}/join`, {});
+  return response.data;
+}
+
 export async function getMyBadges() {
   const response = await api.get("/gamification/badges/me");
   return response.data;
@@ -15,6 +25,16 @@ export async function getContributorLeaderboard() {
   return response.data;
 }
 
+export async function getLeaderboard(role = "learner") {
+  const response = await api.get(`/gamification/leaderboard?role=${role}`);
+  return response.data;
+}
+
+export async function getLearnerStats() {
+  const response = await api.get("/gamification/stats/me");
+  return response.data;
+}
+
 export async function getMyStats() {
   const response = await api.get("/contributor/me/stats");
   return response.data;
@@ -22,6 +42,11 @@ export async function getMyStats() {
 
 export async function getBadgeStats() {
   const response = await api.get("/gamification/badges/stats");
+  return response.data;
+}
+
+export async function createBadge(payload) {
+  const response = await api.post("/gamification/badges", payload);
   return response.data;
 }
 

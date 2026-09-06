@@ -17,7 +17,7 @@ class ModuleSchema(Schema):
     order_index = fields.Int()
     xp_value = fields.Int()
     has_quiz = fields.Bool()
-    resource = fields.Nested(ResourceSummarySchema, allow_none=True)
+    resources = fields.List(fields.Nested(ResourceSummarySchema))
     # Only populated when the route annotates modules with the current
     # user's progress; absent (not just null) for anonymous/browse views.
     completed = fields.Bool(dump_default=None)

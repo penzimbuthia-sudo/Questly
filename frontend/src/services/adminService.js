@@ -7,11 +7,21 @@ export async function getDashboardStats() {
 
 export async function getRoleDistribution() {
   const response = await api.get("/admin/role-distribution");
-  return response.data;
+  return response.data ?? response;
 }
 
 export async function getPendingResources() {
   const response = await api.get("/admin/resources/pending");
+  return response.data;
+}
+
+export async function getAllResources() {
+  const response = await api.get("/admin/resources");
+  return response.data;
+}
+
+export async function getSystemLogs() {
+  const response = await api.get("/admin/system-logs");
   return response.data;
 }
 

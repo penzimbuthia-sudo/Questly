@@ -1,13 +1,5 @@
 import { useState } from 'react';
-import { Menu, Bell, Search, ChevronDown, X, CheckCircle, AlertCircle, MessageSquare, User, Settings, LogOut, LayoutDashboard, Plus } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-
-const MOCK_NOTIFICATIONS = [
-  { id: 1, title: 'New content pending review', message: '3 resources need your approval', time: '2 min ago', type: 'review', read: false },
-  { id: 2, title: 'Report flagged', message: 'New report from User123 on React guide', time: '15 min ago', type: 'report', read: false },
-  { id: 3, title: 'Challenge ended', message: 'The 5-day builder has concluded', time: '1 hour ago', type: 'challenge', read: false },
-  { id: 4, title: 'User activity spike', message: '50 new users joined today', time: '3 hours ago', type: 'activity', read: true },
-];
+import { Menu, Bell, Search, ChevronDown, X, CheckCircle, AlertCircle, MessageSquare, User, Settings, LogOut, Plus } from 'lucide-react';
 
 const NOTIF_ICON = {
   review: <CheckCircle size={16} className="text-royal" />,
@@ -26,8 +18,7 @@ export default function TopBar({
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [notifications, setNotifications] = useState(MOCK_NOTIFICATIONS);
-  const navigate = useNavigate();
+  const [notifications, setNotifications] = useState([]);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 

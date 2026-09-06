@@ -21,7 +21,8 @@ export function useFetch(path, { skip = false } = {}) {
   }, [path, skip]);
 
   useEffect(() => {
-    refetch();
+    const request = setTimeout(refetch, 0);
+    return () => clearTimeout(request);
   }, [refetch]);
 
   return { data, error, loading, refetch };

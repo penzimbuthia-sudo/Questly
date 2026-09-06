@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { PageHeader } from "@/components/layout";
 import { ReportCard } from "@/components/admin";
 import { getReports, resolveReport } from "@/services/reportService";
+import { toast } from "sonner";
 
 export default function Reports() {
   const [reports, setReports] = useState([]);
@@ -16,6 +17,7 @@ export default function Reports() {
   async function handleResolve(reportId) {
     const updated = await resolveReport(reportId);
     setReports((current) => current.map((r) => (r.id === updated.id ? updated : r)));
+    toast.success("Report resolved!");
   }
 
   return (

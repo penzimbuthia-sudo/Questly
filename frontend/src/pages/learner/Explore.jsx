@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { SlidersHorizontal } from "lucide-react";
 import LearningPathCard from "../../components/learner/LearningPathCard";
 import { getAllPaths, startPath } from "../../services/learningPathService";
-import { CATEGORIES } from "../../data/learningPaths";
+const CATEGORIES = ["All", "Frontend", "Backend", "Data Science", "Design", "DevOps"];
 
 const TABS = ["All", ...CATEGORIES];
 

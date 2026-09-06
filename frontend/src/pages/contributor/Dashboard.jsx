@@ -8,16 +8,9 @@ import {
   AddResourceModal, CreatePathModal,
 } from "@/components/contributor";
 import { getMyResources, createResource, createLearningPath } from "@/services/resourceService";
-import { getMyStats, getContributorLeaderboard } from "@/services/gamificationService";
-import { sampleChallenges } from "@/data/challenges";
+import { getMyStats, getContributorLeaderboard, getChallenges } from "@/services/gamificationService";
 import { useAuth } from "@/hooks/useAuth";
-
-const chartData = [
-  { week: "Wk 1", views: 620 },
-  { week: "Wk 2", views: 810 },
-  { week: "Wk 3", views: 690 },
-  { week: "Wk 4", views: 980 },
-];
+import { toast } from "sonner";
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -31,6 +24,7 @@ export default function Dashboard() {
   });
 
   const [leaderboard, setLeaderboard] = useState([]);
+  const [challenges, setChallenges] = useState([]);
 
   const [showResourceModal, setShowResourceModal] = useState(false);
   const [showPathModal, setShowPathModal] = useState(false);
@@ -39,6 +33,7 @@ export default function Dashboard() {
     getMyResources().then(setContent);
     getMyStats().then(setStats);
     getContributorLeaderboard().then(setLeaderboard);
+    getChallenges().then(setChallenges);
   }, []);
 
   async function handleAddResource(formData) {
@@ -46,12 +41,14 @@ export default function Dashboard() {
 
     setContent((currentList) => [newResource, ...currentList]);
     setShowResourceModal(false);
+    toast.success("Resource submitted for review!");
   }
 
   async function handleCreatePath(formData) {
     const newPath = await createLearningPath(formData);
     setContent((currentList) => [newPath, ...currentList]);
     setShowPathModal(false);
+    toast.success("Learning path created!");
   }
 
   return (
@@ -92,11 +89,10 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Only show the first sample challenge, if one exists */}
-          {sampleChallenges[0] && (
+          {challenges[0] && (
             <div>
               <SectionHeader title="Weekly challenge" />
-              <ChallengeCard {...sampleChallenges[0]} />
+              <ChallengeCard {...challenges[0]} />
             </div>
           )}
         </div>
@@ -132,7 +128,7 @@ export default function Dashboard() {
 
         <AreaChartCard
           title="Contribution analytics"
-          data={chartData}
+          data={[]}
           xKey="week"
           series={[{ key: "views", color: "#8B5CF6" }]}
         />

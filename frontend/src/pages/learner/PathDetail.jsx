@@ -8,7 +8,7 @@ import {
   isModuleComplete,
   startPath,
 } from "../../services/learningPathService";
-import { getQuizForModule, gradeAnswer, submitQuiz } from "../../services/quizService";
+import { getQuizForModule, submitQuiz } from "../../services/quizService";
 
 export default function PathDetail() {
   const { pathId } = useParams();
@@ -55,11 +55,10 @@ export default function PathDetail() {
   const submitAnswer = () => {
     setQuizState((prev) => {
       const question = prev.quiz.questions[prev.index];
-      const feedback = gradeAnswer(question, prev.selected);
       return {
         ...prev,
         isAnswered: true,
-        feedback,
+        feedback: null,
         answers: { ...prev.answers, [question.id]: prev.selected },
       };
     });
@@ -139,7 +138,7 @@ export default function PathDetail() {
         <h2 className="text-base font-semibold text-neutral-900">Modules</h2>
         <div className="mt-4 flex flex-col divide-y divide-neutral-100">
           {path.modules.map((module, i) => {
-            const done = isModuleComplete(pathId, module.id);
+            const done = module.completed || isModuleComplete(pathId, module.id);
             return (
               <div key={module.id} className="flex items-center gap-4 py-3">
                 {done ? (

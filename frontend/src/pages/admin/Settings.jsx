@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { PageHeader } from "@/components/layout";
-import { Card, SectionHeader, Toggle } from "@/components/ui";
+import { Card, SectionHeader, Toggle, Button } from "@/components/ui";
 import { getSettings, updateSettings } from "@/services/adminService";
+import { toast } from "sonner";
 
 const FIELDS = [
   { key: "reviewBeforePublish", label: "Require review before publishing", desc: "Contributor content stays pending until approved." },
@@ -14,18 +15,26 @@ const FIELDS = [
 export default function Settings() {
   const [values, setValues] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     getSettings().then(setValues).finally(() => setLoading(false));
   }, []);
 
-  async function toggleSetting(key) {
-    const next = { ...values, [key]: !values[key] };
-    setValues(next);
+  function toggleSetting(key) {
+    setValues((current) => ({ ...current, [key]: !current[key] }));
+  }
+
+  async function saveSettings() {
+    setSaving(true);
     try {
-      await updateSettings({ [key]: next[key] });
-    } catch {
-      setValues(values);
+      const saved = await updateSettings(values);
+      setValues(saved);
+      toast.success("Settings saved successfully!");
+    } catch (error) {
+      toast.error(error.message || "Could not save settings.");
+    } finally {
+      setSaving(false);
     }
   }
 
@@ -53,6 +62,11 @@ export default function Settings() {
               <Toggle on={values[f.key]} onChange={() => toggleSetting(f.key)} />
             </div>
           ))}
+        </div>
+        <div className="mt-5 flex justify-end border-t border-line/10 pt-4">
+          <Button type="button" variant="primary" disabled={saving} onClick={saveSettings}>
+            {saving ? "Saving..." : "Save Changes"}
+          </Button>
         </div>
       </Card>
     </div>

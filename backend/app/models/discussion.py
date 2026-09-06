@@ -24,6 +24,7 @@ class Discussion(db.Model):
 
     # Status: "Clear" | "Flagged" | "Pending"
     status = db.Column(db.String(20), default="Clear")
+    likes = db.Column(db.Integer, default=0, nullable=False)
 
     # Timestamps
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
@@ -48,6 +49,7 @@ class Discussion(db.Model):
             "is_flagged": self.is_flagged,
             "flag_reason": self.flag_reason,
             "status": self.status,
+            "likes": self.likes,
             "comment_count": self.comments.count(),
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "updated_at": self.updated_at.isoformat() if self.updated_at else None,

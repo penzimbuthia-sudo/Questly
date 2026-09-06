@@ -1,7 +1,7 @@
 import { api } from "@/services/api";
 
 export async function getReports() {
-  const response = await api.get("/admin/reports");
+  const response = await api.get("/admin/reports/");
   return response.data;
 }
 

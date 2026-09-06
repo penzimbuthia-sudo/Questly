@@ -2,17 +2,15 @@ import { useState, useEffect } from "react";
 import { PageHeader } from "@/components/layout";
 import { ChallengeCard } from "@/components/contributor";
 import { getChallenges } from "@/services/gamificationService";
-import { sampleChallenges } from "@/data/challenges";
 
 export default function Challenges() {
   
-  const [challenges, setChallenges] = useState(sampleChallenges);
+  const [challenges, setChallenges] = useState([]);
 
   useEffect(() => {
     getChallenges()
       .then(setChallenges)
-      .catch(() => {
-      });
+      .catch(() => setChallenges([]));
   }, []);
 
   return (

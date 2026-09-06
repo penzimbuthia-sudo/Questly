@@ -4,6 +4,7 @@ import { PageHeader } from "@/components/layout";
 import { Toolbar, Table, Pill, Button } from "@/components/ui";
 import { EditStatusModal } from "@/components/admin";
 import { getAllLearningPaths, updateLearningPathStatus } from "@/services/adminService";
+import { toast } from "sonner";
 
 export default function LearningPaths() {
   const [paths, setPaths] = useState([]);
@@ -27,6 +28,7 @@ export default function LearningPaths() {
     await updateLearningPathStatus(editing.id, draftStatus);
     setPaths((current) => current.map((p) => (p.id === editing.id ? { ...p, status: draftStatus } : p)));
     setEditing(null);
+    toast.success(`Learning path ${draftStatus.toLowerCase()}!`);
   }
 
   const rows = filtered.map((p) => [

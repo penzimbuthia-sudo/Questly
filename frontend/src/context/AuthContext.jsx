@@ -1,34 +1,28 @@
-import { createContext, useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { authService, decodeToken } from '../services/authService';
+import { AuthContext } from './auth-context';
 
-export const AuthContext = createContext(null);
+function getStoredAuth() {
+  const stored = localStorage.getItem('token');
+  if (!stored) return { token: null, user: null };
+
+  const decoded = decodeToken(stored);
+  const expired = decoded?.exp && decoded.exp * 1000 < Date.now();
+  if (decoded && !expired) return { token: stored, user: decoded };
+
+  localStorage.removeItem('token');
+  return { token: null, user: null };
+}
 
 export function AuthProvider({ children }) {
-  const [token, setToken] = useState(null);
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const stored = localStorage.getItem('token');
-    if (stored) {
-      const decoded = decodeToken(stored);
-      const expired = decoded?.exp && decoded.exp * 1000 < Date.now();
-      if (decoded && !expired) {
-        setToken(stored);
-        setUser(decoded);
-      } else {
-        localStorage.removeItem('token');
-      }
-    }
-    setLoading(false);
-  }, []);
+  const [auth, setAuth] = useState(getStoredAuth);
+  const { token, user } = auth;
 
   const login = useCallback(async (email, password) => {
     const data = await authService.login(email, password);
     localStorage.setItem('token', data.token);
     const decoded = decodeToken(data.token);
-    setToken(data.token);
-    setUser(decoded);
+    setAuth({ token: data.token, user: decoded });
     return decoded;
   }, []);
 
@@ -36,15 +30,13 @@ export function AuthProvider({ children }) {
     const data = await authService.register(payload);
     localStorage.setItem('token', data.token);
     const decoded = decodeToken(data.token);
-    setToken(data.token);
-    setUser(decoded);
+    setAuth({ token: data.token, user: decoded });
     return decoded;
   }, []);
 
   const logout = useCallback(() => {
     authService.logout();
-    setToken(null);
-    setUser(null);
+    setAuth({ token: null, user: null });
   }, []);
 
   const value = {
@@ -52,7 +44,7 @@ export function AuthProvider({ children }) {
     user,
     role: user?.role ?? null,
     isAuthenticated: Boolean(token && user),
-    loading,
+    loading: false,
     login,
     register,
     logout,

@@ -1,7 +1,7 @@
 """add learning path status and platform settings
 
 Revision ID: 8c95dd2a7a03
-Revises: d57c992f9827
+Revises: abf0f4298d1a
 Create Date: 2026-09-04 10:00:37.922911
 
 """
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = '8c95dd2a7a03'
-down_revision = 'd57c992f9827'
+down_revision = 'abf0f4298d1a'
 branch_labels = None
 depends_on = None
 

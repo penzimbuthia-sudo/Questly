@@ -10,7 +10,7 @@ from app.models.learning_path import LearningPath
 from app.models.resource import Resource
 from app.schemas.resource_schema import validate_resource_input
 from app.services.badge_engine import check_and_award_badges
-from app.utils.decorators import jwt_required_custom
+from app.utils.decorators import jwt_required_custom, role_required
 from app.utils.responses import error_response, success_response
 
 resources_bp = Blueprint("resources", __name__, url_prefix="/contributor")
@@ -18,6 +18,7 @@ resources_bp = Blueprint("resources", __name__, url_prefix="/contributor")
 
 @resources_bp.route("/resources", methods=["GET"])
 @jwt_required_custom
+@role_required("contributor")
 def get_my_resources():
     """Returns every resource the logged-in contributor has submitted."""
     user_id = get_jwt_identity()
@@ -27,6 +28,7 @@ def get_my_resources():
 
 @resources_bp.route("/resources", methods=["POST"])
 @jwt_required_custom
+@role_required("contributor")
 def create_resource():
     """Submits a new resource. Starts as 'Pending' until an Admin approves it."""
     data = request.get_json()
@@ -56,6 +58,7 @@ def create_resource():
 
 @resources_bp.route("/learning-paths", methods=["POST"])
 @jwt_required_custom
+@role_required("contributor")
 def create_learning_path():
     """Contributor creates a new learning path — starts 'Pending' until
     Admin approves it, same lifecycle as a Resource."""
@@ -75,4 +78,4 @@ def create_learning_path():
     )
     db.session.add(path)
     db.session.commit()
-    return success_response(data=path.to_dict(), message="Learning path submitted for review.", status_code=201)
+    return success_response(data=path.to_dict(), message="Learning path submitted for review.", status=201)

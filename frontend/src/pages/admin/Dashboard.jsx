@@ -6,6 +6,7 @@ import Card from "@/components/ui/Card";
 import { useAuth } from "@/hooks/useAuth";
 import { getDashboardStats, getRoleDistribution, getPendingResources, updateResourceStatus } from "@/services/adminService";
 import { getReports } from "@/services/reportService";
+import { toast } from "sonner";
 
 const ROLE_COLORS = { Learner: "#8B5CF6", Contributor: "#F4D35E", Admin: "#5C5468" };
 
@@ -29,12 +30,14 @@ export default function Dashboard() {
         setReviewQueue(pending);
         setRecentReports((reportsResponse.data ?? reportsResponse).slice(0, 3));
       })
+      .catch((error) => toast.error(error.message))
       .finally(() => setLoading(false));
   }, []);
 
   async function handleReview(resourceId, status) {
     await updateResourceStatus(resourceId, status);
     setReviewQueue((current) => current.filter((item) => item.id !== resourceId));
+    toast.success(`Resource ${status === "Published" ? "approved" : "rejected"}!`);
   }
 
   const statCards = stats

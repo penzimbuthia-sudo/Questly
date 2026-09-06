@@ -10,7 +10,7 @@ from flask_jwt_extended import get_jwt_identity
 from app.models.resource import Resource
 from app.models.user import User
 from app.services.leaderboard_service import get_user_rank
-from app.utils.decorators import jwt_required_custom
+from app.utils.decorators import jwt_required_custom, role_required
 from app.utils.responses import success_response
 
 contributor_bp = Blueprint("contributor", __name__, url_prefix="/contributor")
@@ -18,6 +18,7 @@ contributor_bp = Blueprint("contributor", __name__, url_prefix="/contributor")
 
 @contributor_bp.route("/me/stats", methods=["GET"])
 @jwt_required_custom
+@role_required("contributor")
 def get_my_stats():
     """
     Returns the logged-in contributor's own numbers: xp, level,

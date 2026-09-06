@@ -2,7 +2,7 @@
 admin.py - General admin dashboard routes.
 """
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
@@ -36,7 +36,7 @@ FIELD_MAP = {
 @role_required("admin")
 def get_dashboard_stats():
     """Get all dashboard statistics."""
-    week_ago = datetime.now - timedelta(days=7)
+    week_ago = datetime.now(timezone.utc) - timedelta(days=7)
 
     return jsonify({
         "users": {
@@ -116,9 +116,9 @@ def get_log_level_stats():
 def get_role_distribution():
     """Get user role distribution."""
     return jsonify({
-        "Admin": User.query.filter_by(role="Admin").count(),
-        "Contributor": User.query.filter_by(role="Contributor").count(),
-        "Learner": User.query.filter_by(role="Learner").count(),
+        "Admin": User.query.filter_by(role="admin").count(),
+        "Contributor": User.query.filter_by(role="contributor").count(),
+        "Learner": User.query.filter_by(role="learner").count(),
         "total": User.query.count(),
     }), 200
 
@@ -161,6 +161,24 @@ def get_pending_resources():
     return jsonify({"data": result}), 200
 
 
+@admin_bp.route("/resources", methods=["GET"])
+@jwt_required()
+@role_required("admin")
+def get_all_resources():
+    resources = Resource.query.order_by(Resource.created_at.desc()).all()
+    result = []
+    for resource in resources:
+        contributor = User.query.get(resource.contributor_id)
+        result.append({
+            "id": resource.id,
+            "title": resource.title,
+            "type": resource.type,
+            "by": contributor.name if contributor else "Unknown",
+            "status": resource.status,
+        })
+    return jsonify({"data": result}), 200
+
+
 @admin_bp.route("/resources/<int:resource_id>/status", methods=["PATCH"])
 @jwt_required()
 @role_required("admin")
@@ -182,7 +200,7 @@ def update_resource_status(resource_id):
         message=f"Resource {status.lower()}: {resource.title}",
         source="admin.py",
         admin_id=get_jwt_identity(),
-        log_metadata={"resource_id": resource_id, "status": status},
+        metadata_json={"resource_id": resource_id, "status": status},
     )
     db.session.add(log)
     db.session.commit()
@@ -226,7 +244,7 @@ def update_learning_path_status(path_id):
         message=f"Learning path {status.lower()}: {path.title}",
         source="admin.py",
         admin_id=get_jwt_identity(),
-        log_metadata={"learning_path_id": path_id, "status": status},
+        metadata_json={"learning_path_id": path_id, "status": status},
     )
     db.session.add(log)
     db.session.commit()

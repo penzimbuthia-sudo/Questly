@@ -29,7 +29,7 @@ def list_modules(path_id):
 
     identity = get_jwt_identity()
     if identity is not None:
-        user_id = int(identity)
+        user_id = identity
         completed_ids = {
             p.module_id
             for p in Progress.query.filter_by(
@@ -50,7 +50,7 @@ def get_module(module_id):
 
     identity = get_jwt_identity()
     if identity is not None:
-        user_id = int(identity)
+        user_id = identity
         completed = Progress.query.filter_by(
             user_id=user_id, module_id=module_id, status="completed"
         ).first()

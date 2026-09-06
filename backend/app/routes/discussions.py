@@ -6,12 +6,62 @@ from flask import Blueprint, jsonify, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from app import db
+from app.models.comment import Comment
 from app.models.discussion import Discussion
 from app.models.system_log import SystemLog
 from app.schemas.discussion_schema import DiscussionUpdateSchema
 from app.utils.decorators import role_required
 
 discussions_bp = Blueprint("discussions", __name__, url_prefix="/admin/discussions")
+community_bp = Blueprint("community", __name__, url_prefix="/discussions")
+
+
+@community_bp.route("", methods=["GET"])
+@jwt_required()
+def community_discussions():
+    discussions = Discussion.query.order_by(Discussion.created_at.desc()).all()
+    return jsonify({"data": [
+        {**discussion.to_dict(), "author": discussion.author.name if discussion.author else "Unknown"}
+        for discussion in discussions
+    ]}), 200
+
+
+@community_bp.route("", methods=["POST"])
+@jwt_required()
+def create_discussion():
+    data = request.get_json(silent=True) or {}
+    title = str(data.get("title", "")).strip()
+    content = str(data.get("content", "")).strip()
+    if not title or not content:
+        return jsonify({"error": "title and content are required"}), 400
+    discussion = Discussion(title=title, content=content, author_id=get_jwt_identity())
+    db.session.add(discussion)
+    db.session.commit()
+    return jsonify({"data": discussion.to_dict(), "message": "Discussion posted"}), 201
+
+
+@community_bp.route("/<int:discussion_id>/comments", methods=["GET", "POST"])
+@jwt_required()
+def discussion_comments(discussion_id):
+    discussion = Discussion.query.get_or_404(discussion_id)
+    if request.method == "POST":
+        content = str((request.get_json(silent=True) or {}).get("content", "")).strip()
+        if not content:
+            return jsonify({"error": "content is required"}), 400
+        comment = Comment(content=content, author_id=get_jwt_identity(), discussion_id=discussion.id)
+        db.session.add(comment)
+        db.session.commit()
+        return jsonify({"data": comment.to_dict(), "message": "Reply posted"}), 201
+    return jsonify({"data": [comment.to_dict() for comment in discussion.comments.all()]}), 200
+
+
+@community_bp.route("/<int:discussion_id>/like", methods=["POST"])
+@jwt_required()
+def like_discussion(discussion_id):
+    discussion = Discussion.query.get_or_404(discussion_id)
+    discussion.likes += 1
+    db.session.commit()
+    return jsonify({"likes": discussion.likes}), 200
 
 
 @discussions_bp.route("/", methods=["GET"])

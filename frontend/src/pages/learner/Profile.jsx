@@ -1,27 +1,24 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { BadgeCheck, CheckCircle2, Award as AwardIcon, Share2, Pencil } from "lucide-react";
+import { BadgeCheck, Pencil } from "lucide-react";
 import BadgeCard from "../../components/learner/BadgeCard";
 import { getMyPaths, getUserStats, subscribe } from "../../services/learningPathService";
-import { ACHIEVEMENTS } from "../../data/achievements";
+import { getMyBadges } from "../../services/gamificationService";
+import { getLearnerStats } from "../../services/gamificationService";
 import { useAuth } from "../../hooks/useAuth";
-
-const RECENT_ACTIVITY = [
-  { id: "a1", icon: CheckCircle2, text: 'Completed "Hooks deep dive" module', time: "2h ago" },
-  { id: "a2", icon: AwardIcon, text: "Earned the Streak keeper badge", time: "1d ago" },
-  { id: "a3", icon: Share2, text: 'Shared "CSS Grid in 10 minutes"', time: "2d ago" },
-];
 
 export default function Profile() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [stats, setStats] = useState(getUserStats());
   const [myPaths, setMyPaths] = useState([]);
-  const earnedBadges = ACHIEVEMENTS.filter((b) => b.earned);
+  const [earnedBadges, setEarnedBadges] = useState([]);
 
   useEffect(() => subscribe((snapshot) => setStats(snapshot.stats)), []);
   useEffect(() => {
     getMyPaths().then(setMyPaths);
+    getMyBadges().then((badges) => setEarnedBadges(badges.filter((badge) => badge.earned)));
+    getLearnerStats().then(setStats);
   }, []);
 
   const pathsDone = myPaths.filter(({ progress }) => progress.isComplete).length;
@@ -106,17 +103,7 @@ export default function Profile() {
 
       <section className="rounded-2xl border border-black/5 bg-white p-6">
         <h2 className="text-base font-semibold text-neutral-900">Recent activity</h2>
-        <div className="mt-4 flex flex-col gap-4">
-          {RECENT_ACTIVITY.map(({ id, icon: Icon, text, time }) => (
-            <div key={id} className="flex items-center gap-3 border-t border-neutral-200 pt-3 first:border-t-0 first:pt-0">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-purple-50 text-purple-600">
-                <Icon className="h-4 w-4" />
-              </div>
-              <p className="flex-1 text-sm text-neutral-800">{text}</p>
-              <span className="text-xs text-neutral-400">{time}</span>
-            </div>
-          ))}
-        </div>
+        <p className="mt-4 text-sm text-neutral-500">Activity will appear here as you use Questly.</p>
       </section>
     </div>
   );

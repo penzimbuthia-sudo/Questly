@@ -42,7 +42,7 @@ export default function QuizQuestion({
         {question.options.map((option) => {
           const isSelected = selectedOptionId === option.id;
           const isCorrectOption = isAnswered && option.id === feedback?.correctOptionId;
-          const isWrongSelected = isAnswered && isSelected && !feedback?.isCorrect;
+          const isWrongSelected = isAnswered && feedback && isSelected && !feedback.isCorrect;
 
           return (
             <button

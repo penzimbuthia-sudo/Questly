@@ -1,4 +1,4 @@
-import { Sparkles, ArrowRight, Zap, Award, Flame, Crown } from "lucide-react";
+import { Sparkles, ArrowRight, Zap, Award, Flame } from "lucide-react";
 import Button from "../ui/Button";
 import { HERO_STATS } from "../../data/landingContent";
 
