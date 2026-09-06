@@ -1,3 +1,4 @@
+// Challenges.jsx
 import { useState } from "react";
 import { Target } from "lucide-react";
 import WeeklyChallengeCard from "../../components/learner/WeeklyChallengeCard";
@@ -35,31 +36,31 @@ export default function Challenges() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-bold text-neutral-900">Challenges</h1>
-        <p className="mt-1 text-sm text-neutral-500">Weekly and seasonal quests that reward bonus XP and badges.</p>
+        <h1 className="text-2xl font-bold text-fg">Challenges</h1>
+        <p className="mt-1 text-sm text-fg/60">Weekly and seasonal quests that reward bonus XP and badges.</p>
       </div>
 
       <WeeklyChallengeCard {...FEATURED} joined={joined.has("featured")} onAction={() => toggleJoin("featured")} />
 
       <section>
-        <h2 className="text-base font-semibold text-neutral-900">More challenges</h2>
+        <h2 className="text-base font-semibold text-fg">More challenges</h2>
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
           {MORE_CHALLENGES.map((challenge) => (
-            <div key={challenge.id} className="rounded-2xl border border-black/5 bg-white p-6">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-purple-50 text-purple-600">
+            <div key={challenge.id} className="rounded-2xl border border-line/10 bg-card p-6">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-royal/10 text-royal">
                 <Target className="h-5 w-5" />
               </div>
-              <p className="mt-4 font-semibold text-neutral-900">{challenge.title}</p>
-              <p className="mt-1 text-sm text-neutral-500">{challenge.description}</p>
+              <p className="mt-4 font-semibold text-fg">{challenge.title}</p>
+              <p className="mt-1 text-sm text-fg/60">{challenge.description}</p>
               <div className="mt-4 flex items-center justify-between">
-                <span className="text-sm font-semibold text-amber-600">+{challenge.xp} XP</span>
-                <span className="text-sm text-neutral-400">{challenge.daysLeft} days left</span>
+                <span className="text-sm font-semibold text-butter-dark">+{challenge.xp} XP</span>
+                <span className="text-sm text-fg/40">{challenge.daysLeft} days left</span>
               </div>
               <button
                 type="button"
                 onClick={() => toggleJoin(challenge.id)}
                 className={`mt-3 w-full rounded-lg px-4 py-2 text-sm font-semibold ${
-                  joined.has(challenge.id) ? "border border-neutral-200 text-neutral-600" : "bg-purple-600 text-white"
+                  joined.has(challenge.id) ? "border border-line/15 text-fg/70" : "bg-royal text-ivory"
                 }`}
               >
                 {joined.has(challenge.id) ? "Joined" : "Join challenge"}

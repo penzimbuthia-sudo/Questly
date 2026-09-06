@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Menu, Bell, Search, ChevronDown, X, CheckCircle, AlertCircle, MessageSquare, User, Settings, LogOut, LayoutDashboard, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import ThemeToggle from '../ui/ThemeToggle';
 
 const MOCK_NOTIFICATIONS = [
   { id: 1, title: 'New content pending review', message: '3 resources need your approval', time: '2 min ago', type: 'review', read: false },
@@ -85,6 +86,8 @@ export default function TopBar({
             <Plus size={15} /> {action.label}
           </button>
         )}
+
+        <ThemeToggle />
 
         {/* Notifications */}
         <div className="relative">

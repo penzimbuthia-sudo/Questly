@@ -1,3 +1,4 @@
+// Leaderboard.jsx
 import { useState } from "react";
 import PodiumCard from "../../components/learner/PodiumCard";
 import LeaderboardRow from "../../components/learner/LeaderboardRow";
@@ -27,8 +28,8 @@ export default function Leaderboard() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-bold text-neutral-900">Leaderboard</h1>
-        <p className="mt-1 text-sm text-neutral-500">See how you stack up against the rest of the community.</p>
+        <h1 className="text-2xl font-bold text-fg">Leaderboard</h1>
+        <p className="mt-1 text-sm text-fg/60">See how you stack up against the rest of the community.</p>
       </div>
 
       <div className="flex gap-2">
@@ -38,7 +39,7 @@ export default function Leaderboard() {
             type="button"
             onClick={() => setActiveTab(tab)}
             className={`rounded-full px-4 py-1.5 text-sm font-medium ${
-              activeTab === tab ? "bg-purple-600 text-white" : "bg-white text-neutral-600 hover:bg-neutral-100"
+              activeTab === tab ? "bg-royal text-ivory" : "bg-card text-fg/70 hover:bg-surface-active"
             }`}
           >
             {tab}
@@ -46,7 +47,7 @@ export default function Leaderboard() {
         ))}
       </div>
 
-      <div className="rounded-2xl bg-neutral-900 p-8">
+      <div className="rounded-2xl bg-ink p-8">
         <div className="mx-auto flex max-w-md items-end justify-center gap-6">
           <PodiumCard place={2} {...second} />
           <PodiumCard place={1} {...first} />
@@ -54,7 +55,7 @@ export default function Leaderboard() {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-black/5 bg-white px-4">
+      <div className="rounded-2xl border border-line/10 bg-card px-4">
         {rest.map((entry) => (
           <LeaderboardRow key={entry.rank} {...entry} />
         ))}

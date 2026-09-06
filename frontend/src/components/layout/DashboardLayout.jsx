@@ -1,26 +1,10 @@
-import { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import TopBar from "./TopBar";
 
-export default function DashboardLayout({
-  theme,
-  sidebarProps = {},
-  topBarProps = {},
-  //children,
-}) {
-  const themeClass = theme ? `theme-${theme}` : "";
-
-  useEffect(() => {
-    document.body.classList.remove("theme-contributor", "theme-admin");
-    if (themeClass) document.body.classList.add(themeClass);
-    return () => {
-      if (themeClass) document.body.classList.remove(themeClass);
-    };
-  }, [themeClass]);
-
+export default function DashboardLayout({ sidebarProps = {}, topBarProps = {} }) {
   return (
-    <div className={`${themeClass} flex min-h-screen bg-page`}>
+    <div className="flex min-h-screen bg-page">
       <Sidebar {...sidebarProps} />
       <div className="flex-1 min-w-0 flex flex-col">
         <TopBar {...topBarProps} />

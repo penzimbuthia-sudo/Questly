@@ -85,7 +85,6 @@ export default function ContributorLayout() {
     // ← wrapped in a fragment so the modal can render as a sibling of DashboardLayout
     <>
       <DashboardLayout
-        theme="contributor"
         sidebarProps={{
           logo: <Logo size="md" />,
           groups: [{ items: NAV_ITEMS }, { label: 'Account', items: ACCOUNT_ITEMS }],
