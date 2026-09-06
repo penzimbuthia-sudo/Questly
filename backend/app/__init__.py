@@ -49,4 +49,12 @@ def create_app(config_name="development"):
     def server_error(_e):
         return error_response("Internal server error", 500)
 
+    @app.route("/")
+    def home():
+        return {
+            "success": True,
+            "message": "Questly API is running",
+            "status": "healthy"
+        }, 200
+
     return app
