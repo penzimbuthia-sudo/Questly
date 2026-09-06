@@ -1,52 +1,28 @@
-/**
- * src/services/learningPathService.js
- *
- * OWNERSHIP: this file is owned by the learner-UI workstream (C).
- * Don't edit directly — if you need a new export, ask C to add it so the
- * public surface stays intentional and doesn't drift out from under the
- * pages/components that depend on it.
- *
- * This is a mock/in-memory implementation so the learner pages can be
- * built and demoed against a realistic API shape before the real backend
- * exists. Every exported function returns a Promise, mirrors REST-ish
- * naming, and can be swapped for real `fetch` calls later without
- * touching any calling component.
- *
- * State is keyed per user id (see setCurrentUser/clearCurrentUser below)
- * so switching accounts in the same browser session never leaks one
- * learner's progress into another's.
- */
-
+import { api } from "./api";
 import { PATH_CATALOG } from "../data/learningPaths";
 
-// ---------------------------------------------------------------------------
-// Catalog (shared, not user-specific)
-// ---------------------------------------------------------------------------
-
-const clone = (value) => JSON.parse(JSON.stringify(value));
-
-const paths = clone(PATH_CATALOG);
-
-// ---------------------------------------------------------------------------
-// Per-user store
-// ---------------------------------------------------------------------------
-
-/** userId -> { enrollments, userStats, earnedBadges } */
-const stores = new Map();
+const USE_MOCK_AUTH = import.meta.env.VITE_USE_MOCK_AUTH === "true";
 const STORAGE_PREFIX = "questly-learning-state:";
 
+const clone = (value) => JSON.parse(JSON.stringify(value));
+const delay = (ms = 150) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// ---------------------------------------------------------------------------
+// Mock engine (only active when USE_MOCK_AUTH=true) — in-memory, per-user,
+// backed by localStorage so state survives a refresh during local dev.
+// ---------------------------------------------------------------------------
+
+const paths = clone(PATH_CATALOG);
+const stores = new Map();
 let currentUserId = null;
+const listeners = new Set();
 
 function buildSeedStore() {
-  const enrollments = new Map();
-  const userStats = {
-    totalXP: 0,
-    weeklyXP: 0,
-    level: 1,
-    streakDays: 0,
+  return {
+    enrollments: new Map(),
+    userStats: { totalXP: 0, weeklyXP: 0, level: 1, streakDays: 0 },
+    earnedBadges: new Set(),
   };
-
-  return { enrollments, userStats, earnedBadges: new Set() };
 }
 
 function loadStore(userId) {
@@ -54,7 +30,6 @@ function loadStore(userId) {
   try {
     const saved = JSON.parse(localStorage.getItem(`${STORAGE_PREFIX}${userId}`) || "null");
     if (!saved) return seed;
-
     seed.userStats = { ...seed.userStats, ...saved.userStats };
     seed.earnedBadges = new Set(saved.earnedBadges || []);
     seed.enrollments = new Map(
@@ -71,14 +46,17 @@ function loadStore(userId) {
 
 function persistStore(userId, store) {
   if (!userId || !store) return;
-  localStorage.setItem(`${STORAGE_PREFIX}${userId}`, JSON.stringify({
-    userStats: store.userStats,
-    earnedBadges: [...store.earnedBadges],
-    enrollments: [...store.enrollments.entries()].map(([pathId, enrollment]) => [
-      pathId,
-      { ...enrollment, modulesCompleted: [...enrollment.modulesCompleted] },
-    ]),
-  }));
+  localStorage.setItem(
+    `${STORAGE_PREFIX}${userId}`,
+    JSON.stringify({
+      userStats: store.userStats,
+      earnedBadges: [...store.earnedBadges],
+      enrollments: [...store.enrollments.entries()].map(([pathId, enrollment]) => [
+        pathId,
+        { ...enrollment, modulesCompleted: [...enrollment.modulesCompleted] },
+      ]),
+    })
+  );
 }
 
 /** Call on login/register (and on mount if a session is restored from storage). */
@@ -88,9 +66,7 @@ export function setCurrentUser(userId) {
     return;
   }
   currentUserId = userId;
-  if (!stores.has(userId)) {
-    stores.set(userId, loadStore(userId));
-  }
+  if (!stores.has(userId)) stores.set(userId, loadStore(userId));
   notify();
 }
 
@@ -104,64 +80,27 @@ function getStore() {
   if (!currentUserId) {
     throw new Error("learningPathService: no current user set (call setCurrentUser after login)");
   }
-  if (!stores.has(currentUserId)) {
-    stores.set(currentUserId, loadStore(currentUserId));
-  }
+  if (!stores.has(currentUserId)) stores.set(currentUserId, loadStore(currentUserId));
   return stores.get(currentUserId);
 }
 
-// Illustrative level curve only — swap for the real progression rule
-// once product/backend defines it.
+// Illustrative level curve only — swap for the real progression rule once
+// product/backend defines it.
 const xpForNextLevel = (level) => 250 + (level - 1) * 30;
-
-const listeners = new Set();
 const notify = () => listeners.forEach((fn) => fn(getSnapshot()));
 
 function getSnapshot() {
-  if (!currentUserId) {
-    return { stats: null };
-  }
+  if (!currentUserId) return { stats: null };
   const { userStats } = getStore();
   return {
-    stats: { ...userStats, xpToNextLevel: xpForNextLevel(userStats.level) },
+    stats: {
+      totalXP: userStats.totalXP,
+      weeklyXP: userStats.weeklyXP,
+      level: userStats.level,
+      streakDays: userStats.streakDays,
+      xpToNextLevel: xpForNextLevel(userStats.level),
+    },
   };
-}
-
-const delay = (ms = 150) => new Promise((res) => setTimeout(res, ms));
-
-// ---------------------------------------------------------------------------
-// Public API
-// ---------------------------------------------------------------------------
-
-/** Subscribe to XP/level/streak changes. Returns an unsubscribe fn. */
-export function subscribe(listener) {
-  listeners.add(listener);
-  listener(getSnapshot());
-  return () => listeners.delete(listener);
-}
-
-/** All paths in the catalog, optionally filtered by category ("All" = no filter). */
-export async function getAllPaths({ category } = {}) {
-  await delay();
-  if (!category || category === "All") return clone(paths);
-  return clone(paths.filter((p) => p.category === category));
-}
-
-export async function getPathById(pathId) {
-  await delay();
-  const path = paths.find((p) => p.id === pathId);
-  if (!path) throw new Error(`Unknown path: ${pathId}`);
-  return clone(path);
-}
-
-/** Paths the learner is currently enrolled in, with computed progress. */
-export async function getMyPaths() {
-  await delay();
-  const { enrollments } = getStore();
-  return Array.from(enrollments.keys()).map((pathId) => {
-    const path = paths.find((p) => p.id === pathId);
-    return { path: clone(path), progress: computeProgress(pathId) };
-  });
 }
 
 export function computeProgress(pathId) {
@@ -180,11 +119,6 @@ export function computeProgress(pathId) {
   };
 }
 
-export async function getPathProgress(pathId) {
-  await delay(50);
-  return computeProgress(pathId);
-}
-
 export function isEnrolled(pathId) {
   return getStore().enrollments.has(pathId);
 }
@@ -193,54 +127,6 @@ export function isModuleComplete(pathId, moduleId) {
   return getStore().enrollments.get(pathId)?.modulesCompleted.has(moduleId) ?? false;
 }
 
-export async function startPath(pathId) {
-  await delay();
-  const { enrollments } = getStore();
-  if (!enrollments.has(pathId)) {
-    enrollments.set(pathId, { modulesCompleted: new Set(), xpEarned: 0 });
-    persistStore(currentUserId, getStore());
-  }
-  return computeProgress(pathId);
-}
-
-/**
- * Marks a module complete, awards its XP, and advances the progress bar.
- * Idempotent: completing an already-completed module is a no-op that
- * still resolves with the current progress.
- */
-export async function completeModule(pathId, moduleId) {
-  await delay();
-  const path = paths.find((p) => p.id === pathId);
-  const module = path?.modules.find((m) => m.id === moduleId);
-  if (!path || !module) throw new Error(`Unknown module ${moduleId} on ${pathId}`);
-
-  const { enrollments } = getStore();
-  if (!enrollments.has(pathId)) enrollments.set(pathId, { modulesCompleted: new Set(), xpEarned: 0 });
-  const enrollment = enrollments.get(pathId);
-
-  let xpAwarded = 0;
-  const badgesAwarded = [];
-  if (!enrollment.modulesCompleted.has(moduleId)) {
-    enrollment.modulesCompleted.add(moduleId);
-    enrollment.xpEarned += module.xp;
-    xpAwarded = module.xp;
-    awardXP(module.xp);
-
-    if (!getStore().earnedBadges.has("Spark Ignited")) {
-      getStore().earnedBadges.add("Spark Ignited");
-      badgesAwarded.push("Spark Ignited");
-    }
-    if (computeProgress(pathId).isComplete && !getStore().earnedBadges.has("Pathfinder")) {
-      getStore().earnedBadges.add("Pathfinder");
-      badgesAwarded.push("Pathfinder");
-    }
-    persistStore(currentUserId, getStore());
-  }
-
-  return { progress: computeProgress(pathId), xpAwarded, badgesAwarded };
-}
-
-/** Adds XP to the learner's total and recomputes level, notifying subscribers. */
 export function awardXP(amount) {
   const { userStats } = getStore();
   userStats.totalXP += amount;
@@ -255,10 +141,138 @@ export function awardXP(amount) {
   return getSnapshot().stats;
 }
 
-export function getUserStats() {
-  return getSnapshot().stats;
-}
-
 export function getEarnedBadges() {
   return [...getStore().earnedBadges];
+}
+
+// ---------------------------------------------------------------------------
+// Public API — mock engine when USE_MOCK_AUTH=true, real backend otherwise.
+// ---------------------------------------------------------------------------
+
+export async function getMyStats() {
+  if (USE_MOCK_AUTH) {
+    await delay(50);
+    return getSnapshot().stats;
+  }
+  const response = await api.get("/auth/me");
+  const user = response.data;
+  const level = Math.floor(user.xp_total / 500) + 1; // illustrative — no backend-authoritative level system exists yet
+  return {
+    totalXP: user.xp_total,
+    streakDays: user.streak_days,
+    level,
+    xpToNextLevel: level * 500,
+  };
+}
+
+export async function getAllPaths({ category } = {}) {
+  if (USE_MOCK_AUTH) {
+    await delay();
+    return category && category !== "All"
+      ? clone(paths.filter((p) => p.category === category))
+      : clone(paths);
+  }
+  const response = await api.get("/learning-paths", {
+    params: category && category !== "All" ? { category } : {},
+  });
+  return response.data;
+}
+
+export async function getPathById(pathId) {
+  if (USE_MOCK_AUTH) {
+    await delay();
+    return clone(paths.find((p) => p.id === pathId) ?? null);
+  }
+  const response = await api.get(`/learning-paths/${pathId}`);
+  return response.data;
+}
+
+export async function getMyPaths() {
+  if (USE_MOCK_AUTH) {
+    await delay();
+    const { enrollments } = getStore();
+    return Array.from(enrollments.keys()).map((pathId) => {
+      const path = paths.find((p) => p.id === pathId);
+      return { path: clone(path), progress: computeProgress(pathId) };
+    });
+  }
+  const response = await api.get("/learning-paths/mine");
+  return response.data.map((entry) => ({
+    path: entry.learning_path,
+    progress: {
+      modulesCompleted: entry.modules_completed,
+      totalModules: entry.total_modules,
+      percent: entry.percent,
+    },
+  }));
+}
+
+export async function startPath(pathId) {
+  if (USE_MOCK_AUTH) {
+    await delay();
+    const { enrollments } = getStore();
+    if (!enrollments.has(pathId)) {
+      enrollments.set(pathId, { modulesCompleted: new Set(), xpEarned: 0 });
+      persistStore(currentUserId, getStore());
+    }
+    return computeProgress(pathId);
+  }
+  const response = await api.post(`/learning-paths/${pathId}/follow`);
+  return response.data;
+}
+
+/**
+ * Marks a module complete, awards its XP, and advances the progress bar.
+ * Idempotent: completing an already-completed module is a no-op that still
+ * resolves with the current progress.
+ */
+export async function completeModule(pathId, moduleId) {
+  if (USE_MOCK_AUTH) {
+    await delay();
+    const path = paths.find((p) => p.id === pathId);
+    const module = path?.modules.find((m) => m.id === moduleId);
+    if (!path || !module) throw new Error(`Unknown module ${moduleId} on ${pathId}`);
+
+    const { enrollments } = getStore();
+    if (!enrollments.has(pathId)) {
+      enrollments.set(pathId, { modulesCompleted: new Set(), xpEarned: 0 });
+    }
+    const enrollment = enrollments.get(pathId);
+
+    let xpAwarded = 0;
+    const badgesAwarded = [];
+    if (!enrollment.modulesCompleted.has(moduleId)) {
+      enrollment.modulesCompleted.add(moduleId);
+      enrollment.xpEarned += module.xp;
+      xpAwarded = module.xp;
+      awardXP(module.xp);
+
+      if (!getStore().earnedBadges.has("Spark Ignited")) {
+        getStore().earnedBadges.add("Spark Ignited");
+        badgesAwarded.push("Spark Ignited");
+      }
+      if (computeProgress(pathId).isComplete && !getStore().earnedBadges.has("Pathfinder")) {
+        getStore().earnedBadges.add("Pathfinder");
+        badgesAwarded.push("Pathfinder");
+      }
+      persistStore(currentUserId, getStore());
+    }
+
+    return { progress: computeProgress(pathId), xpAwarded, badgesAwarded };
+  }
+  const response = await api.post(`/modules/${moduleId}/complete`);
+  return { xpAwarded: response.data.xp_awarded };
+}
+
+export async function getPathProgress(pathId) {
+  if (USE_MOCK_AUTH) {
+    await delay(50);
+    return computeProgress(pathId);
+  }
+  const response = await api.get(`/progress/paths/${pathId}`);
+  return response.data;
+}
+
+export function getUserStats() {
+  return getSnapshot().stats;
 }

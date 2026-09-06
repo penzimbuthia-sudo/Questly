@@ -29,8 +29,8 @@ export default function Paths() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-bold text-neutral-900">Learning paths</h1>
-        <p className="mt-1 text-sm text-neutral-500">Structured routes built from modules, resources, and quizzes.</p>
+        <h1 className="text-2xl font-bold text-fg">Learning paths</h1>
+        <p className="mt-1 text-sm text-fg/60">Structured routes built from modules, resources, and quizzes.</p>
       </div>
 
       <div className="flex gap-2">
@@ -48,25 +48,21 @@ export default function Paths() {
         ) : (
           <div className="flex flex-col gap-4">
             {myPaths.map(({ path, progress }) => (
-              <div key={path.id} className="flex items-center gap-4 rounded-2xl border border-black/5 bg-white p-5">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-neutral-50 text-lg">
+              <div key={path.id} className="flex items-center gap-4 rounded-2xl border border-line/10 bg-card p-5">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-surface-active text-lg">
                   {path.icon}
                 </div>
                 <div className="flex-1">
-                  <p className="font-semibold text-neutral-900">{path.title}</p>
-                  <div className="mt-2 h-2 w-full max-w-md overflow-hidden rounded-full bg-neutral-100">
-                    <div className="h-full rounded-full bg-amber-400" style={{ width: `${progress.percent}%` }} />
+                  <p className="font-semibold text-fg">{path.title}</p>
+                  <div className="mt-2 h-2 w-full max-w-md overflow-hidden rounded-full bg-surface-active">
+                    <div className="h-full rounded-full bg-butter" style={{ width: `${progress.percent}%` }} />
                   </div>
                 </div>
                 <div className="text-right text-sm">
-                  <p className="text-neutral-400">{progress.modulesCompleted}/{progress.totalModules} modules</p>
-                  <p className="font-semibold text-amber-600">{progress.xpEarned.toLocaleString()} XP</p>
+                  <p className="text-fg/40">{progress.modulesCompleted}/{progress.totalModules} modules</p>
+                  <p className="font-semibold text-butter-dark">{progress.xpEarned.toLocaleString()} XP</p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => navigate(path.id)}
-                  className="rounded-lg bg-purple-600 px-4 py-2 text-sm font-semibold text-white"
-                >
+                <button type="button" onClick={() => navigate(path.id)} className="rounded-lg bg-royal px-4 py-2 text-sm font-semibold text-ivory">
                   Resume
                 </button>
               </div>
@@ -90,7 +86,7 @@ function TabButton({ active, onClick, children }) {
       type="button"
       onClick={onClick}
       className={`rounded-full px-4 py-1.5 text-sm font-medium ${
-        active ? "bg-neutral-900 text-white" : "bg-white text-neutral-600 hover:bg-neutral-100"
+        active ? "bg-ink text-ivory" : "bg-card text-fg/70 hover:bg-surface-active"
       }`}
     >
       {children}
@@ -100,10 +96,10 @@ function TabButton({ active, onClick, children }) {
 
 function EmptyState({ onBrowse }) {
   return (
-    <div className="rounded-2xl border border-dashed border-neutral-300 bg-white p-10 text-center">
-      <p className="font-medium text-neutral-800">You haven&apos;t started any paths yet</p>
-      <p className="mt-1 text-sm text-neutral-500">Browse the catalog and start one — progress shows up here.</p>
-      <button type="button" onClick={onBrowse} className="mt-4 rounded-lg bg-purple-600 px-4 py-2 text-sm font-semibold text-white">
+    <div className="rounded-2xl border border-dashed border-line/20 bg-card p-10 text-center">
+      <p className="font-medium text-fg">You haven&apos;t started any paths yet</p>
+      <p className="mt-1 text-sm text-fg/60">Browse the catalog and start one — progress shows up here.</p>
+      <button type="button" onClick={onBrowse} className="mt-4 rounded-lg bg-royal px-4 py-2 text-sm font-semibold text-ivory">
         Browse all paths
       </button>
     </div>

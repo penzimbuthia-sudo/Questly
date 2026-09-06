@@ -1,9 +1,11 @@
+from dotenv import load_dotenv
 from flask import Flask
 
 from app.config import config_by_name
 from app.extensions import cors, db, jwt, mail, migrate
 from app.utils.responses import error_response
 
+load_dotenv()
 
 def create_app(config_name="development"):
     app = Flask(__name__)

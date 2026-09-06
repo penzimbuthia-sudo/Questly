@@ -20,7 +20,9 @@ function getMockUser() {
 
 function getMockContributorStats() {
   const user = getMockUser();
-  const saved = JSON.parse(localStorage.getItem(`${MOCK_STATS_PREFIX}${user?.sub || "anonymous"}`) || "null");
+  const saved = JSON.parse(
+    localStorage.getItem(`${MOCK_STATS_PREFIX}${user?.sub || "anonymous"}`) || "null"
+  );
   return saved || { xp: 0, resources: 0, paths: 0, upvotes: 0, streak_days: 0 };
 }
 
@@ -62,16 +64,17 @@ export async function getLeaderboard(role) {
     const user = getMockUser();
     if (user?.role !== role) return [];
     const stats = role === "contributor" ? getMockContributorStats() : (getUserStats() ?? {});
-    return [{
-      rank: 1,
-      id: user.sub,
-      name: user.name || user.email || "New user",
-      xp: stats.totalXP ?? 0,
-      streak_days: stats.streak_days ?? stats.streakDays ?? 0,
-      isYou: true,
-    }];
+    return [
+      {
+        rank: 1,
+        id: user.sub,
+        name: user.name || user.email || "New user",
+        xp: stats.totalXP ?? 0,
+        streak_days: stats.streak_days ?? stats.streakDays ?? 0,
+        isYou: true,
+      },
+    ];
   }
-
   const response = await api.get(`/gamification/leaderboard?role=${role}`);
   return unwrap(response) ?? [];
 }
