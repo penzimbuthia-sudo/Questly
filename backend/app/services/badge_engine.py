@@ -14,7 +14,9 @@ check_and_award_badges(user_id).
 
 from app.extensions import db
 from app.models.badge import Badge
+from app.models.module import Module
 from app.models.resource import Resource
+from app.models.progress import Progress
 from app.models.user import User
 from app.models.user_badge import UserBadge
 
@@ -44,28 +46,51 @@ def _award_badge(user_id, badge_name):
 
 
 def check_and_award_badges(user_id):
-    """
-    The main function everyone calls. Checks EVERY badge rule we
-    know about, and awards any the user has now qualified for.
+    """Award every badge currently earned and return the new badge names."""
+    before = {
+        badge.name
+        for badge in Badge.query.join(UserBadge).filter(UserBadge.user_id == user_id).all()
+    }
 
-    This function is meant to grow over time — as more badge
-    rules get added to the game, they get added here, in one
-    place, instead of scattered across every route that could
-    trigger a badge.
-    """
     published_count = Resource.query.filter_by(
         contributor_id=user_id, status="Published"
     ).count()
+    completed_modules = Progress.query.filter_by(
+        user_id=user_id, status="completed"
+    ).filter(Progress.module_id.isnot(None)).count()
+    perfect_quizzes = Progress.query.filter(
+        Progress.user_id == user_id,
+        Progress.status == "completed",
+        Progress.module_id.isnot(None),
+        Progress.score == 100,
+    ).count()
 
-    if published_count >= 1:
-        _award_badge(user_id, "Spark ignited")
-
+    if completed_modules >= 1:
+        _award_badge(user_id, "Spark Ignited")
+    if perfect_quizzes >= 5:
+        _award_badge(user_id, "Quiz Master")
+    if published_count >= 5:
+        _award_badge(user_id, "Contributor")
     if published_count >= 20:
-        _award_badge(user_id, "Prolific creator")
+        _award_badge(user_id, "Prolific Creator")
 
     user = User.query.get(user_id)
     if user and user.streak_days >= 7:
-        _award_badge(user_id, "Streak keeper")
+        _award_badge(user_id, "Streak Keeper")
+    if user and user.xp_total >= 5000:
+        _award_badge(user_id, "Rising Star")
 
-    # More rules get added here as the game grows — e.g. quiz
-    # scores, learning path completions, leaderboard position.
+    # A path is complete when every module in it has a completed progress row.
+    if completed_modules:
+        for path in {progress.learning_path_id for progress in Progress.query.filter_by(user_id=user_id, status="completed").filter(Progress.module_id.isnot(None)).all()}:
+            module_count = Progress.query.filter_by(
+                user_id=user_id, learning_path_id=path, status="completed"
+            ).filter(Progress.module_id.isnot(None)).count()
+            if module_count == Module.query.filter_by(learning_path_id=path).count():
+                _award_badge(user_id, "Pathfinder")
+
+    after = {
+        badge.name
+        for badge in Badge.query.join(UserBadge).filter(UserBadge.user_id == user_id).all()
+    }
+    return sorted(after - before)

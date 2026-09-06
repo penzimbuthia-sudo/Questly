@@ -7,7 +7,7 @@ This is simpler validation than a full library like Marshmallow
 — just plain functions, easy to read for a beginner.
 """
 
-from app.utils.validators import is_allowed_status
+from app.utils.validators import is_allowed_status, is_valid_url
 
 ALLOWED_TYPES = ["Video", "Article", "Tutorial"]
 ALLOWED_STATUSES = ["Published", "Pending", "Rejected"]
@@ -22,6 +22,7 @@ def validate_resource_input(data):
     Returns a list of error messages. An empty list means
     everything looks good.
     """
+    data = data or {}
     errors = []
 
     if not data.get("title", "").strip():
@@ -29,6 +30,15 @@ def validate_resource_input(data):
 
     if data.get("type") not in ALLOWED_TYPES:
         errors.append(f"Type must be one of: {', '.join(ALLOWED_TYPES)}.")
+
+    url = data.get("url", "")
+    if not url or not str(url).strip():
+        errors.append("URL is required.")
+    elif not is_valid_url(url):
+        errors.append("URL must be a valid HTTP or HTTPS link.")
+
+    if not data.get("description", "").strip():
+        errors.append("Description is required.")
 
     return errors
 

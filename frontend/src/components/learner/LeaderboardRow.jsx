@@ -1,4 +1,4 @@
-import { TrendingUp, TrendingDown, Minus } from "lucide-react";
+import { TrendingUp, TrendingDown, Minus, Flame } from "lucide-react";
 
 const TREND_ICON = { up: TrendingUp, down: TrendingDown, flat: Minus };
 const TREND_STYLE = { up: "text-emerald-500", down: "text-rose-500", flat: "text-neutral-400" };
@@ -7,7 +7,7 @@ const TREND_STYLE = { up: "text-emerald-500", down: "text-rose-500", flat: "text
  * LeaderboardRow
  * A single ranked row for spots 4+ (the top 3 use <PodiumCard /> instead).
  */
-export default function LeaderboardRow({ rank, name, xp, trend = "flat", isCurrentUser = false }) {
+export default function LeaderboardRow({ rank, name, xp, streak_days = 0, trend = "flat", isCurrentUser = false }) {
   const TrendIcon = TREND_ICON[trend] ?? Minus;
   const initials = name
     .split(" ")
@@ -27,6 +27,9 @@ export default function LeaderboardRow({ rank, name, xp, trend = "flat", isCurre
         {isCurrentUser ? " (you)" : ""}
       </span>
       <TrendIcon className={`h-4 w-4 ${TREND_STYLE[trend]}`} />
+      <span className="flex items-center gap-1 text-xs text-orange-500" title="Current streak">
+        <Flame className="h-3.5 w-3.5" /> {streak_days}d
+      </span>
       <span className="w-20 text-right text-sm font-semibold text-amber-600">
         {xp.toLocaleString()} XP
       </span>

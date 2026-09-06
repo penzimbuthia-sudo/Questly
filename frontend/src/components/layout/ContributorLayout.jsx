@@ -55,7 +55,8 @@ export default function ContributorLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuth();
-  const [showResourceModal, setShowResourceModal] = useState(false); // ← new state
+  const [showResourceModal, setShowResourceModal] = useState(false);
+  const [resourceError, setResourceError] = useState("");
 
   const activeKey = computeActiveKey(location.pathname);
 
@@ -72,13 +73,14 @@ export default function ContributorLayout() {
 
   // ← new function
   async function handleAddResource(payload) {
-    setShowResourceModal(false);
     try {
-      await createResource(payload);
+      const createdResource = await createResource(payload);
+      setResourceError("");
+      setShowResourceModal(false);
+      navigate('/contributor/my-content', { state: { createdResource } });
     } catch {
-      // backend not ready yet — modal already closed either way
+      setResourceError("We couldn't submit that resource. Check the details and try again.");
     }
-    navigate('/contributor/my-content');
   }
 
   return (
@@ -97,11 +99,15 @@ export default function ContributorLayout() {
           searchPlaceholder: 'Search your content, paths, resources…', // ← replaced this whole block
           user: sidebarUser,
           onLogout: handleLogout,
-          action: { label: 'New resource', onClick: () => setShowResourceModal(true) },
+          action: { label: 'New resource', onClick: () => { setResourceError(""); setShowResourceModal(true); } },
         }}
       />
       {showResourceModal && (
-        <AddResourceModal onClose={() => setShowResourceModal(false)} onSubmit={handleAddResource} />
+        <AddResourceModal
+          onClose={() => setShowResourceModal(false)}
+          onSubmit={handleAddResource}
+          error={resourceError}
+        />
       )}
     </>
   );

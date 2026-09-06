@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Pencil } from "lucide-react";
 import { PageHeader } from "@/components/layout";
 import { Toolbar, Table, Pill, Button } from "@/components/ui";
-import { EditStatusModal } from "@/components/admin";
 import { getDiscussions, updateDiscussion } from "@/services/discussionService";
 
 export default function Discussions() {

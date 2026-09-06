@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import LearningPathCard from "../../components/learner/LearningPathCard";
 import { getAllPaths, getMyPaths, startPath } from "../../services/learningPathService";
+import { useAuth } from "../../hooks/useAuth";
 
 export default function Paths() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get("tab") === "all" ? "all" : "mine";
 
@@ -12,9 +14,10 @@ export default function Paths() {
   const [allPaths, setAllPaths] = useState([]);
 
   useEffect(() => {
+    if (!user) return;
     getMyPaths().then(setMyPaths);
     getAllPaths().then(setAllPaths);
-  }, []);
+  }, [user?.sub]); // refetch whenever the logged-in user actually changes
 
   const handleStart = async (path) => {
     await startPath(path.id);

@@ -16,6 +16,7 @@ from app.schemas.quiz_schema import (
     QuizSubmissionSchema,
 )
 from app.services import leaderboard_service
+from app.services.badge_engine import check_and_award_badges
 
 quizzes_bp = Blueprint("quizzes", __name__, url_prefix="")
 
@@ -59,6 +60,7 @@ def submit_quiz(module_id):
 
     user_id = get_jwt_identity()
     xp_awarded = 0
+    badges_awarded = []
 
     if passed:
         already_completed = Progress.query.filter_by(
@@ -94,6 +96,8 @@ def submit_quiz(module_id):
                 source_id=quiz.id,
             )
 
+            badges_awarded = check_and_award_badges(user_id)
+
     result = {
         "score": score,
         "correct_count": correct_count,
@@ -101,6 +105,7 @@ def submit_quiz(module_id):
         "pass_score": quiz.pass_score,
         "passed": passed,
         "xp_awarded": xp_awarded,
+        "badges_awarded": badges_awarded,
         # Safe to reveal answers/explanations now — the attempt is graded.
         "questions": [q.to_dict(reveal_answer=True) for q in questions],
     }

@@ -1,4 +1,4 @@
-import { Medal } from "lucide-react";
+import { Flame, Medal } from "lucide-react";
 
 const MEDAL_COLOR = { 1: "text-amber-400", 2: "text-neutral-300", 3: "text-orange-400" };
 const SIZE = { 1: "h-20 w-20 text-xl", 2: "h-16 w-16 text-base", 3: "h-16 w-16 text-base" };
@@ -8,7 +8,7 @@ const SIZE = { 1: "h-20 w-20 text-xl", 2: "h-16 w-16 text-base", 3: "h-16 w-16 t
  * One place on the leaderboard's top-3 podium. Render three of these
  * side by side, ordered 2nd / 1st / 3rd to match a classic podium layout.
  */
-export default function PodiumCard({ place, name, xp, isCurrentUser = false }) {
+export default function PodiumCard({ place, name, xp, streak_days = 0, isCurrentUser = false }) {
   const initials = name
     .split(" ")
     .map((part) => part[0])
@@ -33,6 +33,7 @@ export default function PodiumCard({ place, name, xp, isCurrentUser = false }) {
         {isCurrentUser ? " (you)" : ""}
       </p>
       <p className="text-xs font-medium text-amber-300">{xp.toLocaleString()} XP</p>
+      <p className="flex items-center gap-1 text-xs text-orange-300"><Flame className="h-3 w-3" /> {streak_days}d streak</p>
       <div className="flex h-9 w-full items-center justify-center rounded-lg bg-neutral-800 text-sm font-bold text-white">
         {place}
       </div>
