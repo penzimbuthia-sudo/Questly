@@ -53,7 +53,6 @@ export default function AdminLayout() {
 
   return (
     <DashboardLayout
-      theme="admin"
       sidebarProps={{
         logo: <Logo size="md" />,
         groups: navGroups,

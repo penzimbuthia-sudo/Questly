@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BadgeCheck, CheckCircle2, Award as AwardIcon, Share2, Pencil } from "lucide-react";
 import BadgeCard from "../../components/learner/BadgeCard";
-import { getMyPaths, getUserStats, subscribe } from "../../services/learningPathService";
+import { getMyPaths, getUserStats } from "../../services/learningPathService";
 import { ACHIEVEMENTS } from "../../data/achievements";
 import { useAuth } from "../../hooks/useAuth";
 
