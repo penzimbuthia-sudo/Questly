@@ -87,6 +87,8 @@ export default function TopBar({
           </button>
         )}
 
+        <ThemeToggle />
+
         {/* Notifications */}
         <div className="relative">
           <button
@@ -135,11 +137,6 @@ export default function TopBar({
             </div>
           )}
         </div>
-
-        <ThemeToggle />
-
-        {/* Notifications */}
-        <div className="relative"></div>
 
         {/* Profile dropdown */}
         <div className="relative">
