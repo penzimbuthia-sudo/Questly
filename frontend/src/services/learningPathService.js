@@ -145,6 +145,12 @@ export function getEarnedBadges() {
   return [...getStore().earnedBadges];
 }
 
+export function subscribe(callback) {
+  listeners.add(callback);
+  callback(getSnapshot());
+  return () => listeners.delete(callback);
+}
+
 // ---------------------------------------------------------------------------
 // Public API — mock engine when USE_MOCK_AUTH=true, real backend otherwise.
 // ---------------------------------------------------------------------------
