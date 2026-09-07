@@ -20,7 +20,7 @@ const MORE_CHALLENGES = [
   { id: "resource-rally", title: "Resource rally", description: "Share 3 new resources with the community", xp: 300, daysLeft: 4 },
   { id: "perfect-week", title: "Perfect week", description: "Score 90%+ on every quiz you take this week", xp: 400, daysLeft: 4 },
   { id: "consistency-streak", title: "Consistency streak", description: "Log in and complete a module 5 days in a row", xp: 250, daysLeft: 2 },
-  { id: "quiz-sprint", title: "Quiz sprint", description: "Complete 5 module quizzes before the weekend", xp: 350, daysLeft: 6 },
+  { id: "quiz-sprint", title: "Quiz sprint", description: "Complete 5 module quizzes before the weekend", xp:350, daysLeft: 6 },
   { id: "community-helper", title: "Community helper", description: "Answer 3 learner questions in a discussion", xp: 275, daysLeft: 8 },
   { id: "path-explorer", title: "Path explorer", description: "Complete a module in 3 different learning paths", xp: 450, daysLeft: 12 },
   { id: "early-riser", title: "Early riser", description: "Finish a learning session before 9 AM three times", xp: 200, daysLeft: 5 },
@@ -40,7 +40,10 @@ export default function Challenges() {
         setServerChallenges(challenges);
         setJoined(new Set(challenges.filter((challenge) => challenge.joined).map((challenge) => challenge.id)));
       })
-      .catch(() => setServerChallenges([]));
+      .catch((err) => {
+        console.log("getChallenges failed:", err); // TEMP DEBUG
+        setServerChallenges([]);
+      });
   }, []);
 
   const toggleJoin = async (id) => {
@@ -55,7 +58,8 @@ export default function Challenges() {
         : displayedChallenges.find((item) => item.id === id) ?? challenge;
       setNotice(`You joined ${challenge?.title ?? "this challenge"}. Complete the goal to earn the bonus XP.`);
       setActiveChallenge(challengeView);
-    } catch {
+    } catch (err) {
+      console.log("joinChallenge failed:", err); // TEMP DEBUG
       setJoined((prev) => new Set(prev).add(id));
       const challenge = MORE_CHALLENGES.find((item) => item.id === id);
       setNotice(`You joined ${challenge?.title ?? "this challenge"}. Complete the goal to earn the bonus XP.`);
@@ -103,8 +107,8 @@ export default function Challenges() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-bold text-neutral-900">Challenges</h1>
-        <p className="mt-1 text-sm text-neutral-500">Weekly and seasonal quests that reward bonus XP and badges.</p>
+        <h1 className="text-2xl font-bold text-fg">Challenges</h1>
+        <p className="mt-1 text-sm text-fg/60">Weekly and seasonal quests that reward bonus XP and badges.</p>
       </div>
 
       {notice && (
@@ -129,18 +133,18 @@ export default function Challenges() {
       />
 
       <section>
-        <h2 className="text-base font-semibold text-neutral-900">More challenges</h2>
+        <h2 className="text-base font-semibold text-fg">More challenges</h2>
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
           {displayedChallenges.map((challenge) => (
-            <div key={challenge.id} className="rounded-2xl border border-black/5 bg-white p-6">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-purple-50 text-purple-600">
+            <div key={challenge.id} className="rounded-2xl border border-line/10 bg-card p-6">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-royal/10 text-royal">
                 <Target className="h-5 w-5" />
               </div>
-              <p className="mt-4 font-semibold text-neutral-900">{challenge.title}</p>
-              <p className="mt-1 text-sm text-neutral-500">{challenge.description}</p>
+              <p className="mt-4 font-semibold text-fg">{challenge.title}</p>
+              <p className="mt-1 text-sm text-fg/60">{challenge.description}</p>
               <div className="mt-4 flex items-center justify-between">
-                <span className="text-sm font-semibold text-amber-600">+{challenge.xp} XP</span>
-                <span className="text-sm text-neutral-400">{challenge.daysLeft} days left</span>
+                <span className="text-sm font-semibold text-butter-dark">+{challenge.xp} XP</span>
+                <span className="text-sm text-fg/40">{challenge.daysLeft} days left</span>
               </div>
               {joined.has(challenge.id) && (
                 <p className="mt-3 text-xs font-medium text-emerald-600">You are enrolled · progress starts at 0</p>
@@ -150,7 +154,7 @@ export default function Challenges() {
                 onClick={() => joined.has(challenge.id) ? openChallenge(challenge) : toggleJoin(challenge.id)}
                 disabled={joining === challenge.id}
                 className={`mt-3 w-full rounded-lg px-4 py-2 text-sm font-semibold ${
-                  joined.has(challenge.id) ? "border border-neutral-200 text-neutral-600" : "bg-purple-600 text-white"
+                  joined.has(challenge.id) ? "border border-line/15 text-fg/70" : "bg-royal text-ivory"
                 }`}
               >
                 {joined.has(challenge.id) ? "Open challenge" : joining === challenge.id ? "Joining..." : "Join challenge"}
@@ -240,13 +244,13 @@ function ChallengeQuiz({ challenge, completed, onClose, onComplete }) {
   };
 
   return (
-    <section className="rounded-2xl border border-purple-200 bg-purple-50 p-5">
+    <section className="rounded-2xl border border-royal/20 bg-royal/5 p-5">
       <div className="mb-4 flex items-center justify-between gap-4">
         <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-purple-600">Challenge quiz</p>
-          <h2 className="mt-1 text-lg font-bold text-neutral-900">{challenge.title}</h2>
+          <p className="text-xs font-bold uppercase tracking-wider text-royal">Challenge quiz</p>
+          <h2 className="mt-1 text-lg font-bold text-fg">{challenge.title}</h2>
         </div>
-        <button type="button" onClick={onClose} className="text-sm font-semibold text-neutral-500 hover:text-neutral-900">Close</button>
+        <button type="button" onClick={onClose} className="text-sm font-semibold text-fg/50 hover:text-fg">Close</button>
       </div>
       {score == null ? (
         <QuizQuestion
@@ -262,10 +266,10 @@ function ChallengeQuiz({ challenge, completed, onClose, onComplete }) {
           isLastQuestion={index === questions.length - 1}
         />
       ) : (
-        <div className="rounded-xl bg-white p-5 text-center">
-          <p className="text-2xl font-bold text-neutral-900">{score}%</p>
-          <p className="mt-1 text-sm text-neutral-600">{score >= 70 ? "Challenge quiz passed." : "Try again to claim the challenge XP."}</p>
-          <button type="button" onClick={onClose} className="mt-4 rounded-lg bg-neutral-900 px-4 py-2 text-sm font-semibold text-white">Back to challenges</button>
+        <div className="rounded-xl bg-card p-5 text-center">
+          <p className="text-2xl font-bold text-fg">{score}%</p>
+          <p className="mt-1 text-sm text-fg/60">{score >= 70 ? "Challenge quiz passed." : "Try again to claim the challenge XP."}</p>
+          <button type="button" onClick={onClose} className="mt-4 rounded-lg bg-royal px-4 py-2 text-sm font-semibold text-ivory">Back to challenges</button>
         </div>
       )}
     </section>

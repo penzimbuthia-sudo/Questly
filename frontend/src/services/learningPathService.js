@@ -145,6 +145,12 @@ export function getEarnedBadges() {
   return [...getStore().earnedBadges];
 }
 
+/**
+ * Subscribe to live stats/badge updates. Calls `callback` immediately with
+ * the current snapshot, then again every time awardXP/completeModule/
+ * setCurrentUser change the store. Returns an unsubscribe function — call
+ * it in a useEffect cleanup to avoid leaking listeners.
+ */
 export function subscribe(callback) {
   listeners.add(callback);
   callback(getSnapshot());

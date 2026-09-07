@@ -6,7 +6,7 @@ import LevelCard from "../../components/learner/LevelCard";
 import LearningPathCard from "../../components/learner/LearningPathCard";
 import WeeklyChallengeCard from "../../components/learner/WeeklyChallengeCard";
 import BadgeCard from "../../components/learner/BadgeCard";
-import { getAllPaths, getMyPaths, getMyStats, getEarnedBadges, subscribe } from "../../services/learningPathService";
+import { getAllPaths, getMyPaths, getMyStats, getEarnedBadges } from "../../services/learningPathService";
 import { ACHIEVEMENTS } from "../../data/achievements";
 import { getMyBadges, getChallenges, getLeaderboard, checkInStreak } from "../../services/gamificationService";
 import { useAuth } from "../../hooks/useAuth";
@@ -30,15 +30,6 @@ export default function Home() {
   const [topLearners, setTopLearners] = useState([]);
   const [earnedBadgeNames, setEarnedBadgeNames] = useState(safeEarnedBadgeNames());
   const earnedBadges = ACHIEVEMENTS.filter((badge) => earnedBadgeNames.includes(badge.title));
-
-  useEffect(
-    () =>
-      subscribe((snapshot) => {
-        if (snapshot.stats) setStats(snapshot.stats);
-        setEarnedBadgeNames(safeEarnedBadgeNames());
-      }),
-    []
-  );
 
   useEffect(() => {
     checkInStreak()
