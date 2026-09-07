@@ -6,18 +6,10 @@ import LevelCard from "../../components/learner/LevelCard";
 import LearningPathCard from "../../components/learner/LearningPathCard";
 import WeeklyChallengeCard from "../../components/learner/WeeklyChallengeCard";
 import BadgeCard from "../../components/learner/BadgeCard";
-import { getAllPaths, getMyPaths, getMyStats, getEarnedBadges } from "../../services/learningPathService";
-import { ACHIEVEMENTS } from "../../data/achievements";
+import { getAllPaths, getMyPaths, getMyStats } from "../../services/learningPathService";
 import { getMyBadges, getChallenges, getLeaderboard, checkInStreak } from "../../services/gamificationService";
 import { useAuth } from "../../hooks/useAuth";
 
-function safeEarnedBadgeNames() {
-  try {
-    return getEarnedBadges();
-  } catch {
-    return [];
-  }
-}
 
 export default function Home() {
   const navigate = useNavigate();
@@ -28,8 +20,6 @@ export default function Home() {
   const [badges, setBadges] = useState([]);
   const [challenge, setChallenge] = useState(null);
   const [topLearners, setTopLearners] = useState([]);
-  const [earnedBadgeNames, setEarnedBadgeNames] = useState(safeEarnedBadgeNames());
-  const earnedBadges = ACHIEVEMENTS.filter((badge) => earnedBadgeNames.includes(badge.title));
 
   useEffect(() => {
     checkInStreak()
@@ -81,7 +71,7 @@ export default function Home() {
         <div className="flex items-center justify-between gap-4">
           <div>
             <p className="text-xs font-bold uppercase tracking-wider text-amber-700">Your reward progress</p>
-            <h2 className="mt-1 text-lg font-bold text-neutral-900">{earnedBadges.length} badges unlocked</h2>
+            <h2 className="mt-1 text-lg font-bold text-neutral-900">{badges.length} badges unlocked</h2>
             <p className="mt-1 text-sm text-neutral-600">Complete a module or pass a quiz to keep building your streak.</p>
           </div>
           <button type="button" onClick={() => navigate("/learner/achievements")} className="shrink-0 rounded-lg bg-neutral-900 px-3 py-2 text-xs font-semibold text-white">

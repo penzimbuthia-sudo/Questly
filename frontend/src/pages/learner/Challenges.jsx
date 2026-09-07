@@ -3,7 +3,6 @@ import { Target } from "lucide-react";
 import WeeklyChallengeCard from "../../components/learner/WeeklyChallengeCard";
 import QuizQuestion from "../../components/learner/QuizQuestion";
 import { getChallenges, joinChallenge } from "../../services/gamificationService";
-import { awardXP } from "../../services/learningPathService";
 import { gradeAnswer } from "../../services/quizService";
 
 const FEATURED = {
@@ -99,7 +98,6 @@ export default function Challenges() {
 
   const completeChallenge = (challenge) => {
     if (completedChallenges.has(challenge.id)) return;
-    awardXP(challenge.xpReward ?? challenge.xp ?? 0);
     setCompletedChallenges((prev) => new Set(prev).add(challenge.id));
     setNotice(`Challenge complete! +${challenge.xpReward ?? challenge.xp ?? 0} XP awarded.`);
   };
