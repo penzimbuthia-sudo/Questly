@@ -15,7 +15,7 @@ def create_app(config_name="development"):
     jwt.init_app(app)
     migrate.init_app(app, db)
     mail.init_app(app)
-    cors.init_app(app, resources={r"/*": {"origins": app.config["FRONTEND_URL"]}})
+    cors.init_app(app, resources={r"/*": {"origins": app.config["ALLOWED_ORIGINS"]}})
 
     # Import models here (not at module load time) so Flask-Migrate can
     # discover every table via db.metadata once all five people's model

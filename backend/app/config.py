@@ -14,6 +14,8 @@ class Config:
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+    ALLOWED_ORIGINS = os.environ.get("ALLOWED_ORIGINS", "http://localhost:5173").split(",")
+
     SQLALCHEMY_ENGINE_OPTIONS = {  # noqa: RUF012
         "pool_pre_ping": True,
         "pool_recycle": 300,
