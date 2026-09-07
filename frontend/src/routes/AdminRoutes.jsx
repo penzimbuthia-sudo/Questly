@@ -4,7 +4,6 @@ import Dashboard from "@/pages/admin/Dashboard";
 import Users from "@/pages/admin/Users";
 import Resources from "@/pages/admin/Resources";
 import LearningPaths from "@/pages/admin/LearningPaths";
-import Quizzes from "@/pages/admin/Quizzes";
 import Challenges from "@/pages/admin/Challenges";
 import Badges from "@/pages/admin/Badges";
 import Discussions from "@/pages/admin/Discussions";
@@ -21,7 +20,6 @@ export default function AdminRoutes() {
         <Route path="users" element={<Users />} />
         <Route path="resources" element={<Resources />} />
         <Route path="learning-paths" element={<LearningPaths />} />
-        <Route path="quizzes" element={<Quizzes />} />
         <Route path="challenges" element={<Challenges />} />
         <Route path="badges" element={<Badges />} />
         <Route path="discussions" element={<Discussions />} />
