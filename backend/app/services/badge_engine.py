@@ -19,8 +19,7 @@ from app.models.progress import Progress
 from app.models.resource import Resource
 from app.models.user import User
 from app.models.user_badge import UserBadge
-
-from backend.app.services.notification_service import notify
+from app.services.notification_service import notify
 
 
 def _has_badge(user_id, badge_name):
