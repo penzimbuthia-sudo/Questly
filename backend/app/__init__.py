@@ -30,6 +30,9 @@ def create_app(config_name="development"):
     from app.routes.quizzes import quizzes_bp
     app.register_blueprint(quizzes_bp)
 
+    from app.routes.modules import modules_bp
+    app.register_blueprint(modules_bp)
+
     from app.routes.progress import progress_bp
     app.register_blueprint(progress_bp)
 

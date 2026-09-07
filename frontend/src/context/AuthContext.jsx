@@ -1,7 +1,6 @@
 import { useState, useCallback, useMemo } from 'react';
 import { AuthContext } from './AuthContextType';
 import { authService, decodeToken } from '../services/authService';
-import { setCurrentUser, clearCurrentUser } from '../services/learningPathService';
 
 export { AuthContext };
 
@@ -21,18 +20,10 @@ const initializeAuth = () => {
 export function AuthProvider({ children }) {
   const [authState, setAuthState] = useState(() => initializeAuth());
 
-  // Restore per-user store on mount if user is present
-  useMemo(() => {
-    if (authState.user?.sub) {
-      setCurrentUser(authState.user.sub);
-    }
-  }, [authState.user?.sub]);
-
   const login = useCallback(async (email, password) => {
     const data = await authService.login(email, password);
     localStorage.setItem('token', data.token);
     const decoded = decodeToken(data.token);
-    setCurrentUser(decoded.sub);
     setAuthState({ token: data.token, user: decoded, loading: false });
     return decoded;
   }, []);
@@ -41,14 +32,12 @@ export function AuthProvider({ children }) {
     const data = await authService.register(payload);
     localStorage.setItem('token', data.token);
     const decoded = decodeToken(data.token);
-    setCurrentUser(decoded.sub);
     setAuthState({ token: data.token, user: decoded, loading: false });
     return decoded;
   }, []);
 
   const logout = useCallback(() => {
     authService.logout();
-    clearCurrentUser();
     setAuthState({ token: null, user: null, loading: false });
   }, []);
 
