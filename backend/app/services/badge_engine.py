@@ -15,10 +15,12 @@ check_and_award_badges(user_id).
 from app.extensions import db
 from app.models.badge import Badge
 from app.models.module import Module
-from app.models.resource import Resource
 from app.models.progress import Progress
+from app.models.resource import Resource
 from app.models.user import User
 from app.models.user_badge import UserBadge
+
+from backend.app.services.notification_service import notify
 
 
 def _has_badge(user_id, badge_name):
@@ -43,6 +45,8 @@ def _award_badge(user_id, badge_name):
     new_user_badge = UserBadge(user_id=user_id, badge_id=badge.id)
     db.session.add(new_user_badge)
     db.session.commit()
+
+    notify(user_id, f'You earned the "{badge_name}" badge!', type="success")
 
 
 def check_and_award_badges(user_id):
