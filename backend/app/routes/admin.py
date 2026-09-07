@@ -120,9 +120,9 @@ def get_log_level_stats():
 def get_role_distribution():
     """Get user role distribution."""
     return jsonify({
-        "Admin": User.query.filter_by(role="Admin").count(),
-        "Contributor": User.query.filter_by(role="Contributor").count(),
-        "Learner": User.query.filter_by(role="Learner").count(),
+        "Admin": User.query.filter_by(role="admin").count(),
+        "Contributor": User.query.filter_by(role="contributor").count(),
+        "Learner": User.query.filter_by(role="learner").count(),
         "total": User.query.count(),
     }), 200
 
