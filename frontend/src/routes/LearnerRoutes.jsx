@@ -2,7 +2,6 @@ import { Routes, Route } from 'react-router-dom';
 import LearnerLayout from '../components/layout/LearnerLayout';
 import Home from '../pages/learner/Home';
 import Explore from '../pages/learner/Explore';
-import Resources from '../pages/learner/Resources';
 import Paths from '../pages/learner/Paths';
 import PathDetail from '../pages/learner/PathDetail';
 import Challenges from '../pages/learner/Challenges';
@@ -20,7 +19,6 @@ export default function LearnerRoutes() {
       <Route element={<LearnerLayout />}>
         <Route index element={<Home />} />
         <Route path="explore" element={<Explore />} />
-        <Route path="resources" element={<Resources />} />
         <Route path="paths" element={<Paths />} />
         <Route path="paths/:pathId" element={<PathDetail />} />
         <Route path="challenges" element={<Challenges />} />

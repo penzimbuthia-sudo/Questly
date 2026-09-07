@@ -6,7 +6,7 @@ import { Zap } from "lucide-react";
  * pass `percent` if you want it to represent something specific, e.g.
  * progress toward a weekly goal).
  */
-export default function XPCard({ totalXP, weeklyXP, percent = 65 }) {
+export default function XPCard({ totalXP = 0, weeklyXP = 0, percent = 65 }) {
   return (
     <div className="rounded-2xl border border-black/5 bg-white p-6">
       <div className="flex items-center gap-3">
