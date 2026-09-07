@@ -40,7 +40,7 @@ FIELD_MAP = {
 @role_required("admin")
 def get_dashboard_stats():
     """Get all dashboard statistics."""
-    week_ago = datetime.now - timedelta(days=7)
+    week_ago = datetime.now() - timedelta(days=7)  # noqa: DTZ005
 
     return jsonify({
         "users": {
