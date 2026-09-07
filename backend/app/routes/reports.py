@@ -15,7 +15,7 @@ from app.utils.decorators import role_required
 reports_bp = Blueprint("reports", __name__, url_prefix="/admin/reports")
 
 
-@reports_bp.route("/", methods=["GET"])
+@reports_bp.route("", methods=["GET"])
 @jwt_required()
 @role_required("admin")
 def get_reports():

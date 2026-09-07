@@ -50,6 +50,9 @@ def create_app(config_name="development"):
     app.register_blueprint(admin_bp)
     app.register_blueprint(api_admin_resources_bp)
 
+    from app.routes.reports import reports_bp
+    app.register_blueprint(reports_bp)
+
     from app.routes.notifications import notifications_bp
     app.register_blueprint(notifications_bp)
 
