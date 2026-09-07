@@ -10,8 +10,7 @@ import Leaderboard from '../pages/learner/Leaderboard';
 import Achievements from '../pages/learner/Achievements';
 import Profile from '../pages/learner/Profile';
 import Settings from '../pages/learner/Settings';
-// Remove this line:
-// import Quizzes from '../pages/learner/Quizzes';
+
 
 export default function LearnerRoutes() {
   return (
