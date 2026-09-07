@@ -9,10 +9,10 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
 
   return (
-    // theme-contributor flips --color-fg / --color-line to ivory for this
+    // theme-dark flips --color-fg / --color-line to ivory for this
     // subtree, so Button's "outline" / "ghost" variants read correctly on
     // the dark ink background without any one-off color overrides.
-    <header className="theme-contributor sticky top-0 z-50 bg-ink">
+    <header className="theme-dark sticky top-0 z-50 bg-ink">
       <div className="w-full max-w-6xl mx-auto px-5 sm:px-6 lg:px-8 flex items-center justify-between py-3.5">
         <Link to="/">
           <Logo />

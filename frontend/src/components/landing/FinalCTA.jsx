@@ -4,7 +4,7 @@ import Button from "../ui/Button";
 
 export default function FinalCTA() {
   return (
-    <section className="theme-contributor relative overflow-hidden bg-royal">
+    <section className="theme-dark relative overflow-hidden bg-royal">
       <div className="absolute -bottom-16 -left-16 w-64 h-64 rounded-full opacity-20 pointer-events-none bg-butter" />
       <div className="w-full max-w-6xl mx-auto px-5 sm:px-6 lg:px-8 relative py-14 sm:py-16 text-center flex flex-col items-center">
         <h2 className="text-2xl sm:text-3xl mb-3 max-w-xl text-ivory font-extrabold tracking-tight">
