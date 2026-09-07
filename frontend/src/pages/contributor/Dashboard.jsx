@@ -56,11 +56,15 @@ export default function Dashboard() {
   }
 
   async function handleCreatePath(formData) {
-    const newPath = await createLearningPath(formData);
-    setContent((currentList) => [newPath, ...currentList]);
-    setStats((current) => ({ ...current, xp: current.xp + (newPath.xp_awarded ?? 50) }));
-    setRewardNotice(`+${newPath.xp_awarded ?? 50} XP for creating a learning path`);
-    setShowPathModal(false);
+    try {
+      const newPath = await createLearningPath(formData);
+      setContent((currentList) => [newPath, ...currentList]);
+      setStats((current) => ({ ...current, xp: current.xp + (newPath.xp_awarded ?? 50) }));
+      setRewardNotice(`+${newPath.xp_awarded ?? 50} XP for creating a learning path`);
+      setShowPathModal(false);
+    } catch (err) {
+      console.error("createLearningPath failed:", err);
+    }
   }
 
   return (

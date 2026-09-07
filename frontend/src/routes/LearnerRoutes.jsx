@@ -10,8 +10,8 @@ import Leaderboard from '../pages/learner/Leaderboard';
 import Achievements from '../pages/learner/Achievements';
 import Profile from '../pages/learner/Profile';
 import Settings from '../pages/learner/Settings';
-
-
+// Remove this line:
+// import Quizzes from '../pages/learner/Quizzes';
 
 export default function LearnerRoutes() {
   return (
@@ -27,6 +27,8 @@ export default function LearnerRoutes() {
         <Route path="achievements" element={<Achievements />} />
         <Route path="profile" element={<Profile />} />
         <Route path="settings" element={<Settings />} />
+        {/* Remove this route: */}
+        {/* <Route path="quizzes" element={<Quizzes />} /> */}
       </Route>
     </Routes>
   );

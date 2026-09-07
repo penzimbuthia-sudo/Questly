@@ -10,6 +10,7 @@ import {
   Award,
   User,
   Settings,
+  HelpCircle,
 } from 'lucide-react';
 import DashboardLayout from './DashboardLayout';
 import Logo from '../ui/Logo';
@@ -20,6 +21,7 @@ const NAV_ITEMS = [
   { key: '/learner/explore', label: 'Explore', icon: Search },
   { key: '/learner/resources', label: 'Resources', icon: FileText },
   { key: '/learner/paths', label: 'Learning paths', icon: BookOpen },
+  { key: '/learner/quizzes', label: 'Quizzes', icon: HelpCircle },
   { key: '/learner/challenges', label: 'Challenges', icon: Target },
   { key: '/learner/community', label: 'Community', icon: Users },
   { key: '/learner/leaderboard', label: 'Leaderboard', icon: Trophy },
@@ -45,14 +47,6 @@ function roleLabel(role) {
   return role.charAt(0).toUpperCase() + role.slice(1);
 }
 
-/**
- * LearnerLayout
- * Supplies the generic <Sidebar>/<TopBar> (via <DashboardLayout>) with
- * everything the learner section needs: nav groups, which item is active
- * based on the current route, click-to-navigate, the signed-in user, and
- * logout. Mount this as the layout route for everything under /learner
- * instead of <DashboardLayout /> directly.
- */
 function getInitials(name = "") {
   return name
     .trim()
