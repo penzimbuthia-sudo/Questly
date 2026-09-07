@@ -4,3 +4,4 @@ export { default as ChallengeCard } from "./ChallengeCard";
 export { default as ContributorLeaderboard } from "./ContributorLeaderboard";
 export { default as AddResourceModal } from "./AddResourceModal";
 export { default as CreatePathModal } from "./CreatePathModal";
+export { default as CreateQuizModal } from "./CreateQuizModal";
