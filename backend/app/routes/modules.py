@@ -11,6 +11,7 @@ from app.models.module import Module
 from app.models.progress import Progress
 from app.schemas.learning_path_schema import ModuleSchema
 from app.services import leaderboard_service
+from app.services.badge_engine import check_and_award_badges
 
 modules_bp = Blueprint("modules", __name__, url_prefix="")
 
@@ -113,4 +114,6 @@ def complete_module(module_id):
         source_id=module.id,
     )
 
-    return jsonify({"message": "Module completed", "xp_awarded": module.xp_value}), 200
+    badges_awarded = check_and_award_badges(user_id)
+
+    return jsonify({"message": "Module completed", "xp_awarded": module.xp_value, "badges_awarded": badges_awarded}), 200

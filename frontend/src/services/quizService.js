@@ -92,6 +92,30 @@ function genericQuiz(pathTitle, moduleTitle) {
         correctOptionId: "b",
         explanation: "Each module is scoped to build one concrete skill that compounds toward the path's outcome.",
       },
+      {
+        id: "q3",
+        prompt: `Which habit will help you retain the skill from "${moduleTitle}"?`,
+        options: [
+          { id: "a", text: "Practice it in a small project" },
+          { id: "b", text: "Only read the title" },
+          { id: "c", text: "Avoid trying the examples" },
+          { id: "d", text: "Skip every exercise" },
+        ],
+        correctOptionId: "a",
+        explanation: "A small practical project turns a new concept into a usable skill.",
+      },
+      {
+        id: "q4",
+        prompt: `When should you revisit the material from "${moduleTitle}"?`,
+        options: [
+          { id: "a", text: "Only after finishing the entire course" },
+          { id: "b", text: "When practice exposes a gap in understanding" },
+          { id: "c", text: "Never" },
+          { id: "d", text: "Before reading it" },
+        ],
+        correctOptionId: "b",
+        explanation: "Using practice to identify gaps makes review targeted and effective.",
+      },
     ],
   };
 }
@@ -154,5 +178,6 @@ export async function submitQuiz(pathId, moduleId, answers, questions) {
     passScore: PASS_SCORE,
     progress: completion.progress,
     xpAwarded: completion.xpAwarded,
+    badgesAwarded: completion.badgesAwarded ?? [],
   };
 }

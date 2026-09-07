@@ -2,8 +2,8 @@
  * src/data/achievements.js
  *
  * Badge catalog shown on the Achievements page and Profile. `earned` here
- * is the seed state for the demo learner (Penzi Mbuthia) — in the real
- * app this flag is computed server-side per-user.
+ * starts locked for every new account. Earned state is computed per-user by
+ * the progress/gamification services.
  */
 
 export const ACHIEVEMENTS = [
@@ -12,42 +12,42 @@ export const ACHIEVEMENTS = [
     title: "Spark ignited",
     description: "Complete your first module",
     icon: "zap",
-    earned: true,
+    earned: false,
   },
   {
     id: "trailblazer",
     title: "Trailblazer",
     description: "Finish your first learning path",
     icon: "flag",
-    earned: true,
+    earned: false,
   },
   {
     id: "quiz-champion",
     title: "Quiz champion",
     description: "Score 90%+ on 10 quizzes",
     icon: "shield",
-    earned: true,
+    earned: false,
   },
   {
     id: "knowledge-sharer",
     title: "Knowledge sharer",
     description: "Share 10 resources with the community",
     icon: "users",
-    earned: true,
+    earned: false,
   },
   {
     id: "streak-keeper",
     title: "Streak keeper",
     description: "Maintain a 7-day learning streak",
     icon: "flame",
-    earned: true,
+    earned: false,
   },
   {
     id: "elite-ranked",
     title: "Elite ranked",
     description: "Reach the top 10% on the leaderboard",
     icon: "crown",
-    earned: true,
+    earned: false,
   },
   {
     id: "perfect-score",

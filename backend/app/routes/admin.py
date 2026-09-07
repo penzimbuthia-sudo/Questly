@@ -17,10 +17,13 @@ from app.models.quiz import Quiz
 from app.models.report import Report
 from app.models.resource import Resource
 from app.models.system_log import SystemLog
+from app.services import leaderboard_service
+from app.services.badge_engine import check_and_award_badges
 from app.models.user import User
 from app.utils.decorators import role_required
 
 admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
+api_admin_resources_bp = Blueprint("api_admin_resources", __name__, url_prefix="/api/resources")
 
 FIELD_MAP = {
     "reviewBeforePublish": "review_before_publish",
@@ -153,15 +156,32 @@ def get_pending_resources():
     for r in pending:
         contributor = User.query.get(r.contributor_id)
         result.append({
-            "id": r.id,
-            "title": r.title,
+            **r.to_dict(),
             "type_label": f"Resource · {r.type}",
             "submitted_by": contributor.name if contributor else "Unknown",
         })
     return jsonify({"data": result}), 200
 
 
+@admin_bp.route("/resources", methods=["GET"])
+@jwt_required()
+@role_required("admin")
+def get_all_resources():
+    """Return the complete resource catalog for admin review and listing."""
+    resources = Resource.query.order_by(Resource.created_at.desc()).all()
+    result = []
+    for resource in resources:
+        contributor = User.query.get(resource.contributor_id)
+        result.append({
+            **resource.to_dict(),
+            "type_label": f"Resource · {resource.type}",
+            "submitted_by": contributor.name if contributor else "Unknown",
+        })
+    return jsonify({"data": result}), 200
+
+
 @admin_bp.route("/resources/<int:resource_id>/status", methods=["PATCH"])
+@api_admin_resources_bp.route("/<int:resource_id>/status", methods=["PATCH"])
 @jwt_required()
 @role_required("admin")
 def update_resource_status(resource_id):
@@ -174,8 +194,24 @@ def update_resource_status(resource_id):
         return jsonify({"error": "status must be 'Published' or 'Rejected'"}), 400
 
     resource = Resource.query.get_or_404(resource_id)
+    if resource.status != "Pending":
+        return jsonify({"error": "Only pending resources can be reviewed."}), 409
+    was_published = resource.status == "Published"
     resource.status = status
     db.session.commit()
+
+    xp_awarded = 0
+    badges_awarded = []
+    if status == "Published" and not was_published:
+        xp_awarded = 75
+        leaderboard_service.award_xp(
+            user_id=resource.contributor_id,
+            amount=xp_awarded,
+            reason=f'Published resource "{resource.title}"',
+            source_type="resource_publication",
+            source_id=resource.id,
+        )
+        badges_awarded = check_and_award_badges(resource.contributor_id)
 
     log = SystemLog(
         level="INFO",
@@ -187,7 +223,10 @@ def update_resource_status(resource_id):
     db.session.add(log)
     db.session.commit()
 
-    return jsonify({"data": resource.to_dict(), "message": f"Resource {status.lower()}."}), 200
+    data = resource.to_dict()
+    data["xp_awarded"] = xp_awarded
+    data["badges_awarded"] = badges_awarded
+    return jsonify({"data": data, "message": f"Resource {status.lower()}."}), 200
 
 
 @admin_bp.route("/learning-paths", methods=["GET"])

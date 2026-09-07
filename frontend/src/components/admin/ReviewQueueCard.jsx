@@ -1,7 +1,7 @@
-import { Check, X } from "lucide-react";
+import { Eye } from "lucide-react";
 import { Avatar, Button } from "@/components/ui";
 
-export default function ReviewQueueCard({ title, typeLabel, submittedBy, onApprove, onReject }) {
+export default function ReviewQueueCard({ title, typeLabel, submittedBy, onRead }) {
   return (
     <div className="flex items-center gap-3 p-3 rounded-xl bg-surface-alt">
       <Avatar name={submittedBy} size={34} />
@@ -13,11 +13,8 @@ export default function ReviewQueueCard({ title, typeLabel, submittedBy, onAppro
         </div>
       </div>
 
-      <Button variant="butter" size="sm" onClick={onApprove}>
-        <Check size={13} /> Approve
-      </Button>
-      <Button variant="outline" size="sm" onClick={onReject}>
-        <X size={13} /> Reject
+      <Button variant="primary" size="sm" onClick={onRead}>
+        <Eye size={13} /> Read resource
       </Button>
     </div>
   );

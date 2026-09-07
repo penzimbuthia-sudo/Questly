@@ -22,6 +22,7 @@ class User(db.Model):
 
     xp_total = db.Column(db.Integer, nullable=False, default=0)
     streak_days = db.Column(db.Integer, nullable=False, default=0)
+    streak_last_date = db.Column(db.Date, nullable=True)
 
     created_at = db.Column(db.DateTime, default=datetime.now)
     updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
@@ -44,4 +45,5 @@ class User(db.Model):
             "role": self.role,
             "xp_total": self.xp_total,
             "streak_days": self.streak_days,
+            "streak_last_date": self.streak_last_date.isoformat() if self.streak_last_date else None,
         }

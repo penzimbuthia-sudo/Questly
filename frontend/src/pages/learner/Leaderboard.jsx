@@ -1,28 +1,28 @@
-// Leaderboard.jsx
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PodiumCard from "../../components/learner/PodiumCard";
 import LeaderboardRow from "../../components/learner/LeaderboardRow";
-
-const TABS = ["This week", "This month", "All time"];
-
-const RANKINGS = {
-  "This week": [
-    { rank: 1, name: "Aisha K.", xp: 4820, trend: "up" },
-    { rank: 2, name: "Brian O.", xp: 4560, trend: "down" },
-    { rank: 3, name: "Penzi M.", xp: 4230, trend: "up", isCurrentUser: true },
-    { rank: 4, name: "Chinedu M.", xp: 3980, trend: "down" },
-    { rank: 5, name: "Damilola A.", xp: 3710, trend: "up" },
-    { rank: 6, name: "Grace W.", xp: 3420, trend: "down" },
-    { rank: 7, name: "Kwame B.", xp: 3105, trend: "flat" },
-    { rank: 8, name: "Amara N.", xp: 2890, trend: "up" },
-  ],
-};
-RANKINGS["This month"] = RANKINGS["This week"];
-RANKINGS["All time"] = RANKINGS["This week"];
+import { getLeaderboard } from "../../services/gamificationService";
+import { useAuth } from "../../hooks/useAuth";
 
 export default function Leaderboard() {
-  const [activeTab, setActiveTab] = useState("This week");
-  const ranked = RANKINGS[activeTab];
+  const { user } = useAuth();
+  const [ranked, setRanked] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    getLeaderboard("learner")
+      .then((entries) => {
+        setRanked(entries.map((entry) => ({
+          ...entry,
+          isCurrentUser: entry.id === (user?.id ?? user?.sub),
+        })));
+        setError("");
+      })
+      .catch((requestError) => setError(requestError.message || "Unable to load the leaderboard."))
+      .finally(() => setLoading(false));
+  }, [user?.id]);
+
   const [first, second, third, ...rest] = ranked;
 
   return (
@@ -32,34 +32,45 @@ export default function Leaderboard() {
         <p className="mt-1 text-sm text-fg/60">See how you stack up against the rest of the community.</p>
       </div>
 
-      <div className="flex gap-2">
-        {TABS.map((tab) => (
-          <button
-            key={tab}
-            type="button"
-            onClick={() => setActiveTab(tab)}
-            className={`rounded-full px-4 py-1.5 text-sm font-medium ${
-              activeTab === tab ? "bg-royal text-ivory" : "bg-card text-fg/70 hover:bg-surface-active"
-            }`}
-          >
-            {tab}
-          </button>
-        ))}
-      </div>
+      <p className="w-fit rounded-full bg-royal/10 px-4 py-1.5 text-sm font-medium text-royal">All-time learner rankings</p>
 
-      <div className="rounded-2xl bg-ink p-8">
-        <div className="mx-auto flex max-w-md items-end justify-center gap-6">
-          <PodiumCard place={2} {...second} />
-          <PodiumCard place={1} {...first} />
-          <PodiumCard place={3} {...third} />
+      {error && (
+        <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>
+      )}
+
+      {loading && <p className="text-sm text-fg/50">Loading leaderboard...</p>}
+
+      {!loading && ranked.length >= 3 && (
+        <div className="rounded-2xl bg-ink p-8">
+          <div className="mx-auto flex max-w-md items-end justify-center gap-6">
+            <PodiumCard place={2} {...second} />
+            <PodiumCard place={1} {...first} />
+            <PodiumCard place={3} {...third} />
+          </div>
         </div>
-      </div>
+      )}
 
-      <div className="rounded-2xl border border-line/10 bg-card px-4">
-        {rest.map((entry) => (
-          <LeaderboardRow key={entry.rank} {...entry} />
-        ))}
-      </div>
+      {!loading && ranked.length === 0 && (
+        <div className="rounded-2xl border border-line/10 bg-card p-6 text-sm text-fg/50">
+          No learner rankings yet. Earn XP to appear here.
+        </div>
+      )}
+
+      {!loading && ranked.length > 0 && ranked.length < 3 && (
+        <div className="rounded-2xl border border-line/10 bg-card px-4">
+          {ranked.map((entry) => (
+            <LeaderboardRow key={entry.id} {...entry} />
+          ))}
+        </div>
+      )}
+
+      {!loading && rest.length > 0 && (
+        <div className="rounded-2xl border border-line/10 bg-card px-4">
+          {rest.map((entry) => (
+            <LeaderboardRow key={entry.rank} {...entry} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

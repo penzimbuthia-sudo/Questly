@@ -1,34 +1,39 @@
-import { createContext, useState, useEffect, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
+import { AuthContext } from './AuthContextType';
 import { authService, decodeToken } from '../services/authService';
+import { setCurrentUser, clearCurrentUser } from '../services/learningPathService';
 
-export const AuthContext = createContext(null);
+export { AuthContext };
+
+const initializeAuth = () => {
+  const stored = localStorage.getItem('token');
+  if (stored) {
+    const decoded = decodeToken(stored);
+    const expired = decoded?.exp && decoded.exp * 1000 < Date.now();
+    if (decoded && !expired) {
+      return { token: stored, user: decoded, loading: false };
+    }
+    localStorage.removeItem('token');
+  }
+  return { token: null, user: null, loading: false };
+};
 
 export function AuthProvider({ children }) {
-  const [token, setToken] = useState(null);
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [authState, setAuthState] = useState(() => initializeAuth());
 
-  useEffect(() => {
-    const stored = localStorage.getItem('token');
-    if (stored) {
-      const decoded = decodeToken(stored);
-      const expired = decoded?.exp && decoded.exp * 1000 < Date.now();
-      if (decoded && !expired) {
-        setToken(stored);
-        setUser(decoded);
-      } else {
-        localStorage.removeItem('token');
-      }
+  // Restore per-user store on mount if user is present
+  useMemo(() => {
+    if (authState.user?.sub) {
+      setCurrentUser(authState.user.sub);
     }
-    setLoading(false);
-  }, []);
+  }, [authState.user?.sub]);
 
   const login = useCallback(async (email, password) => {
     const data = await authService.login(email, password);
     localStorage.setItem('token', data.token);
     const decoded = decodeToken(data.token);
-    setToken(data.token);
-    setUser(decoded);
+    setCurrentUser(decoded.sub);
+    setAuthState({ token: data.token, user: decoded, loading: false });
     return decoded;
   }, []);
 
@@ -36,27 +41,30 @@ export function AuthProvider({ children }) {
     const data = await authService.register(payload);
     localStorage.setItem('token', data.token);
     const decoded = decodeToken(data.token);
-    setToken(data.token);
-    setUser(decoded);
+    setCurrentUser(decoded.sub);
+    setAuthState({ token: data.token, user: decoded, loading: false });
     return decoded;
   }, []);
 
   const logout = useCallback(() => {
     authService.logout();
-    setToken(null);
-    setUser(null);
+    clearCurrentUser();
+    setAuthState({ token: null, user: null, loading: false });
   }, []);
 
-  const value = {
-    token,
-    user,
-    role: user?.role ?? null,
-    isAuthenticated: Boolean(token && user),
-    loading,
-    login,
-    register,
-    logout,
-  };
+  const value = useMemo(
+    () => ({
+      token: authState.token,
+      user: authState.user,
+      role: authState.user?.role ?? null,
+      isAuthenticated: Boolean(authState.token && authState.user),
+      loading: authState.loading,
+      login,
+      register,
+      logout,
+    }),
+    [authState.token, authState.user, authState.loading, login, register, logout]
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

@@ -226,17 +226,45 @@ def _seed_resources(modules, users):
         {"module": modules[9], "contributor": contributors[0], "title": "ML Overview", "type": "Video", "url": "https://example.com/ml-overview", "description": "What is machine learning?", "views": 400, "upvotes": 55, "status": "Published"},
     ]
 
+    # Standalone catalog resources used by the learner Resources page.
+    # Keep these published and idempotent so seed.py can be rerun safely.
+    catalog_resources = [
+        {"title": "JavaScript Crash Course", "type": "Video", "url": "https://www.youtube.com/watch?v=hdI2bqOjy3c", "description": "A beginner-friendly crash course covering core JavaScript syntax and concepts."},
+        {"title": "Python for Beginners - Full Course", "type": "Video", "url": "https://www.youtube.com/watch?v=rfscVS0vtbw", "description": "A complete beginner course covering Python fundamentals and practical examples."},
+        {"title": "Learn React In 30 Minutes", "type": "Video", "url": "https://www.youtube.com/watch?v=hQAHSlTtcmY", "description": "A concise introduction to React components, props, state, and rendering."},
+        {"title": "Git and GitHub for Beginners", "type": "Video", "url": "https://www.youtube.com/watch?v=RGOj5yH7evk", "description": "Learn the essential Git workflow and how to collaborate with GitHub."},
+        {"title": "SQL Tutorial - Full Database Course", "type": "Video", "url": "https://www.youtube.com/watch?v=HXV3zeQKqGY", "description": "A practical introduction to SQL, relational databases, and queries."},
+        {"title": "Flask Tutorial for Beginners", "type": "Video", "url": "https://www.youtube.com/watch?v=Z1RJmh_OqeA", "description": "Build a Flask web application while learning the framework fundamentals."},
+        {"title": "JavaScript Guide (MDN)", "type": "Article", "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide", "description": "The official MDN guide to JavaScript language features and patterns."},
+        {"title": "Python Official Tutorial", "type": "Article", "url": "https://docs.python.org/3/tutorial/", "description": "The official Python tutorial for learning the language from the ground up."},
+        {"title": "Understanding React Hooks", "type": "Article", "url": "https://react.dev/reference/react", "description": "Official React reference documentation for hooks and core APIs."},
+        {"title": "Flask Quickstart", "type": "Article", "url": "https://flask.palletsprojects.com/en/latest/quickstart/", "description": "Official Flask quickstart covering routes, templates, and request handling."},
+        {"title": "SQLAlchemy ORM Tutorial", "type": "Article", "url": "https://docs.sqlalchemy.org/en/20/orm/quickstart.html", "description": "Official SQLAlchemy ORM quickstart for models, sessions, and queries."},
+        {"title": "REST API Design Best Practices", "type": "Article", "url": "https://restfulapi.net/", "description": "Practical guidance for designing consistent and maintainable REST APIs."},
+    ]
+    resources.extend(
+        {
+            "module": None,
+            "contributor": contributors[index % len(contributors)],
+            "views": 0,
+            "upvotes": 0,
+            "status": "Published",
+            **resource,
+        }
+        for index, resource in enumerate(catalog_resources)
+    )
+
     created_count = 0
     for payload in resources:
         existing = Resource.query.filter_by(
-            module_id=payload["module"].id,
+            module_id=payload["module"].id if payload["module"] else None,
             title=payload["title"],
         ).first()
         if existing:
             continue
 
         resource = Resource(
-            module_id=payload["module"].id,
+            module_id=payload["module"].id if payload["module"] else None,
             contributor_id=payload["contributor"].id,
             title=payload["title"],
             type=payload["type"],

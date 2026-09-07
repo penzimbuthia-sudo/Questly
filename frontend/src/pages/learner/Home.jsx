@@ -6,9 +6,18 @@ import LevelCard from "../../components/learner/LevelCard";
 import LearningPathCard from "../../components/learner/LearningPathCard";
 import WeeklyChallengeCard from "../../components/learner/WeeklyChallengeCard";
 import BadgeCard from "../../components/learner/BadgeCard";
-import { getAllPaths, getMyPaths, getMyStats } from "../../services/learningPathService";
-import { getMyBadges, getChallenges, getLeaderboard } from "../../services/gamificationService";
+import { getAllPaths, getMyPaths, getMyStats, getEarnedBadges, subscribe } from "../../services/learningPathService";
+import { ACHIEVEMENTS } from "../../data/achievements";
+import { getMyBadges, getChallenges, getLeaderboard, checkInStreak } from "../../services/gamificationService";
 import { useAuth } from "../../hooks/useAuth";
+
+function safeEarnedBadgeNames() {
+  try {
+    return getEarnedBadges();
+  } catch {
+    return [];
+  }
+}
 
 export default function Home() {
   const navigate = useNavigate();
@@ -19,12 +28,31 @@ export default function Home() {
   const [badges, setBadges] = useState([]);
   const [challenge, setChallenge] = useState(null);
   const [topLearners, setTopLearners] = useState([]);
+  const [earnedBadgeNames, setEarnedBadgeNames] = useState(safeEarnedBadgeNames());
+  const earnedBadges = ACHIEVEMENTS.filter((badge) => earnedBadgeNames.includes(badge.title));
+
+  useEffect(
+    () =>
+      subscribe((snapshot) => {
+        if (snapshot.stats) setStats(snapshot.stats);
+        setEarnedBadgeNames(safeEarnedBadgeNames());
+      }),
+    []
+  );
+
+  useEffect(() => {
+    checkInStreak()
+      .then((streak) =>
+        setStats((current) => ({ ...current, streakDays: streak.streak_days ?? current?.streakDays }))
+      )
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     getMyStats().then(setStats);
     getMyBadges().then((all) => setBadges(all.filter((b) => b.earned)));
     getChallenges().then((all) => setChallenge(all.find((c) => c.status === "Active") ?? null));
-    getLeaderboard({ role: "learner" }).then(setTopLearners);
+    getLeaderboard("learner").then(setTopLearners);
 
     getMyPaths().then((mine) => {
       const top = mine.sort((a, b) => b.progress.percent - a.progress.percent)[0];
@@ -49,10 +77,27 @@ export default function Home() {
 
       {stats && (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <XPCard totalXP={stats.totalXP} weeklyXP={0} />
+          <XPCard
+            totalXP={stats.totalXP}
+            weeklyXP={stats.weeklyXP}
+            percent={((stats.totalXP % stats.xpToNextLevel) / stats.xpToNextLevel) * 100}
+          />
           <LevelCard level={stats.level} xpToNextLevel={stats.xpToNextLevel} />
         </div>
       )}
+
+      <section className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-wider text-amber-700">Your reward progress</p>
+            <h2 className="mt-1 text-lg font-bold text-neutral-900">{earnedBadges.length} badges unlocked</h2>
+            <p className="mt-1 text-sm text-neutral-600">Complete a module or pass a quiz to keep building your streak.</p>
+          </div>
+          <button type="button" onClick={() => navigate("/learner/achievements")} className="shrink-0 rounded-lg bg-neutral-900 px-3 py-2 text-xs font-semibold text-white">
+            View badges
+          </button>
+        </div>
+      </section>
 
       {primaryPath && (
         <section className="rounded-2xl border border-black/5 bg-white p-6">

@@ -2,6 +2,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Home,
   Search,
+  FileText,
   BookOpen,
   Target,
   Users,
@@ -17,6 +18,7 @@ import { useAuth } from '../../hooks/useAuth';
 const NAV_ITEMS = [
   { key: '/learner', label: 'Home', icon: Home },
   { key: '/learner/explore', label: 'Explore', icon: Search },
+  { key: '/learner/resources', label: 'Resources', icon: FileText },
   { key: '/learner/paths', label: 'Learning paths', icon: BookOpen },
   { key: '/learner/challenges', label: 'Challenges', icon: Target },
   { key: '/learner/community', label: 'Community', icon: Users },

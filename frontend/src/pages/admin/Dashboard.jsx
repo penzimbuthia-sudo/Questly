@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { PageHeader } from "@/components/layout";
 import { PieChartCard } from "@/components/charts";
-import { StatCard, ReviewQueueCard, ReportCard } from "@/components/admin";
+import { StatCard, ReviewQueueCard, ReportCard, ResourceReviewModal } from "@/components/admin";
 import Card from "@/components/ui/Card";
 import { useAuth } from "@/hooks/useAuth";
 import { getDashboardStats, getRoleDistribution, getPendingResources, updateResourceStatus } from "@/services/adminService";
@@ -16,6 +16,8 @@ export default function Dashboard() {
   const [reviewQueue, setReviewQueue] = useState([]);
   const [recentReports, setRecentReports] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [reviewing, setReviewing] = useState(null);
+  const [reviewSaving, setReviewSaving] = useState(false);
 
   useEffect(() => {
     Promise.all([getDashboardStats(), getRoleDistribution(), getPendingResources(), getReports()])
@@ -33,8 +35,14 @@ export default function Dashboard() {
   }, []);
 
   async function handleReview(resourceId, status) {
-    await updateResourceStatus(resourceId, status);
-    setReviewQueue((current) => current.filter((item) => item.id !== resourceId));
+    setReviewSaving(true);
+    try {
+      await updateResourceStatus(resourceId, status);
+      setReviewQueue((current) => current.filter((item) => item.id !== resourceId));
+      setReviewing(null);
+    } finally {
+      setReviewSaving(false);
+    }
   }
 
   const statCards = stats
@@ -73,8 +81,7 @@ export default function Dashboard() {
                   title={item.title}
                   typeLabel={item.type_label}
                   submittedBy={item.submitted_by}
-                  onApprove={() => handleReview(item.id, "Published")}
-                  onReject={() => handleReview(item.id, "Rejected")}
+                  onRead={() => setReviewing(item)}
                 />
               ))}
             </div>
@@ -97,6 +104,13 @@ export default function Dashboard() {
           <PieChartCard title="User role distribution" data={roleData} centerLabel="total users" />
         )}
       </div>
+
+      <ResourceReviewModal
+        resource={reviewing}
+        onClose={() => setReviewing(null)}
+        onDecision={(status) => handleReview(reviewing.id, status)}
+        saving={reviewSaving}
+      />
     </div>
   );
 }
