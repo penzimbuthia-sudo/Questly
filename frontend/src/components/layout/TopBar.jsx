@@ -1,38 +1,49 @@
-import { useState } from 'react';
-import { Menu, Bell, Search, ChevronDown, X, CheckCircle, AlertCircle, MessageSquare, User, Settings, LogOut, LayoutDashboard, Plus } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Menu, Bell, Search, ChevronDown, X, CheckCircle, AlertCircle, User, Settings, LogOut, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import ThemeToggle from '../ui/ThemeToggle';
-
-const MOCK_NOTIFICATIONS = [
-  { id: 1, title: 'New content pending review', message: '3 resources need your approval', time: '2 min ago', type: 'review', read: false },
-  { id: 2, title: 'Report flagged', message: 'New report from User123 on React guide', time: '15 min ago', type: 'report', read: false },
-  { id: 3, title: 'Challenge ended', message: 'The 5-day builder has concluded', time: '1 hour ago', type: 'challenge', read: false },
-  { id: 4, title: 'User activity spike', message: '50 new users joined today', time: '3 hours ago', type: 'activity', read: true },
-];
+import { getMyNotifications, markAllNotificationsRead, markNotificationRead } from '../../services/notificationService';
 
 const NOTIF_ICON = {
-  review: <CheckCircle size={16} className="text-royal" />,
-  report: <AlertCircle size={16} className="text-danger" />,
-  challenge: <MessageSquare size={16} className="text-butter" />,
+  success: <CheckCircle size={16} className="text-royal" />,
+  warning: <AlertCircle size={16} className="text-danger" />,
 };
 
-export default function TopBar({
-  sidebarOpen,
-  setSidebarOpen,
-  searchPlaceholder = 'Search...',
-  user,
-  action,
-  onLogout,
-}) {
+function timeAgo(isoString) {
+  const seconds = Math.floor((Date.now() - new Date(isoString)) / 1000);
+  if (seconds < 60) return 'just now';
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes} min ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours} hour${hours === 1 ? '' : 's'} ago`;
+  return `${Math.floor(hours / 24)}d ago`;
+}
+
+export default function TopBar({ sidebarOpen, setSidebarOpen, searchPlaceholder = 'Search...', user, action, onLogout }) {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [notifications, setNotifications] = useState(MOCK_NOTIFICATIONS);
+  const [notifications, setNotifications] = useState([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    getMyNotifications().then(setNotifications).catch(() => {});
+  }, []);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
-  const markAllRead = () => setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+  const markAllRead = async () => {
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+    await markAllNotificationsRead();
+  };
+
+  const openNotification = async (notif) => {
+    setShowNotifications(false);
+    if (!notif.read) {
+      setNotifications((prev) => prev.map((n) => (n.id === notif.id ? { ...n, read: true } : n)));
+      await markNotificationRead(notif.id);
+    }
+  };
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -49,18 +60,11 @@ export default function TopBar({
     <header className="h-16 bg-card border-b border-line/10 flex items-center justify-between px-4 lg:px-6 relative">
       <div className="flex items-center gap-4 flex-1 min-w-0">
         {setSidebarOpen && (
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="lg:hidden text-fg/60 hover:text-fg transition-colors"
-          >
+          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="lg:hidden text-fg/60 hover:text-fg transition-colors">
             <Menu size={24} />
           </button>
         )}
-
-        <form
-          onSubmit={handleSearch}
-          className="hidden md:flex items-center gap-2 bg-page rounded-lg px-3 py-2 border border-line/15 focus-within:border-royal transition-colors w-80"
-        >
+        <form onSubmit={handleSearch} className="hidden md:flex items-center gap-2 bg-page rounded-lg px-3 py-2 border border-line/15 focus-within:border-royal transition-colors w-80">
           <Search size={16} className="text-fg/40" />
           <input
             type="text"
@@ -79,22 +83,15 @@ export default function TopBar({
 
       <div className="flex items-center gap-3">
         {action && (
-          <button
-            onClick={action.onClick}
-            className="hidden sm:flex items-center gap-1.5 text-sm font-semibold px-3.5 py-2 rounded-lg bg-royal text-ivory hover:opacity-90 transition-opacity"
-          >
+          <button onClick={action.onClick} className="hidden sm:flex items-center gap-1.5 text-sm font-semibold px-3.5 py-2 rounded-lg bg-royal text-ivory hover:opacity-90 transition-opacity">
             <Plus size={15} /> {action.label}
           </button>
         )}
 
         <ThemeToggle />
 
-        {/* Notifications */}
         <div className="relative">
-          <button
-            className="relative p-2 rounded-lg hover:bg-page transition-colors"
-            onClick={() => setShowNotifications((v) => !v)}
-          >
+          <button className="relative p-2 rounded-lg hover:bg-page transition-colors" onClick={() => setShowNotifications((v) => !v)}>
             <Bell size={18} className="text-fg/60" />
             {unreadCount > 0 && (
               <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-danger text-ivory text-[10px] font-bold rounded-full flex items-center justify-center">
@@ -114,36 +111,33 @@ export default function TopBar({
                 )}
               </div>
               <div className="max-h-80 overflow-y-auto">
-                {notifications.map((notif) => (
-                  <div
-                    key={notif.id}
-                    className={`px-4 py-3 hover:bg-page cursor-pointer transition-colors border-b border-line/5 last:border-0 ${
-                      !notif.read ? 'bg-royal/5' : ''
-                    }`}
-                    onClick={() => setShowNotifications(false)}
-                  >
-                    <div className="flex items-start gap-3">
-                      <div className="mt-0.5">{NOTIF_ICON[notif.type] || <User size={16} className="text-fg/40" />}</div>
-                      <div className="flex-1">
-                        <p className={`text-sm ${!notif.read ? 'font-semibold text-fg' : 'text-fg/70'}`}>{notif.title}</p>
-                        <p className="text-xs text-fg/40 mt-0.5">{notif.message}</p>
-                        <p className="text-[10px] text-fg/30 mt-1">{notif.time}</p>
+                {notifications.length === 0 ? (
+                  <p className="px-4 py-6 text-center text-sm text-fg/40">You're all caught up.</p>
+                ) : (
+                  notifications.map((notif) => (
+                    <div
+                      key={notif.id}
+                      className={`px-4 py-3 hover:bg-page cursor-pointer transition-colors border-b border-line/5 last:border-0 ${!notif.read ? 'bg-royal/5' : ''}`}
+                      onClick={() => openNotification(notif)}
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="mt-0.5">{NOTIF_ICON[notif.type] || <User size={16} className="text-fg/40" />}</div>
+                        <div className="flex-1">
+                          <p className={`text-sm ${!notif.read ? 'font-semibold text-fg' : 'text-fg/70'}`}>{notif.message}</p>
+                          <p className="text-[10px] text-fg/30 mt-1">{timeAgo(notif.created_at)}</p>
+                        </div>
+                        {!notif.read && <span className="w-2 h-2 bg-royal rounded-full mt-1.5 shrink-0" />}
                       </div>
-                      {!notif.read && <span className="w-2 h-2 bg-royal rounded-full mt-1.5 shrink-0" />}
                     </div>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </div>
           )}
         </div>
 
-        {/* Profile dropdown */}
         <div className="relative">
-          <div
-            className="flex items-center gap-2 pl-3 border-l border-line/10 cursor-pointer hover:bg-page rounded-lg px-2 py-1 transition-colors"
-            onClick={() => setShowProfileMenu((v) => !v)}
-          >
+          <div className="flex items-center gap-2 pl-3 border-l border-line/10 cursor-pointer hover:bg-page rounded-lg px-2 py-1 transition-colors" onClick={() => setShowProfileMenu((v) => !v)}>
             <div className="w-8 h-8 rounded-full bg-royal flex items-center justify-center text-ivory font-semibold text-sm">
               {user?.initials || 'U'}
             </div>
@@ -161,27 +155,15 @@ export default function TopBar({
                 <p className="text-xs text-fg/40">{user?.roleLabel || ''}</p>
               </div>
               <div className="py-1">
-                <button
-                  className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-fg/80 hover:bg-page transition-colors"
-                  onClick={() => setShowProfileMenu(false)}
-                >
-                  <User size={16} className="text-fg/40" />
-                  Profile
+                <button className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-fg/80 hover:bg-page transition-colors" onClick={() => setShowProfileMenu(false)}>
+                  <User size={16} className="text-fg/40" /> Profile
                 </button>
-                <button
-                  className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-fg/80 hover:bg-page transition-colors"
-                  onClick={() => setShowProfileMenu(false)}
-                >
-                  <Settings size={16} className="text-fg/40" />
-                  Settings
+                <button className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-fg/80 hover:bg-page transition-colors" onClick={() => setShowProfileMenu(false)}>
+                  <Settings size={16} className="text-fg/40" /> Settings
                 </button>
                 <div className="border-t border-line/10 my-1" />
-                <button
-                  className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-danger hover:bg-page transition-colors"
-                  onClick={handleLogout}
-                >
-                  <LogOut size={16} />
-                  Logout
+                <button className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-danger hover:bg-page transition-colors" onClick={handleLogout}>
+                  <LogOut size={16} /> Logout
                 </button>
               </div>
             </div>

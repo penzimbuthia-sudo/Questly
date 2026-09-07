@@ -17,9 +17,10 @@ from app.models.quiz import Quiz
 from app.models.report import Report
 from app.models.resource import Resource
 from app.models.system_log import SystemLog
+from app.models.user import User
 from app.services import leaderboard_service
 from app.services.badge_engine import check_and_award_badges
-from app.models.user import User
+from app.services.notification_service import notify
 from app.utils.decorators import role_required
 
 admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
@@ -222,6 +223,12 @@ def update_resource_status(resource_id):
     )
     db.session.add(log)
     db.session.commit()
+
+    notify(
+        resource.contributor_id,
+        f'Your resource "{resource.title}" was {status.lower()}.',
+        type="success" if status == "Published" else "warning",
+    )
 
     data = resource.to_dict()
     data["xp_awarded"] = xp_awarded

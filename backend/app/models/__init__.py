@@ -20,6 +20,7 @@ from .challenge import Challenge
 from .challenge_progress import ChallengeProgress
 from .comment import Comment
 from .discussion import Discussion
+from .notification import Notification
 from .password_reset_token import PasswordResetToken
 from .report import Report
 from .system_log import SystemLog
