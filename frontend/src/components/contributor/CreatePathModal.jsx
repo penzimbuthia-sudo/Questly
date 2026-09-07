@@ -1,3 +1,4 @@
+// CreatePathModal.jsx
 import { useState } from "react";
 import Modal from "../../components/ui/Modal";
 import FormField from "../../components/ui/FormField";
@@ -15,7 +16,7 @@ export default function CreatePathModal({ onClose, onSubmit }) {
   }
 
   return (
-    <Modal title="Create a learning path" onClose={onClose}>
+    <Modal open={true} title="Create a learning path" onClose={onClose}>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <FormField
           label="Path title"
