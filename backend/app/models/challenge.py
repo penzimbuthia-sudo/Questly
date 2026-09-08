@@ -23,7 +23,7 @@ class Challenge(db.Model):
     reward_badge_id = db.Column(db.Integer, db.ForeignKey("badges.id"), nullable=True)
 
     # "Active" | "Upcoming" | "Ended"
-    status = db.Column(db.String(20), default="Upcoming")
+    status = db.Column(db.String(20), default="Pending")
 
     def to_dict(self):
         return {
