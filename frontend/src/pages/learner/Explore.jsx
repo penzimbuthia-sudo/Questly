@@ -20,7 +20,7 @@ export default function Explore() {
     getAllPaths({ category: activeTab })
       .then((result) => {
         if (!cancelled) {
-          setPaths(result);
+          setPaths(Array.isArray(result) ? result : []);
           setLoading(false);
         }
       })

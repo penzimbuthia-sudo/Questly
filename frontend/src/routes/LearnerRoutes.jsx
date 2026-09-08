@@ -4,14 +4,14 @@ import Home from '../pages/learner/Home';
 import Explore from '../pages/learner/Explore';
 import Paths from '../pages/learner/Paths';
 import PathDetail from '../pages/learner/PathDetail';
+import Resources from '../pages/learner/Resources';
+import Quizzes from '../pages/learner/Quizzes';
 import Challenges from '../pages/learner/Challenges';
 import Community from '../pages/learner/Community';
 import Leaderboard from '../pages/learner/Leaderboard';
 import Achievements from '../pages/learner/Achievements';
 import Profile from '../pages/learner/Profile';
 import Settings from '../pages/learner/Settings';
-// Remove this line:
-// import Quizzes from '../pages/learner/Quizzes';
 
 export default function LearnerRoutes() {
   return (
@@ -21,14 +21,14 @@ export default function LearnerRoutes() {
         <Route path="explore" element={<Explore />} />
         <Route path="paths" element={<Paths />} />
         <Route path="paths/:pathId" element={<PathDetail />} />
+        <Route path="resources" element={<Resources />} />
+        <Route path="quizzes" element={<Quizzes />} />
         <Route path="challenges" element={<Challenges />} />
         <Route path="community" element={<Community />} />
         <Route path="leaderboard" element={<Leaderboard />} />
         <Route path="achievements" element={<Achievements />} />
         <Route path="profile" element={<Profile />} />
         <Route path="settings" element={<Settings />} />
-        {/* Remove this route: */}
-        {/* <Route path="quizzes" element={<Quizzes />} /> */}
       </Route>
     </Routes>
   );

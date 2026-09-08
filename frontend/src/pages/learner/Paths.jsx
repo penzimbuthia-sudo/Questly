@@ -16,7 +16,7 @@ export default function Paths() {
   useEffect(() => {
     if (!user) return;
     getMyPaths().then(setMyPaths);
-    getAllPaths().then(setAllPaths);
+    getAllPaths().then((result) => setAllPaths(Array.isArray(result) ? result : []));
   }, [user?.sub]); // refetch whenever the logged-in user actually changes
 
   const handleStart = async (path) => {

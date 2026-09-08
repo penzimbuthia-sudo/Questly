@@ -26,7 +26,8 @@ export async function getPathById(pathId) {
 
 export async function getMyPaths() {
   const response = await api.get("/learning-paths/mine");
-  return response.data.map((entry) => ({
+  const paths = Array.isArray(response.data) ? response.data : [];
+  return paths.map((entry) => ({
     path: entry.learning_path,
     progress: {
       modulesCompleted: entry.modules_completed,

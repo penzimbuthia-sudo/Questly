@@ -4,13 +4,13 @@ import {
   Search,
   FileText,
   BookOpen,
+  HelpCircle,
   Target,
   Users,
   Trophy,
   Award,
   User,
   Settings,
-  HelpCircle,
 } from 'lucide-react';
 import DashboardLayout from './DashboardLayout';
 import Logo from '../ui/Logo';
