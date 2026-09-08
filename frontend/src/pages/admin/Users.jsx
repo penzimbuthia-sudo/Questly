@@ -32,7 +32,9 @@ export default function Users() {
   }
 
   async function saveStatus() {
+  console.log("Saving status for:", editingUser.id, "to:", draftStatus);
     const updated = await updateUserStatus(editingUser.id, draftStatus);
+  console.log("Updated user:", updated);
     setUsers((current) => current.map((u) => (u.id === updated.id ? updated : u)));
     setEditingUser(null);
   }
@@ -41,7 +43,7 @@ export default function Users() {
     u.name,
     u.email,
     u.role,
-    <Pill status={u.status} key={u.id} />,
+    <Pill key={u.id}>{u.status || "Active"}</Pill>,
     <Button variant="ghost" size="sm" onClick={() => openEdit(u)} key={`edit-${u.id}`}>
       <Pencil size={12} /> Edit
     </Button>,
@@ -67,7 +69,7 @@ export default function Users() {
         <EditStatusModal
           title={`Edit ${editingUser.name}`}
           subtitle="Update this user's account status."
-          statusOptions={["Active", "Suspended"]}
+          statusOptions={["Active", "Inactive", "Suspended", "Banned"]}
           value={draftStatus}
           onChange={setDraftStatus}
           onCancel={() => setEditingUser(null)}

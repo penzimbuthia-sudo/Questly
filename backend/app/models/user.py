@@ -43,6 +43,7 @@ class User(db.Model):
             "name": self.name,
             "email": self.email,
             "role": self.role,
+        "status": self.status,
             "xp_total": self.xp_total,
             "streak_days": self.streak_days,
             "streak_last_date": self.streak_last_date.isoformat() if self.streak_last_date else None,
