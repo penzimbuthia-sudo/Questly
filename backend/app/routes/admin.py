@@ -359,3 +359,54 @@ def get_all_users():
             "pages": paginated.pages
         }
     }), 200
+
+@admin_bp.route("/users/<string:user_id>/status", methods=["PATCH"])
+@jwt_required()
+@role_required("admin")
+def update_user_status(user_id):
+    data = request.get_json() or {}
+    status = data.get("status")
+    valid_statuses = ["Active", "Inactive", "Suspended", "Banned"]
+    if status not in valid_statuses:
+        return jsonify({"error": "Invalid status"}), 400
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+    user.status = status
+    db.session.commit()
+    return jsonify({"data": user.to_dict(), "message": "Status updated"}), 200
+
+@admin_bp.route("/badges", methods=["GET"])
+@jwt_required()
+@role_required("admin")
+def get_badges(): 
+    from app.models.badge import Badge 
+    badges = Badge.query.all() 
+    return jsonify({"data": [b.to_dict() for b in badges]}), 200
+@admin_bp.route("/badges", methods=["POST"])
+@jwt_required()
+@role_required("admin")
+def create_badge():
+    from app.models.badge import Badge
+    data = request.get_json() or {}
+    if not data.get("name"):
+        return jsonify({"error": "Badge name required"}), 400
+    badge = Badge(
+        name=data["name"],
+        description=data.get("description", ""),
+        icon_key=data.get("icon_key", "trophy"),
+        criteria=data.get("criteria", ""),
+        xp_reward=data.get("xp_reward", 50),
+        color=data.get("color", "#FFD700")
+    )
+    db.session.add(badge)
+    db.session.commit()
+    return jsonify({"data": badge.to_dict(), "message": "Badge created"}), 201
+
+@admin_bp.after_request
+def add_cors_headers(response):
+    response.headers['Access-Control-Allow-Origin'] = 'http://localhost:5173'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, Accept'
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, PATCH, DELETE, OPTIONS'
+    response.headers['Access-Control-Allow-Credentials'] = 'true'
+    return response
