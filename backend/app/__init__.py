@@ -1,8 +1,10 @@
+
 from dotenv import load_dotenv
 from flask import Flask
+from flask_cors import CORS
 
 from app.config import config_by_name
-from app.extensions import cors, db, jwt, mail, migrate
+from app.extensions import db, jwt, mail, migrate
 from app.utils.responses import error_response
 
 load_dotenv()
@@ -15,11 +17,14 @@ def create_app(config_name="development"):
     jwt.init_app(app)
     migrate.init_app(app, db)
     mail.init_app(app)
-    cors.init_app(app, resources={r"/*": {"origins": app.config["ALLOWED_ORIGINS"]}})
 
-    # Import models here (not at module load time) so Flask-Migrate can
-    # discover every table via db.metadata once all five people's model
-    # files exist, without any circular-import ordering issues.
+    # CORS configuration - Allow specific origins for development
+    CORS(app,
+         origins=['http://localhost:5173', 'http://127.0.0.1:5173'],
+         allow_headers=['Content-Type', 'Authorization'],
+         methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+         supports_credentials=True)
+
     from app.routes.auth import auth_bp
     app.register_blueprint(auth_bp)
 
@@ -29,9 +34,6 @@ def create_app(config_name="development"):
 
     from app.routes.quizzes import quizzes_bp
     app.register_blueprint(quizzes_bp)
-
-    from app.routes.modules import modules_bp
-    app.register_blueprint(modules_bp)
 
     from app.routes.progress import progress_bp
     app.register_blueprint(progress_bp)
@@ -43,15 +45,15 @@ def create_app(config_name="development"):
     from app.routes.gamification import gamification_bp
     app.register_blueprint(gamification_bp)
 
+    from app.routes.notifications import notifications_bp
+    app.register_blueprint(notifications_bp)
+
     from app.routes.contributor import contributor_bp
     app.register_blueprint(contributor_bp)
 
     from app.routes.admin import admin_bp, api_admin_resources_bp
     app.register_blueprint(admin_bp)
     app.register_blueprint(api_admin_resources_bp)
-
-    from app.routes.notifications import notifications_bp
-    app.register_blueprint(notifications_bp)
 
     @app.errorhandler(404)
     def not_found(_e):
@@ -60,13 +62,5 @@ def create_app(config_name="development"):
     @app.errorhandler(500)
     def server_error(_e):
         return error_response("Internal server error", 500)
-
-    @app.route("/")
-    def home():
-        return {
-            "success": True,
-            "message": "Questly API is running",
-            "status": "healthy"
-        }, 200
 
     return app
