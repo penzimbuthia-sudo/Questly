@@ -1,115 +1,147 @@
 import { useEffect, useMemo, useState } from "react";
-import { ExternalLink, FileText, ThumbsUp, Video } from "lucide-react";
-import { EmptyState } from "../../components/ui";
+import { ThumbsUp, FileText, Video, BookOpen } from "lucide-react";
 import { getPublishedResources, upvoteResource } from "../../services/resourceService";
 
-const FILTERS = ["All", "Video", "Article", "Tutorial"];
+const TABS = [
+  { label: "All", value: "" },
+  { label: "Video", value: "video" },
+  { label: "Article", value: "article" },
+  { label: "Learning Path", value: "learning_path" },
+];
 
 const TYPE_ICONS = {
-  Video,
-  Article: FileText,
-  Tutorial: FileText,
+  video: Video,
+  article: FileText,
+  learning_path: BookOpen,
 };
 
 export default function Resources() {
+  const [activeTab, setActiveTab] = useState("");
   const [resources, setResources] = useState([]);
-  const [activeFilter, setActiveFilter] = useState("All");
-  const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [voting, setVoting] = useState(null);
+  const [upvoted, setUpvoted] = useState(new Set());
 
   useEffect(() => {
-    getPublishedResources()
-      .then(setResources)
-      .catch((requestError) => setError(requestError.message || "Unable to load resources."))
-      .finally(() => setLoading(false));
-  }, []);
+    let cancelled = false;
+    setLoading(true);
+    getPublishedResources(activeTab || undefined)
+      .then((result) => {
+        if (!cancelled) {
+          setResources(Array.isArray(result) ? result : []);
+          setLoading(false);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setResources([]);
+          setLoading(false);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [activeTab]);
 
-  const filteredResources = useMemo(() => resources.filter((resource) => {
-    const query = search.toLowerCase();
-    const matchesType = activeFilter === "All" || resource.type === activeFilter;
-    const matchesSearch = `${resource.title ?? ""} ${resource.description ?? ""}`.toLowerCase().includes(query);
-    return matchesType && matchesSearch;
-  }), [activeFilter, resources, search]);
-
-  async function handleUpvote(resourceId) {
-    if (voting === resourceId) return;
-    setVoting(resourceId);
+  const handleUpvote = async (resource) => {
+    if (upvoted.has(resource.id)) return;
+    setUpvoted((prev) => new Set(prev).add(resource.id));
+    setResources((prev) =>
+      prev.map((r) => (r.id === resource.id ? { ...r, upvotes: (r.upvotes ?? 0) + 1 } : r))
+    );
     try {
-      const result = await upvoteResource(resourceId);
-      setResources((current) => current.map((resource) => (
-        resource.id === resourceId
-          ? { ...resource, upvotes: result?.upvotes ?? resource.upvotes + 1 }
-          : resource
-      )));
-    } catch (requestError) {
-      setError(requestError.message || "Unable to upvote this resource.");
-    } finally {
-      setVoting(null);
+      await upvoteResource(resource.id);
+    } catch {
+      setUpvoted((prev) => {
+        const next = new Set(prev);
+        next.delete(resource.id);
+        return next;
+      });
+      setResources((prev) =>
+        prev.map((r) => (r.id === resource.id ? { ...r, upvotes: Math.max(0, (r.upvotes ?? 1) - 1) } : r))
+      );
     }
-  }
+  };
+
+  const emptyState = useMemo(() => !loading && resources.length === 0, [loading, resources]);
 
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-bold text-neutral-900">Resources</h1>
-        <p className="mt-1 text-sm text-neutral-500">Explore approved videos, articles, and tutorials shared by contributors.</p>
+        <h1 className="text-2xl font-bold text-fg">Resources</h1>
+        <p className="mt-1 text-sm text-fg/60">Videos, articles, and paths shared by the community.</p>
       </div>
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-wrap gap-2">
-          {FILTERS.map((filter) => (
-            <button
-              key={filter}
-              type="button"
-              onClick={() => setActiveFilter(filter)}
-              className={`rounded-full px-4 py-1.5 text-sm font-medium ${activeFilter === filter ? "bg-purple-600 text-white" : "bg-white text-neutral-600 hover:bg-neutral-100"}`}
-            >
-              {filter}
-            </button>
-          ))}
+      <div className="flex flex-wrap gap-2">
+        {TABS.map((tab) => (
+          <button
+            key={tab.label}
+            type="button"
+            onClick={() => setActiveTab(tab.value)}
+            className={`rounded-full px-4 py-1.5 text-sm font-medium ${
+              activeTab === tab.value ? "bg-royal text-ivory" : "bg-card text-fg/70 hover:bg-surface-active"
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {emptyState ? (
+        <div className="rounded-2xl border border-dashed border-line/20 bg-card p-10 text-center">
+          <p className="font-medium text-fg">No resources here yet</p>
+          <p className="mt-1 text-sm text-fg/60">Try a different category, or check back soon.</p>
         </div>
-        <input
-          type="search"
-          value={search}
-          onChange={(event) => setSearch(event.target.value)}
-          placeholder="Search resources..."
-          className="rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm outline-none focus:border-purple-400"
-        />
-      </div>
-
-      {loading && <p className="text-sm text-neutral-500">Loading resources...</p>}
-      {error && <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>}
-      {!loading && !error && filteredResources.length === 0 && (
-        <EmptyState title="No resources found" description="Try another filter or search term." />
-      )}
-
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {filteredResources.map((resource) => {
-          const Icon = TYPE_ICONS[resource.type] ?? FileText;
-          return (
-            <article key={resource.id} className="rounded-2xl border border-black/5 bg-white p-6">
-              <div className="flex items-center justify-between">
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-purple-50 text-purple-600">
-                  <Icon className="h-5 w-5" />
+      ) : (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {resources.map((resource) => {
+            const Icon = TYPE_ICONS[resource.type] ?? FileText;
+            return (
+              <div key={resource.id} className="flex flex-col gap-3 rounded-2xl border border-line/15 bg-card p-5">
+                <div className="flex items-start gap-3">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-royal/10 text-royal">
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="truncate font-medium text-fg">{resource.title}</p>
+                    {resource.author && <p className="mt-0.5 text-xs text-fg/50">by {resource.author}</p>}
+                  </div>
                 </div>
-                <span className="text-xs font-medium text-neutral-400">{resource.type}</span>
+
+                {resource.description && (
+                  <p className="line-clamp-2 text-sm text-fg/70">{resource.description}</p>
+                )}
+
+                <div className="mt-auto flex items-center justify-between pt-2">
+                  {resource.url ? (
+                    <a
+                      href={resource.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-sm font-medium text-royal hover:underline"
+                    >
+                      Open
+                    </a>
+                  ) : (
+                    <span />
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => handleUpvote(resource)}
+                    disabled={upvoted.has(resource.id)}
+                    className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium ${
+                      upvoted.has(resource.id)
+                        ? "border-royal/30 bg-royal/10 text-royal"
+                        : "border-line/15 text-fg/70 hover:bg-surface-active"
+                    }`}
+                  >
+                    <ThumbsUp className="h-3.5 w-3.5" /> {resource.upvotes ?? 0}
+                  </button>
+                </div>
               </div>
-              <h2 className="mt-4 text-base font-semibold text-neutral-900">{resource.title}</h2>
-              <p className="mt-2 line-clamp-3 text-sm text-neutral-500">{resource.description}</p>
-              <div className="mt-5 flex items-center justify-between border-t border-neutral-100 pt-4">
-                <button type="button" onClick={() => handleUpvote(resource.id)} disabled={voting === resource.id} className="inline-flex items-center gap-1.5 text-sm font-medium text-neutral-500 hover:text-purple-600 disabled:opacity-50">
-                  <ThumbsUp className="h-4 w-4" /> {resource.upvotes ?? 0}
-                </button>
-                <a href={resource.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 rounded-lg bg-purple-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-purple-500">
-                  Open <ExternalLink className="h-4 w-4" />
-                </a>
-              </div>
-            </article>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

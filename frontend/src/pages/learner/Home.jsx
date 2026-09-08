@@ -31,15 +31,16 @@ export default function Home() {
 
   useEffect(() => {
     getMyStats().then(setStats);
-    getMyBadges().then((all) => setBadges(all.filter((b) => b.earned)));
-    getChallenges().then((all) => setChallenge(all.find((c) => c.status === "Active") ?? null));
-    getLeaderboard("learner").then(setTopLearners);
+    getMyBadges().then((all) => setBadges(Array.isArray(all) ? all.filter((b) => b.earned) : []));
+    getChallenges().then((all) => setChallenge(Array.isArray(all) ? all.find((c) => c.status === "Active") ?? null : null));
+    getLeaderboard("learner").then((all) => setTopLearners(Array.isArray(all) ? all : []));
 
     getMyPaths().then((mine) => {
-      const top = mine.sort((a, b) => b.progress.percent - a.progress.percent)[0];
+      const list = Array.isArray(mine) ? mine : [];
+      const top = list.sort((a, b) => b.progress.percent - a.progress.percent)[0];
       if (top) setPrimaryPath(top);
     });
-    getAllPaths().then((all) => setRecommended(all.slice(0, 4)));
+    getAllPaths().then((all) => setRecommended(Array.isArray(all) ? all.slice(0, 4) : []));
   }, []);
 
   return (
