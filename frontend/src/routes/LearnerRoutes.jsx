@@ -12,7 +12,6 @@ import Profile from '../pages/learner/Profile';
 import Settings from '../pages/learner/Settings';
 
 
-
 export default function LearnerRoutes() {
   return (
     <Routes>
@@ -27,6 +26,8 @@ export default function LearnerRoutes() {
         <Route path="achievements" element={<Achievements />} />
         <Route path="profile" element={<Profile />} />
         <Route path="settings" element={<Settings />} />
+        {/* Remove this route: */}
+        {/* <Route path="quizzes" element={<Quizzes />} /> */}
       </Route>
     </Routes>
   );

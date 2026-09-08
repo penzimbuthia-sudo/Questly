@@ -40,7 +40,7 @@ FIELD_MAP = {
 @role_required("admin")
 def get_dashboard_stats():
     """Get all dashboard statistics."""
-    week_ago = datetime.now() - timedelta(days=7)
+    week_ago = datetime.now() - timedelta(days=7)  # noqa: DTZ005
 
     return jsonify({
         "users": {
@@ -120,9 +120,9 @@ def get_log_level_stats():
 def get_role_distribution():
     """Get user role distribution."""
     return jsonify({
-        "Admin": User.query.filter_by(role="Admin").count(),
-        "Contributor": User.query.filter_by(role="Contributor").count(),
-        "Learner": User.query.filter_by(role="Learner").count(),
+        "Admin": User.query.filter_by(role="admin").count(),
+        "Contributor": User.query.filter_by(role="contributor").count(),
+        "Learner": User.query.filter_by(role="learner").count(),
         "total": User.query.count(),
     }), 200
 
@@ -323,90 +323,3 @@ def update_settings():
             setattr(settings, column, bool(value))
     db.session.commit()
     return jsonify({"data": settings.to_dict(), "message": "Settings updated."}), 200
-@admin_bp.route("/users", methods=["GET"])
-@jwt_required()
-@role_required("admin")
-def get_all_users():
-    """Get all users with pagination and search."""
-    search = request.args.get("search", "")
-    role_filter = request.args.get("role", "")
-    page = request.args.get("page", 1, type=int)
-    per_page = request.args.get("per_page", 20, type=int)
-    
-    query = User.query
-    
-    if search:
-        query = query.filter(
-            db.or_(
-                User.name.ilike(f"%{search}%"),
-                User.email.ilike(f"%{search}%")
-            )
-        )
-    
-    if role_filter:
-        query = query.filter_by(role=role_filter)
-    
-    paginated = query.order_by(User.created_at.desc()).paginate(
-        page=page, per_page=per_page, error_out=False
-    )
-    
-    return jsonify({
-        "data": [user.to_dict() for user in paginated.items],
-        "meta": {
-            "page": page,
-            "per_page": per_page,
-            "total": paginated.total,
-            "pages": paginated.pages
-        }
-    }), 200
-
-@admin_bp.route("/users/<string:user_id>/status", methods=["PATCH"])
-@jwt_required()
-@role_required("admin")
-def update_user_status(user_id):
-    data = request.get_json() or {}
-    status = data.get("status")
-    valid_statuses = ["Active", "Inactive", "Suspended", "Banned"]
-    if status not in valid_statuses:
-        return jsonify({"error": "Invalid status"}), 400
-    user = User.query.get(user_id)
-    if not user:
-        return jsonify({"error": "User not found"}), 404
-    user.status = status
-    db.session.commit()
-    return jsonify({"data": user.to_dict(), "message": "Status updated"}), 200
-
-@admin_bp.route("/badges", methods=["GET"])
-@jwt_required()
-@role_required("admin")
-def get_badges(): 
-    from app.models.badge import Badge 
-    badges = Badge.query.all() 
-    return jsonify({"data": [b.to_dict() for b in badges]}), 200
-@admin_bp.route("/badges", methods=["POST"])
-@jwt_required()
-@role_required("admin")
-def create_badge():
-    from app.models.badge import Badge
-    data = request.get_json() or {}
-    if not data.get("name"):
-        return jsonify({"error": "Badge name required"}), 400
-    badge = Badge(
-        name=data["name"],
-        description=data.get("description", ""),
-        icon_key=data.get("icon_key", "trophy"),
-        criteria=data.get("criteria", ""),
-        xp_reward=data.get("xp_reward", 50),
-        color=data.get("color", "#FFD700")
-    )
-    db.session.add(badge)
-    db.session.commit()
-    return jsonify({"data": badge.to_dict(), "message": "Badge created"}), 201
-
-@admin_bp.after_request
-def add_cors_headers(response):
-    response.headers['Access-Control-Allow-Origin'] = 'http://localhost:5173'
-    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, Accept'
-    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, PATCH, DELETE, OPTIONS'
-    response.headers['Access-Control-Allow-Credentials'] = 'true'
-    return response

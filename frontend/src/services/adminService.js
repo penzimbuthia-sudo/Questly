@@ -1,13 +1,11 @@
 import { api } from "./api";
 
 export async function getDashboardStats() {
-  const response = await api.get("/admin/dashboard/stats");
-  return response.data;
+  return api.get("/admin/dashboard/stats");
 }
 
 export async function getRoleDistribution() {
-  const response = await api.get("/admin/role-distribution");
-  return response.data;
+  return api.get("/admin/role-distribution");
 }
 
 export async function getPendingResources() {
