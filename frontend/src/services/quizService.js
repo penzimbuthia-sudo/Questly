@@ -9,6 +9,12 @@
  * completes the underlying module via learningPathService, which is what
  * actually moves the progress bar and awards XP — this file owns grading,
  * that file owns progress/XP bookkeeping.
+ *
+ * ---
+ * PROPOSED CHANGE (not yet reviewed/merged by C): added `addAuthoredQuiz`
+ * at the bottom so contributor-submitted quizzes (e.g. from
+ * CreateQuizModal) can register into AUTHORED_QUIZZES without contributors
+ * needing write access to this file. Flagged inline below.
  */
 
 import { completeModule } from "./learningPathService";
@@ -180,4 +186,15 @@ export async function submitQuiz(pathId, moduleId, answers, questions) {
     xpAwarded: completion.xpAwarded,
     badgesAwarded: completion.badgesAwarded ?? [],
   };
+}
+
+// ---------------------------------------------------------------------
+// PROPOSED — not yet reviewed by C. Registers a contributor-submitted
+// quiz (matching CreateQuizModal's output shape) into AUTHORED_QUIZZES,
+// keyed by moduleId the same way the hardcoded entries above are.
+// Overwrites any existing entry for that moduleId; adjust if you'd
+// rather reject duplicates instead.
+// ---------------------------------------------------------------------
+export function addAuthoredQuiz(moduleId, { title, questions }) {
+  AUTHORED_QUIZZES[moduleId] = { title, questions };
 }

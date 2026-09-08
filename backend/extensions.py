@@ -18,7 +18,3 @@ jwt = JWTManager()
 migrate = Migrate()
 mail = Mail()
 cors = CORS()
-
-def init_cors(app):
-    # Allow all origins for development
-    CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
