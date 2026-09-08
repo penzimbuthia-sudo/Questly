@@ -40,7 +40,7 @@ FIELD_MAP = {
 @role_required("admin")
 def get_dashboard_stats():
     """Get all dashboard statistics."""
-    week_ago = datetime.now() - timedelta(days=7)
+    week_ago = datetime.now() - timedelta(days=7)  # noqa: DTZ005
 
     return jsonify({
         "users": {
@@ -120,9 +120,9 @@ def get_log_level_stats():
 def get_role_distribution():
     """Get user role distribution."""
     return jsonify({
-        "Admin": User.query.filter_by(role="Admin").count(),
-        "Contributor": User.query.filter_by(role="Contributor").count(),
-        "Learner": User.query.filter_by(role="Learner").count(),
+        "Admin": User.query.filter_by(role="admin").count(),
+        "Contributor": User.query.filter_by(role="contributor").count(),
+        "Learner": User.query.filter_by(role="learner").count(),
         "total": User.query.count(),
     }), 200
 
@@ -323,39 +323,3 @@ def update_settings():
             setattr(settings, column, bool(value))
     db.session.commit()
     return jsonify({"data": settings.to_dict(), "message": "Settings updated."}), 200
-@admin_bp.route("/users", methods=["GET"])
-@jwt_required()
-@role_required("admin")
-def get_all_users():
-    """Get all users with pagination and search."""
-    search = request.args.get("search", "")
-    role_filter = request.args.get("role", "")
-    page = request.args.get("page", 1, type=int)
-    per_page = request.args.get("per_page", 20, type=int)
-    
-    query = User.query
-    
-    if search:
-        query = query.filter(
-            db.or_(
-                User.name.ilike(f"%{search}%"),
-                User.email.ilike(f"%{search}%")
-            )
-        )
-    
-    if role_filter:
-        query = query.filter_by(role=role_filter)
-    
-    paginated = query.order_by(User.created_at.desc()).paginate(
-        page=page, per_page=per_page, error_out=False
-    )
-    
-    return jsonify({
-        "data": [user.to_dict() for user in paginated.items],
-        "meta": {
-            "page": page,
-            "per_page": per_page,
-            "total": paginated.total,
-            "pages": paginated.pages
-        }
-    }), 200

@@ -6,6 +6,6 @@ export async function getUsers() {
 }
 
 export async function updateUserStatus(userId, status) {
-  const response = await api.patch(`/admin/users/${userId}`, { status });
+  const response = await api.patch(`/admin/users/${userId}/status`, { status });
   return response.data;
 }

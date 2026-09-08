@@ -52,7 +52,7 @@ def update_user_status(user_id):
     if not data or "status" not in data:
         return jsonify({"error": "Status is required"}), 400
 
-    valid_statuses = ["Active", "Inactive", "Pending"]
+    valid_statuses = ["Active", "Inactive", "Suspended", "Banned"]
     if data["status"] not in valid_statuses:
         return jsonify({"error": f"Invalid status. Must be one of: {valid_statuses}"}), 400
 
