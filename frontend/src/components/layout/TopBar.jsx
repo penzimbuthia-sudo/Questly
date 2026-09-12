@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Menu, Bell, Search, ChevronDown, X, CheckCircle, AlertCircle, MessageSquare, User, Settings, LogOut, LayoutDashboard, Plus } from 'lucide-react';
+import { Menu, Bell, Search, ChevronDown, X, CheckCircle, AlertCircle, MessageSquare, User, Settings, LogOut, LayoutDashboard, Plus, Sun, Moon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from '../../hooks/useTheme';
 
 const MOCK_NOTIFICATIONS = [
   { id: 1, title: 'New content pending review', message: '3 resources need your approval', time: '2 min ago', type: 'review', read: false },
@@ -28,6 +29,7 @@ export default function TopBar({
   const [searchTerm, setSearchTerm] = useState('');
   const [notifications, setNotifications] = useState(MOCK_NOTIFICATIONS);
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
@@ -85,6 +87,16 @@ export default function TopBar({
             <Plus size={15} /> {action.label}
           </button>
         )}
+
+        {/* Light / dark toggle */}
+        <button
+          type="button"
+          onClick={toggleTheme}
+          aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+          className="p-2 rounded-lg hover:bg-page transition-colors text-fg/60"
+        >
+          {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+        </button>
 
         {/* Notifications */}
         <div className="relative">

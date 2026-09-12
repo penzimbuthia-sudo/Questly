@@ -5,10 +5,9 @@ import QuizQuestion from "../../components/learner/QuizQuestion";
 import {
   getPathById,
   getPathProgress,
-  isModuleComplete,
   startPath,
 } from "../../services/learningPathService";
-import { getQuizForModule, gradeAnswer, submitQuiz } from "../../services/quizService";
+import { getQuizForModule, submitQuiz } from "../../services/quizService";
 
 export default function PathDetail() {
   const { pathId } = useParams();
@@ -40,7 +39,7 @@ export default function PathDetail() {
   const beginQuiz = async (module) => {
     try {
       setQuizError(null);
-      const quiz = await getQuizForModule(pathId, module.id, { pathTitle: path.title, moduleTitle: module.title });
+      const quiz = await getQuizForModule(module.id);
       setActiveModule(module);
       setQuizState({ quiz, index: 0, answers: {}, selected: null, isAnswered: false, feedback: null, result: null });
     } catch (error) {
@@ -55,11 +54,10 @@ export default function PathDetail() {
   const submitAnswer = () => {
     setQuizState((prev) => {
       const question = prev.quiz.questions[prev.index];
-      const feedback = gradeAnswer(question, prev.selected);
       return {
         ...prev,
         isAnswered: true,
-        feedback,
+        feedback: null, // backend only reveals correctness after the full quiz is submitted
         answers: { ...prev.answers, [question.id]: prev.selected },
       };
     });
@@ -71,11 +69,9 @@ export default function PathDetail() {
       setQuizState((prev) => ({ ...prev, index: prev.index + 1, selected: null, isAnswered: false, feedback: null }));
       return;
     }
-    const question = quizState.quiz.questions[quizState.index];
-    const answers = { ...quizState.answers, [question.id]: quizState.selected };
     try {
-      const result = await submitQuiz(pathId, activeModule.id, answers, quizState.quiz.questions);
-      setQuizState((prev) => ({ ...prev, answers, result }));
+      const result = await submitQuiz(activeModule.id, quizState.answers);
+      setQuizState((prev) => ({ ...prev, result }));
       if (result.passed) {
         const updated = await getPathProgress(pathId);
         setProgress(updated);
@@ -114,7 +110,7 @@ export default function PathDetail() {
 
       <div className="rounded-2xl border border-black/5 bg-white p-6">
         <div className="flex items-start gap-4">
-          <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-purple-50 text-2xl">{path.icon}</div>
+          <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-purple-50 text-2xl">📘</div>
           <div className="flex-1">
             <span className="inline-block rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold text-emerald-700">{path.level}</span>
             <h1 className="mt-2 text-xl font-bold text-neutral-900">{path.title}</h1>
@@ -139,7 +135,7 @@ export default function PathDetail() {
         <h2 className="text-base font-semibold text-neutral-900">Modules</h2>
         <div className="mt-4 flex flex-col divide-y divide-neutral-100">
           {path.modules.map((module, i) => {
-            const done = isModuleComplete(pathId, module.id);
+            const done = module.completed ?? false;
             return (
               <div key={module.id} className="flex items-center gap-4 py-3">
                 {done ? (
@@ -151,7 +147,7 @@ export default function PathDetail() {
                   <p className={`text-sm font-medium ${done ? "text-neutral-500 line-through" : "text-neutral-900"}`}>
                     {i + 1}. {module.title}
                   </p>
-                  <p className="text-xs text-amber-600">{module.xp} XP</p>
+                  <p className="text-xs text-amber-600">{module.xp_value} XP</p>
                 </div>
                 <button
                   type="button"

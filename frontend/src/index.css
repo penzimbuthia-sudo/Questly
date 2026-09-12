@@ -13,11 +13,36 @@
 
   --font-sans: 'Inter', sans-serif;
 
+  /* Brand accent scales — same in light and dark mode by design, only
+     surfaces/text switch. Previously duplicated identically inside both
+     .theme-contributor and .theme-admin; defined once here instead. */
+  --color-violet-300: #C4B5FD;
+  --color-violet-400: #A78BFA;
+  --color-violet-500: var(--color-royal);
+  --color-violet-600: #7C3AED;
+  --color-violet-700: #6D28D9;
+
+  --color-amber-300: var(--color-butter);
+  --color-amber-400: #EAB53F;
+  --color-amber-500: #D9A82E;
+
+  /* --- Light mode (default) --- */
   --color-page: #FAF7F0;
   --color-card: #FFFFFF;
   --color-surface-alt: #FAF7F0;
   --color-fg: #17151A;
   --color-line: #17151A;
+
+  --color-surface: var(--color-card);
+  --color-surface-active: #F1EBDD;
+  --color-surface-hover: #F1EBDD;
+  --color-border: rgba(23, 21, 26, 0.10);
+  --color-border-soft: rgba(23, 21, 26, 0.06);
+
+  --color-ink-0: var(--color-fg);
+  --color-ink-1: rgba(23, 21, 26, 0.72);
+  --color-ink-2: rgba(23, 21, 26, 0.55);
+  --color-ink-3: rgba(23, 21, 26, 0.38);
 
   --color-tone-success-bg: #E7F6EC;
   --color-tone-success-fg: #1F7A44;
@@ -32,6 +57,16 @@
   --color-tone-info-fg: #6D28D9;
 }
 
+/*
+ * Dark mode — a personal preference toggle (see ThemeContext), applied
+ * as a `dark` class on <html>, independent of role. Every learner,
+ * contributor, or admin can switch between this and the light palette
+ * above; it's no longer tied to which section of the app you're in.
+ *
+ * Consolidated from what used to be two nearly-identical blocks
+ * (.theme-contributor and .theme-admin) into one shared dark palette.
+ */
+.dark,
 .theme-contributor {
   --color-page: #17151A;
   --color-card: #211D28;
@@ -50,55 +85,6 @@
   --color-ink-2: rgba(250, 247, 240, 0.60);
   --color-ink-3: rgba(250, 247, 240, 0.40);
 
-  --color-violet-300: #C4B5FD;
-  --color-violet-400: #A78BFA;
-  --color-violet-500: var(--color-royal);
-  --color-violet-600: #7C3AED;
-  --color-violet-700: #6D28D9;
-
-  --color-amber-300: var(--color-butter);
-  --color-amber-400: #EAB53F;
-  --color-amber-500: #D9A82E;
-}
-
-.theme-admin {
-  --color-page: #332D3A;
-  --color-card: #17151A;
-  --color-surface-alt: #201C26;
-  --color-fg: #FAF7F0;
-  --color-line: #FAF7F0;
-
-  /* Same extended tokens as .theme-contributor, added here for the
-     identical reason — admin components (sidebar, StatCard-style
-     widgets, chart legends, timestamps) reference --color-ink-2/-3,
-     --color-violet-*, --color-amber-* for secondary/muted text and
-     accents. Without these defined, that text silently falls back to
-     the browser's default (near-black) and disappears against the dark
-     background — this is almost certainly what "text blending in" is. */
-  --color-surface: var(--color-card);
-  --color-surface-active: #241F2C;
-  --color-surface-hover: #241F2C;
-  --color-border: rgba(250, 247, 240, 0.10);
-  --color-border-soft: rgba(250, 247, 240, 0.06);
-
-  --color-ink-0: var(--color-fg);
-  --color-ink-1: rgba(250, 247, 240, 0.82);
-  --color-ink-2: rgba(250, 247, 240, 0.60);
-  --color-ink-3: rgba(250, 247, 240, 0.40);
-
-  --color-violet-300: #C4B5FD;
-  --color-violet-400: #A78BFA;
-  --color-violet-500: var(--color-royal);
-  --color-violet-600: #7C3AED;
-  --color-violet-700: #6D28D9;
-
-  --color-amber-300: var(--color-butter);
-  --color-amber-400: #EAB53F;
-  --color-amber-500: #D9A82E;
-}
-
-.theme-contributor,
-.theme-admin {
   --color-tone-success-bg: rgba(127, 217, 154, 0.14);
   --color-tone-success-fg: #7FD99A;
 
@@ -116,4 +102,5 @@ body {
   font-family: var(--font-sans);
   background-color: var(--color-page);
   color: var(--color-fg);
+  transition: background-color 0.15s ease, color 0.15s ease;
 }

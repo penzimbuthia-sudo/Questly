@@ -7,6 +7,7 @@ stats for the Contributor's own dashboard/profile.
 from flask import Blueprint
 from flask_jwt_extended import get_jwt_identity
 
+from app.models.learning_path import LearningPath
 from app.models.resource import Resource
 from app.models.user import User
 from app.services.leaderboard_service import get_user_rank
@@ -21,8 +22,8 @@ contributor_bp = Blueprint("contributor", __name__, url_prefix="/contributor")
 def get_my_stats():
     """
     Returns the logged-in contributor's own numbers: xp, level,
-    how many resources they've published, total upvotes, and
-    their current leaderboard rank.
+    how many resources they've published, total upvotes, how many
+    learning paths they've published, and their current leaderboard rank.
     """
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
@@ -30,6 +31,9 @@ def get_my_stats():
     published_resources = Resource.query.filter_by(
         contributor_id=user_id, status="Published"
     ).all()
+    published_paths = LearningPath.query.filter_by(
+        contributor_id=user_id, status="Published"
+    ).count()
 
     total_upvotes = sum(r.upvotes for r in published_resources)
     rank = get_user_rank(user_id, role="contributor")
@@ -38,6 +42,7 @@ def get_my_stats():
         data={
             "xp": user.xp_total,
             "resources": len(published_resources),
+            "paths": published_paths,
             "upvotes": total_upvotes,
             "rank": rank,
         }

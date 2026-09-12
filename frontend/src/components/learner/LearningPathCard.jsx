@@ -1,4 +1,4 @@
-import { Star, Bookmark, BookmarkCheck, BookOpen } from "lucide-react";
+import { Bookmark, BookmarkCheck, BookOpen } from "lucide-react";
 
 const LEVEL_STYLES = {
   Beginner: "bg-emerald-100 text-emerald-700",
@@ -13,10 +13,10 @@ const LEVEL_STYLES = {
  * variant instead of "Start path".
  *
  * Props:
- *  - path: { id, title, icon, level, category, modules (or totalModules), xpReward, rating, author }
+ *  - path: { id, title, level, category, totalModules, xpReward, contributorName }
  *  - onStart(path) / onOpen(path)
  *  - bookmarked, onToggleBookmark(path)
- *  - showMeta: whether to show the rating/author row (Explore = true)
+ *  - showMeta: whether to show the "by {contributor}" row (Explore = true)
  */
 export default function LearningPathCard({
   path,
@@ -26,13 +26,13 @@ export default function LearningPathCard({
   onToggleBookmark,
   showMeta = false,
 }) {
-  const totalModules = path.totalModules ?? path.modules?.length ?? 0;
+  const totalModules = path.totalModules ?? 0;
 
   return (
     <div className="rounded-2xl border border-black/5 bg-white p-6">
       <div className="flex items-start justify-between">
         <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50 text-lg">
-          {path.icon}
+          📘
         </div>
         {onToggleBookmark && (
           <button
@@ -63,15 +63,11 @@ export default function LearningPathCard({
       </button>
 
       <p className="mt-1 text-sm text-amber-600">
-        {totalModules} modules · {path.xpReward.toLocaleString()} XP
+        {totalModules} modules · {(path.xpReward ?? 0).toLocaleString()} XP
       </p>
 
-      {showMeta && (
-        <div className="mt-2 flex items-center gap-1 text-sm text-neutral-500">
-          <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-          <span>{path.rating}</span>
-          <span className="ml-auto text-neutral-400">by {path.author}</span>
-        </div>
+      {showMeta && path.contributorName && (
+        <p className="mt-2 text-sm text-neutral-400">by {path.contributorName}</p>
       )}
 
       <button

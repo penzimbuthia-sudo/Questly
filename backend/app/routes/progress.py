@@ -10,6 +10,7 @@ from sqlalchemy import func
 
 from app.extensions import db
 from app.models.learning_path import LearningPath
+from app.models.module import Module
 from app.models.progress import Progress
 from app.models.rating import Rating
 from app.models.resource import Resource
@@ -30,17 +31,30 @@ def my_progress():
 @progress_bp.get("/progress/paths/<int:path_id>")
 @jwt_required()
 def path_progress(path_id):
-    """Progress summary for one path: modules completed / total, percent."""
+    """Progress summary for one path: modules completed / total, percent,
+    and total XP actually earned from this path's completed modules."""
     path = LearningPath.query.get_or_404(path_id)
     user_id = get_jwt_identity()
 
-    completed_count = Progress.query.filter(
-        Progress.user_id == user_id,
-        Progress.learning_path_id == path_id,
-        Progress.module_id.isnot(None),
-        Progress.status == "completed",
-    ).count()
+    completed_module_ids = [
+        p.module_id
+        for p in Progress.query.filter(
+            Progress.user_id == user_id,
+            Progress.learning_path_id == path_id,
+            Progress.module_id.isnot(None),
+            Progress.status == "completed",
+        )
+    ]
+    completed_count = len(completed_module_ids)
     total = path.total_modules
+
+    xp_earned = 0
+    if completed_module_ids:
+        xp_earned = (
+            db.session.query(db.func.coalesce(db.func.sum(Module.xp_value), 0))
+            .filter(Module.id.in_(completed_module_ids))
+            .scalar()
+        )
 
     return (
         jsonify(
@@ -48,6 +62,7 @@ def path_progress(path_id):
                 "learning_path_id": path_id,
                 "modules_completed": completed_count,
                 "total_modules": total,
+                "xp_earned": xp_earned,
                 "percent": round((completed_count / total) * 100) if total else 0,
             }
         ),

@@ -9,6 +9,7 @@ from app.extensions import db
 from app.models.learning_path import LearningPath
 from app.models.module import Module
 from app.models.progress import Progress
+from app.models.user import User
 from app.schemas.learning_path_schema import ModuleSchema
 from app.services import leaderboard_service
 
@@ -21,15 +22,23 @@ module_schema = ModuleSchema()
 @modules_bp.get("/learning-paths/<int:path_id>/modules")
 @jwt_required(optional=True)
 def list_modules(path_id):
-    LearningPath.query.get_or_404(path_id)
+    path = LearningPath.query.get_or_404(path_id)
+    identity = get_jwt_identity()
+
+    if path.status != "Published":
+        viewer = User.query.get(identity) if identity else None
+        is_owner = viewer is not None and viewer.id == path.contributor_id
+        is_admin = viewer is not None and viewer.role == "admin"
+        if not (is_owner or is_admin):
+            return jsonify({"error": "Not found"}), 404
+
     modules = (
         Module.query.filter_by(learning_path_id=path_id).order_by(Module.order_index).all()
     )
     data = module_list_schema.dump(modules)
 
-    identity = get_jwt_identity()
     if identity is not None:
-        user_id = int(identity)
+        user_id = identity
         completed_ids = {
             p.module_id
             for p in Progress.query.filter_by(
@@ -46,11 +55,19 @@ def list_modules(path_id):
 @jwt_required(optional=True)
 def get_module(module_id):
     module = Module.query.get_or_404(module_id)
+    identity = get_jwt_identity()
+
+    if module.learning_path.status != "Published":
+        viewer = User.query.get(identity) if identity else None
+        is_owner = viewer is not None and viewer.id == module.learning_path.contributor_id
+        is_admin = viewer is not None and viewer.role == "admin"
+        if not (is_owner or is_admin):
+            return jsonify({"error": "Not found"}), 404
+
     data = module_schema.dump(module)
 
-    identity = get_jwt_identity()
     if identity is not None:
-        user_id = int(identity)
+        user_id = identity
         completed = Progress.query.filter_by(
             user_id=user_id, module_id=module_id, status="completed"
         ).first()

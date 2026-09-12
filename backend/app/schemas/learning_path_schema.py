@@ -33,6 +33,7 @@ class LearningPathSchema(Schema):
     level = fields.Str()
     xp_reward = fields.Int()
     total_modules = fields.Int()
+    contributor_name = fields.Str(allow_none=True)
 
 
 class LearningPathDetailSchema(LearningPathSchema):
@@ -47,4 +48,5 @@ class FollowedPathSchema(Schema):
     learning_path = fields.Nested(LearningPathSchema)
     modules_completed = fields.Int()
     total_modules = fields.Int()
+    xp_earned = fields.Int()
     percent = fields.Int()

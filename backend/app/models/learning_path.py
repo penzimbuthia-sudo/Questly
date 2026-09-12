@@ -25,10 +25,15 @@ class LearningPath(db.Model):
     progress_entries = db.relationship(
         "Progress", backref="learning_path", cascade="all, delete-orphan"
     )
+    contributor = db.relationship("User")
 
     @property
     def total_modules(self):
         return len(self.modules)
+
+    @property
+    def contributor_name(self):
+        return self.contributor.name if self.contributor else None
 
     def to_dict(self, include_modules=False):
         data = {
@@ -40,6 +45,7 @@ class LearningPath(db.Model):
             "xp_reward": self.xp_reward,
             "status": self.status,
             "total_modules": self.total_modules,
+            "contributor_name": self.contributor_name,
         }
         if include_modules:
             data["modules"] = [m.to_dict() for m in self.modules]

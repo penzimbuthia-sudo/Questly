@@ -8,10 +8,13 @@ import {
   AddResourceModal, CreatePathModal,
 } from "@/components/contributor";
 import { getMyResources, createResource, createLearningPath } from "@/services/resourceService";
-import { getMyStats, getContributorLeaderboard } from "@/services/gamificationService";
-import { sampleChallenges } from "@/data/challenges";
+import { getMyStats, getContributorLeaderboard, getChallenges } from "@/services/gamificationService";
 import { useAuth } from "@/hooks/useAuth";
 
+// TODO: no backend endpoint exists yet for per-week resource view counts —
+// this chart is still illustrative placeholder data. Needs a real
+// analytics endpoint (e.g. GET /contributor/me/views-by-week) before this
+// can be considered fixed rather than just "not obviously fake."
 const chartData = [
   { week: "Wk 1", views: 620 },
   { week: "Wk 2", views: 810 },
@@ -31,6 +34,7 @@ export default function Dashboard() {
   });
 
   const [leaderboard, setLeaderboard] = useState([]);
+  const [challenge, setChallenge] = useState(null);
 
   const [showResourceModal, setShowResourceModal] = useState(false);
   const [showPathModal, setShowPathModal] = useState(false);
@@ -39,6 +43,7 @@ export default function Dashboard() {
     getMyResources().then(setContent);
     getMyStats().then(setStats);
     getContributorLeaderboard().then(setLeaderboard);
+    getChallenges().then((all) => setChallenge(all.find((c) => c.status === "Active") ?? null));
   }, []);
 
   async function handleAddResource(formData) {
@@ -92,11 +97,14 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Only show the first sample challenge, if one exists */}
-          {sampleChallenges[0] && (
+          {challenge && (
             <div>
               <SectionHeader title="Weekly challenge" />
-              <ChallengeCard {...sampleChallenges[0]} />
+              <ChallengeCard
+                title={challenge.title}
+                description={challenge.description}
+                reward={challenge.reward_xp ? `+${challenge.reward_xp} XP` : undefined}
+              />
             </div>
           )}
         </div>

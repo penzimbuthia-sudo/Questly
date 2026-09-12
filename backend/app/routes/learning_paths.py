@@ -5,7 +5,9 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from app.extensions import db
 from app.models.learning_path import LearningPath
+from app.models.module import Module
 from app.models.progress import Progress
+from app.models.user import User
 from app.schemas.learning_path_schema import (
     FollowedPathSchema,
     LearningPathDetailSchema,
@@ -26,8 +28,9 @@ followed_schema = FollowedPathSchema(many=True)
 @learning_paths_bp.get("")
 def browse_paths():
     """Public browse, matches the frontend's Explore page. Optional
-    ?category=Frontend filter."""
-    query = LearningPath.query
+    ?category=Frontend filter. Learners should only ever see content an
+    admin has approved — Pending/Rejected paths stay invisible here."""
+    query = LearningPath.query.filter_by(status="Published")
     category = request.args.get("category")
     if category and category != "All":
         query = query.filter_by(category=category)
@@ -51,18 +54,30 @@ def my_paths():
     results = []
     for entry in followed:
         path = entry.learning_path
-        completed_count = Progress.query.filter(
-            Progress.user_id == user_id,
-            Progress.learning_path_id == path.id,
-            Progress.module_id.isnot(None),
-            Progress.status == "completed",
-        ).count()
+        completed_module_ids = [
+            p.module_id
+            for p in Progress.query.filter(
+                Progress.user_id == user_id,
+                Progress.learning_path_id == path.id,
+                Progress.module_id.isnot(None),
+                Progress.status == "completed",
+            )
+        ]
+        completed_count = len(completed_module_ids)
         total = path.total_modules
+        xp_earned = 0
+        if completed_module_ids:
+            xp_earned = (
+                db.session.query(db.func.coalesce(db.func.sum(Module.xp_value), 0))
+                .filter(Module.id.in_(completed_module_ids))
+                .scalar()
+            )
         results.append(
             {
                 "learning_path": path,
                 "modules_completed": completed_count,
                 "total_modules": total,
+                "xp_earned": xp_earned,
                 "percent": round((completed_count / total) * 100) if total else 0,
             }
         )
@@ -74,13 +89,25 @@ def my_paths():
 @jwt_required(optional=True)
 def get_path(path_id):
     """Path detail + ordered modules. Works logged-out (browse); when
-    logged in, each module is annotated with whether it's completed."""
+    logged in, each module is annotated with whether it's completed.
+
+    Only Published paths are visible to the general audience — a
+    contributor previewing their own submission, or an admin reviewing
+    it, can still see it regardless of status."""
     path = LearningPath.query.get_or_404(path_id)
+    identity = get_jwt_identity()
+
+    if path.status != "Published":
+        viewer = User.query.get(identity) if identity else None
+        is_owner = viewer is not None and viewer.id == path.contributor_id
+        is_admin = viewer is not None and viewer.role == "admin"
+        if not (is_owner or is_admin):
+            return jsonify({"error": "Not found"}), 404
+
     data = path_detail_schema.dump(path)
 
-    identity = get_jwt_identity()
     if identity is not None:
-        user_id = int(identity)
+        user_id = identity
         completed_ids = {
             p.module_id
             for p in Progress.query.filter_by(

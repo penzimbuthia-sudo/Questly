@@ -3,7 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { SlidersHorizontal } from "lucide-react";
 import LearningPathCard from "../../components/learner/LearningPathCard";
 import { getAllPaths, startPath } from "../../services/learningPathService";
-import { CATEGORIES } from "../../data/learningPaths";
+
+// Matches the categories contributors can currently pick when creating a
+// path — inlined here since data/learningPaths.js (the old mock catalog)
+// is being removed. If contributors can add new categories later, this
+// should move to a real backend-driven list instead.
+const CATEGORIES = ["Frontend", "Backend", "Data science", "Design", "DevOps"];
 
 const TABS = ["All", ...CATEGORIES];
 

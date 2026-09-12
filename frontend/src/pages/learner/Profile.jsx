@@ -1,30 +1,53 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { BadgeCheck, CheckCircle2, Award as AwardIcon, Share2, Pencil } from "lucide-react";
+import { BadgeCheck, CheckCircle2, Compass, Pencil } from "lucide-react";
 import BadgeCard from "../../components/learner/BadgeCard";
-import { getMyPaths, getUserStats, subscribe } from "../../services/learningPathService";
-import { ACHIEVEMENTS } from "../../data/achievements";
+import { getMyPaths, getMyStats, getMyProgress } from "../../services/learningPathService";
+import { getMyBadges } from "../../services/gamificationService";
 import { useAuth } from "../../hooks/useAuth";
 
-const RECENT_ACTIVITY = [
-  { id: "a1", icon: CheckCircle2, text: 'Completed "Hooks deep dive" module', time: "2h ago" },
-  { id: "a2", icon: AwardIcon, text: "Earned the Streak keeper badge", time: "1d ago" },
-  { id: "a3", icon: Share2, text: 'Shared "CSS Grid in 10 minutes"', time: "2d ago" },
-];
+function timeAgo(isoString) {
+  const then = new Date(isoString).getTime();
+  const diffMs = Date.now() - then;
+  const mins = Math.floor(diffMs / 60000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins}m ago`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours}h ago`;
+  return `${Math.floor(hours / 24)}d ago`;
+}
 
 export default function Profile() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [stats, setStats] = useState(getUserStats());
+  const [stats, setStats] = useState(null);
   const [myPaths, setMyPaths] = useState([]);
-  const earnedBadges = ACHIEVEMENTS.filter((b) => b.earned);
+  const [badges, setBadges] = useState([]);
+  const [activity, setActivity] = useState([]);
 
-  useEffect(() => subscribe((snapshot) => setStats(snapshot.stats)), []);
   useEffect(() => {
-    getMyPaths().then(setMyPaths);
+    getMyStats().then(setStats);
+    getMyBadges().then((all) => setBadges(all.filter((b) => b.earned)));
+
+    Promise.all([getMyPaths(), getMyProgress()]).then(([paths, progress]) => {
+      setMyPaths(paths);
+      const pathTitleById = new Map(paths.map((p) => [p.path.id, p.path.title]));
+      const feed = progress
+        .filter((entry) => entry.status === "completed" && entry.completedAt)
+        .slice(0, 8)
+        .map((entry) => ({
+          id: entry.id,
+          icon: entry.moduleId ? CheckCircle2 : Compass,
+          text: entry.moduleId
+            ? `Completed a module in "${pathTitleById.get(entry.learningPathId) ?? "a path"}"`
+            : `Started following "${pathTitleById.get(entry.learningPathId) ?? "a path"}"`,
+          time: timeAgo(entry.completedAt),
+        }));
+      setActivity(feed);
+    });
   }, []);
 
-  const pathsDone = myPaths.filter(({ progress }) => progress.isComplete).length;
+  const pathsDone = myPaths.filter(({ progress }) => progress.percent === 100).length;
 
   return (
     <div className="flex flex-col gap-6">
@@ -60,11 +83,11 @@ export default function Profile() {
         </div>
 
         <div className="grid grid-cols-2 gap-6 border-t border-neutral-100 px-10 py-5 sm:grid-cols-5">
-          <Stat label="Total XP" value={stats.totalXP.toLocaleString()} />
-          <Stat label="Level" value={stats.level} />
-          <Stat label="Badges" value={earnedBadges.length} />
+          <Stat label="Total XP" value={stats ? stats.totalXP.toLocaleString() : "—"} />
+          <Stat label="Level" value={stats?.level ?? "—"} />
+          <Stat label="Badges" value={badges.length} />
           <Stat label="Paths done" value={pathsDone} />
-          <Stat label="Streak" value={`${stats.streakDays}d`} />
+          <Stat label="Streak" value={stats ? `${stats.streakDays}d` : "—"} />
         </div>
       </div>
 
@@ -97,26 +120,34 @@ export default function Profile() {
             View all
           </button>
         </div>
-        <div className="mt-4 grid grid-cols-3 gap-6 sm:grid-cols-6">
-          {earnedBadges.map((badge) => (
-            <BadgeCard key={badge.id} {...badge} compact />
-          ))}
-        </div>
+        {badges.length === 0 ? (
+          <p className="mt-4 text-sm text-neutral-400">No badges earned yet — complete a module to get started.</p>
+        ) : (
+          <div className="mt-4 grid grid-cols-3 gap-6 sm:grid-cols-6">
+            {badges.map((badge) => (
+              <BadgeCard key={badge.id} title={badge.name} description={badge.criteria} icon={badge.icon_key} earned compact />
+            ))}
+          </div>
+        )}
       </section>
 
       <section className="rounded-2xl border border-black/5 bg-white p-6">
         <h2 className="text-base font-semibold text-neutral-900">Recent activity</h2>
-        <div className="mt-4 flex flex-col gap-4">
-          {RECENT_ACTIVITY.map(({ id, icon: Icon, text, time }) => (
-            <div key={id} className="flex items-center gap-3 border-t border-neutral-200 pt-3 first:border-t-0 first:pt-0">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-purple-50 text-purple-600">
-                <Icon className="h-4 w-4" />
+        {activity.length === 0 ? (
+          <p className="mt-4 text-sm text-neutral-400">No activity yet — follow a path and complete a module to see it here.</p>
+        ) : (
+          <div className="mt-4 flex flex-col gap-4">
+            {activity.map(({ id, icon: Icon, text, time }) => (
+              <div key={id} className="flex items-center gap-3 border-t border-neutral-200 pt-3 first:border-t-0 first:pt-0">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-purple-50 text-purple-600">
+                  <Icon className="h-4 w-4" />
+                </div>
+                <p className="flex-1 text-sm text-neutral-800">{text}</p>
+                <span className="text-xs text-neutral-400">{time}</span>
               </div>
-              <p className="flex-1 text-sm text-neutral-800">{text}</p>
-              <span className="text-xs text-neutral-400">{time}</span>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </section>
     </div>
   );
